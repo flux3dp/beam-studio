@@ -228,6 +228,79 @@ describe('test DevControlBlock', () => {
     expect(mockStop).toHaveBeenCalledTimes(1);
   });
 
+  describe('closing the dialog while a command is still on its way', () => {
+    const deferStopPreview = () => {
+      let resolve: () => void = () => {};
+
+      mockStopPreview.mockReturnValueOnce(
+        new Promise<void>((r) => {
+          resolve = r;
+        }),
+      );
+
+      return () => resolve();
+    };
+
+    it('should not start an axis move after the dialog closed', async () => {
+      const finishStopPreview = deferStopPreview();
+      const { getByTestId, unmount } = renderBlock();
+
+      await act(async () => fireEvent.click(getByTestId('dev-z-positive')));
+      unmount();
+      await act(async () => finishStopPreview());
+      expect(mockAdjustZAxis).not.toHaveBeenCalled();
+    });
+
+    it('should stop again when the dialog closed while the move was being sent', async () => {
+      let sent: () => void = () => {};
+
+      mockAdjustAAxis.mockReturnValueOnce(
+        new Promise<void>((r) => {
+          sent = r;
+        }),
+      );
+
+      const { getByTestId, unmount } = renderBlock();
+
+      await act(async () => fireEvent.click(getByTestId('dev-a-positive')));
+      unmount();
+      expect(mockStop).toHaveBeenCalledTimes(1);
+      await act(async () => sent());
+      // the cleanup's stop may have reached the machine before the move did
+      expect(mockStop).toHaveBeenCalledTimes(2);
+    });
+
+    it.each([
+      ['dev-move-go', mockGo],
+      ['dev-pulse-fire', mockDoCalibration],
+    ])('should not send %s after the dialog closed', async (testId, command) => {
+      const finishStopPreview = deferStopPreview();
+      const { getByTestId, unmount } = renderBlock();
+
+      await act(async () => fireEvent.click(getByTestId(testId)));
+      unmount();
+      await act(async () => finishStopPreview());
+      expect(command).not.toHaveBeenCalled();
+    });
+
+    it('should not offer a door retry from a closed dialog', async () => {
+      let reject: (error: unknown) => void = () => {};
+
+      mockDoCalibration.mockReturnValueOnce(
+        new Promise((_, r) => {
+          reject = r;
+        }),
+      );
+
+      const { getByTestId, unmount } = renderBlock();
+
+      await act(async () => fireEvent.click(getByTestId('dev-pulse-fire')));
+      unmount();
+      await act(async () => reject(['error', 'DOOR_OPENED']));
+      expect(mockPopUp).not.toHaveBeenCalled();
+    });
+  });
+
   it('should not stop the machine on close when no axis is moving', async () => {
     const { getByTestId, unmount } = renderBlock();
 

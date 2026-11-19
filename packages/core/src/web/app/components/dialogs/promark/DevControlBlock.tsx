@@ -146,6 +146,14 @@ interface Props {
 }
 
 // Dev-only tools for the production line
+const stopOnClose = async () => {
+  try {
+    await deviceMaster.stop();
+  } catch (error) {
+    console.error('Failed to stop the machine on close', error);
+  }
+};
+
 const DevControlBlock = ({
   applyParameters,
   field,
@@ -169,6 +177,9 @@ const DevControlBlock = ({
   const movingTimeout = useRef<NodeJS.Timeout>(undefined);
   // read by the unmount cleanup, which only sees the state of the first render
   const isMovingRef = useRef(false);
+  // Handlers await (stopping the preview, applying the lens) before they send their command; a dialog
+  // closed meanwhile must not get an axis moving or a pulse fired after it is gone.
+  const isUnmountedRef = useRef(false);
   const isBusy = movingAxis !== null || isRunning;
 
   const setMoving = (axis: 'a' | 'z' | null) => {
@@ -178,21 +189,12 @@ const DevControlBlock = ({
 
   useEffect(
     () => () => {
+      isUnmountedRef.current = true;
       clearTimeout(movingTimeout.current);
 
       // An axis move runs for as long as its distance takes (up to about half a minute) and only this
       // block can stop it: closing the dialog or switching the lens mid-move must not leave it running.
-      if (isMovingRef.current) {
-        const stop = async () => {
-          try {
-            await deviceMaster.stop();
-          } catch (error) {
-            console.error('Failed to stop the axis on close', error);
-          }
-        };
-
-        stop();
-      }
+      if (isMovingRef.current) stopOnClose();
     },
     [],
   );
@@ -204,8 +206,17 @@ const DevControlBlock = ({
     try {
       await stopPreview();
 
+      if (isUnmountedRef.current) return;
+
       if (axis === 'z') await deviceMaster.adjustZAxis(distance);
       else await deviceMaster.adjustAAxis(distance);
+
+      // closed while the move was being sent: the stop from the cleanup may have reached the machine first
+      if (isUnmountedRef.current) {
+        await stopOnClose();
+
+        return;
+      }
 
       movingTimeout.current = setTimeout(() => setMoving(null), (Math.abs(distance) * 1000) / speed + 500);
     } catch (error) {
@@ -234,6 +245,9 @@ const DevControlBlock = ({
       await stopPreview();
       // the red light lands where the red dot parameters put it
       await applyParameters(true);
+
+      if (isUnmountedRef.current) return;
+
       await deviceMaster.go(new Blob([generateMoveTask({ ...position, width })]));
     } catch (error) {
       console.error('Failed to move the galvo', error);
@@ -254,10 +268,17 @@ const DevControlBlock = ({
     try {
       await stopPreview();
       await applyParameters(false);
+
+      if (isUnmountedRef.current) return;
+
       await deviceMaster.doCalibration({ blob: new Blob([task]) });
     } catch (error) {
       if (Array.isArray(error) && error[1] === 'DOOR_OPENED') {
         await deviceMaster.stop();
+
+        // no retry that would fire from a closed dialog
+        if (isUnmountedRef.current) return;
+
         alertCaller.popUp({
           buttonType: alertConstants.RETRY_CANCEL,
           id: 'DOOR_OPENED',
