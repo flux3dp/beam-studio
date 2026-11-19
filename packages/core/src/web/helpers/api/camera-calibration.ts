@@ -11,6 +11,11 @@ import type {
 
 import Websocket from '../websocket';
 
+/** [x, y, size, contrast], x / y in the remapped-image px space `solvePnPCalculate` takes */
+export type AutoPnPBlob = [number, number, number, number];
+
+export type AutoPnPFailReason = 'HIGH_RESIDUAL' | 'NOT_ENOUGH_MARKS' | 'UNSUPPORTED';
+
 class CameraCalibrationApi {
   private ws: any; // websocket
 
@@ -283,12 +288,12 @@ class CameraCalibrationApi {
     points: Array<[number, number]>,
     refPoints: Array<[number, number]>,
   ): Promise<{
-    data: { rvec: number[][]; tvec: number[][] };
+    data: { rms?: number; rvec: number[][]; tvec: number[][] };
     success: boolean;
   }> =>
     new Promise((resolve, reject) => {
       let success = true;
-      let data = {} as { rvec: number[][]; tvec: number[][] };
+      let data = {} as { rms?: number; rvec: number[][]; tvec: number[][] };
 
       this.events.onMessage = (response) => {
         if (response.status === 'fail') {
@@ -313,6 +318,49 @@ class CameraCalibrationApi {
       };
       // solve_pnp_calculate [ref_points] [elevated_dh] [points]
       this.ws.send(`solve_pnp_calculate ${JSON.stringify(refPoints)} ${dh.toFixed(3)} ${JSON.stringify(points)}`);
+    });
+
+  /**
+   * Find the engraved calibration marks in one raw photo. Needs k / d loaded (`updateData`).
+   * `UNSUPPORTED`: the backend predates the command; callers fall back to the manual steps.
+   */
+  autoPnPDetect = (
+    img: ArrayBuffer | Blob,
+  ): Promise<{ blobs: AutoPnPBlob[]; success: true } | { reason: string; success: false }> =>
+    new Promise((resolve, reject) => {
+      this.events.onMessage = (response) => {
+        if (response.status === 'continue') this.ws.send(img);
+        else if (response.status === 'ok') resolve({ blobs: response.blobs, success: true });
+        else if (response.status === 'fail') resolve({ reason: response.info ?? response.reason, success: false });
+      };
+      // an unknown command is answered with an error, not a fail
+      this.events.onError = () => resolve({ reason: 'UNSUPPORTED', success: false });
+      this.events.onFatal = (response) => reject(response);
+
+      const size = img instanceof Blob ? img.size : img.byteLength;
+
+      this.ws.send(`auto_pnp_detect ${size}`);
+    });
+
+  /**
+   * Tell which blob is which mark. `blobs` is one `autoPnPDetect` result per exposure;
+   * `points` comes back ordered like `refPoints` and feeds `solvePnPCalculate`.
+   */
+  autoPnPMatch = (
+    refPoints: Array<[number, number]>,
+    blobs: AutoPnPBlob[][],
+  ): Promise<
+    | { matched: number; points: Array<[number, number]>; rms: number; success: true }
+    | { matched?: number; reason: AutoPnPFailReason; rms?: null | number; success: false }
+  > =>
+    new Promise((resolve, reject) => {
+      this.events.onMessage = ({ status, ...rest }) => {
+        if (status === 'ok') resolve({ ...rest, success: true });
+        else if (status === 'fail') resolve({ ...rest, success: false });
+      };
+      this.events.onError = () => resolve({ reason: 'UNSUPPORTED', success: false });
+      this.events.onFatal = (response) => reject(response);
+      this.ws.send(`auto_pnp_match ${JSON.stringify({ blobs, ref_points: refPoints })}`);
     });
 
   checkPnP = (
