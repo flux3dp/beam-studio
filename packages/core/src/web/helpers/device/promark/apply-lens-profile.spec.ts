@@ -1,6 +1,8 @@
 import { defaultField, defaultGalvoParameters } from '@core/app/constants/promark-constants';
 
-import { applyDocumentLensProfile } from './apply-lens-profile';
+import deviceConstants from '@core/app/constants/device-constants';
+
+import { applyDocumentLensProfile, isJobInProgress } from './apply-lens-profile';
 
 const mockGetDocumentLensProfile = jest.fn();
 
@@ -49,4 +51,29 @@ describe('test applyDocumentLensProfile', () => {
     expect(target.setField).toHaveBeenCalledWith(200, defaultField);
     expect(target.setGalvoParameters).toHaveBeenCalledWith(defaultGalvoParameters);
   });
+});
+
+describe('test isJobInProgress', () => {
+  const { status } = deviceConstants;
+
+  test.each([
+    status.INIT,
+    status.STARTING,
+    status.RUNNING,
+    status.PAUSED,
+    status.PAUSED_FROM_RUNNING,
+    status.PAUSING_FROM_RUNNING,
+    status.RESUME_TO_RUNNING,
+    status.COMPLETING,
+    status.RECONNECTING,
+  ])('status %p keeps the lens of the running job', (statusId) => {
+    expect(isJobInProgress(statusId)).toBe(true);
+  });
+
+  test.each([status.IDLE, status.COMPLETED, status.ABORTED, status.ALARM])(
+    'status %p lets a lens be applied',
+    (statusId) => {
+      expect(isJobInProgress(statusId)).toBe(false);
+    },
+  );
 });

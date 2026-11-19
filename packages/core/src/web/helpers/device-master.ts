@@ -47,7 +47,7 @@ import { swiftrayClient } from './api/swiftray-client';
 import SwiftrayControl from './api/swiftray-control';
 import Touch from './api/touch';
 import { showBb2FirmwareWarning } from './device/bb2FirmwareWarning';
-import { applyDocumentLensProfile } from './device/promark/apply-lens-profile';
+import { applyDocumentLensProfile, isJobInProgress } from './device/promark/apply-lens-profile';
 import { getPromarkInfo } from './device/promark/promark-info';
 import i18n from './i18n';
 import VersionChecker from './version-checker';
@@ -515,7 +515,15 @@ class DeviceMaster {
       }
 
       if (promarkModels.has(device.info.model)) {
-        await applyDocumentLensProfile(this, device.info);
+        // Every connect sends the lens of this tab's document, including the background reconnects
+        // and a new tab selecting the machine; never over a job that is still running.
+        const statusId = await this.getPromarkStatusId();
+
+        if (statusId !== null && isJobInProgress(statusId)) {
+          console.log('Promark is running a job, keeping its lens parameters. st_id:', statusId);
+        } else {
+          await applyDocumentLensProfile(this, device.info);
+        }
       }
 
       Progress.popById('select-device');
@@ -1626,6 +1634,19 @@ class DeviceMaster {
 
     return controlSocket.addTask(controlSocket.deviceInfoFlux);
   }
+
+  /** null when the status cannot be read, so the caller falls back to its usual behaviour */
+  private getPromarkStatusId = async (): Promise<null | number> => {
+    try {
+      const { st_id } = await this.getReport();
+
+      return st_id;
+    } catch (error) {
+      console.warn('Failed to read the Promark status', error);
+
+      return null;
+    }
+  };
 
   async getReport() {
     const controlSocket = await this.getControl();
