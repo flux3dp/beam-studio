@@ -175,6 +175,30 @@ describe('test DevControlBlock', () => {
     expect(await readBlob(mockDoCalibration.mock.calls[0][0].blob)).toContain('G1F240000X10Y55S0');
   });
 
+  it('should link the nine reference points with the move position', () => {
+    const { getByTestId } = renderBlock();
+
+    // starts at the centre
+    expect(getByTestId('dev-move-point-4')).toBeChecked();
+
+    fireEvent.click(getByTestId('dev-move-point-2'));
+    expect(getByTestId('dev-move-x')).toHaveValue('110');
+    expect(getByTestId('dev-move-y')).toHaveValue('0');
+    expect(getByTestId('dev-move-point-4')).not.toBeChecked();
+
+    // a position off the points selects none of them
+    fireEvent.change(getByTestId('dev-move-x'), { target: { value: '10' } });
+    fireEvent.blur(getByTestId('dev-move-x'));
+    expect(getByTestId('dev-move-point-2')).not.toBeChecked();
+
+    // typing a point's coordinates selects it
+    fireEvent.change(getByTestId('dev-move-y'), { target: { value: '110' } });
+    fireEvent.blur(getByTestId('dev-move-y'));
+    fireEvent.change(getByTestId('dev-move-x'), { target: { value: '0' } });
+    fireEvent.blur(getByTestId('dev-move-x'));
+    expect(getByTestId('dev-move-point-6')).toBeChecked();
+  });
+
   it('should ask to retry when the door is open', async () => {
     mockDoCalibration.mockRejectedValueOnce(['error', 'DOOR_OPENED']);
 

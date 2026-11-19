@@ -16,10 +16,11 @@
   width: 100px;
 }
 
-// label | title | input | title | input | button, so the titles and inputs of every row line up
+// label | title | input | side | action, two rows per tool, so the titles and inputs of every row
+// line up
 .grid {
   display: grid;
-  grid-template-columns: 60px auto auto auto auto auto;
+  grid-template-columns: 60px auto auto auto auto;
   justify-content: start;
   align-items: center;
   gap: 12px 8px;
@@ -28,13 +29,38 @@
     grid-column: 1 / -1;
   }
 
-  // the scale rows put the change where the second title and input are in the other rows
-  .scale-change {
-    grid-column: span 2;
+  // Auto columns shrink to their min-content when a row is too long, and CJK text can break between
+  // any two characters, so 寬（左右） ended up one character per line. The titles are short words;
+  // the scale change next to them is the text that wraps.
+  .title {
+    white-space: nowrap;
   }
 
-  .scale-apply {
-    grid-column: 6;
+  .side {
+    grid-column: 4;
     grid-row: span 2;
+  }
+
+  .scale-change {
+    grid-column: 4;
+  }
+
+  .action {
+    grid-column: 5;
+    grid-row: span 2;
+  }
+
+  // the field's nine reference points, like the job origin in Document Settings
+  .points {
+    display: grid;
+    grid-template-columns: repeat(3, 16px);
+    gap: 8px 12px;
+    margin: 0 8px;
+
+    input[type='radio'] {
+      width: 16px;
+      height: 16px;
+      margin: 0;
+    }
   }
 }

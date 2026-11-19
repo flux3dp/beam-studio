@@ -26,6 +26,9 @@ import styles from './DevControlBlock.module.scss';
 // mm/s, Swiftray's A_PULSE_PER_SEC / A_PULSE_PER_MM
 const A_SPEED = 3200 / 63;
 
+/** [column, row] of the corners, edge midpoints and centre of the field, row by row */
+const NINE_POINTS = Array.from({ length: 9 }, (_, i) => [i % 3, Math.floor(i / 3)] as const);
+
 interface AxisRowProps {
   disabled: boolean;
   isMoving: boolean;
@@ -64,6 +67,7 @@ const AxisRow = ({
       <UnitInput
         addonAfter="mm"
         className={styles.input}
+        controls={false}
         data-testid={`${testId}-distance`}
         max={100}
         min={0.01}
@@ -100,10 +104,11 @@ interface NumberCellProps {
 /** A title and its input, as two cells of the aligned grid. */
 const NumberCell = ({ max, min = 0, onChange, precision, testId, title, unit, value }: NumberCellProps) => (
   <>
-    <span>{title}</span>
+    <span className={styles.title}>{title}</span>
     <UnitInput
       addonAfter={unit}
       className={styles.input}
+      controls={false}
       data-testid={testId}
       max={max}
       min={min}
@@ -317,22 +322,50 @@ const DevControlBlock = ({
         testId="dev-a"
       />
       <div className={styles.grid}>
-        <span className={styles.label}>{t.move}</span>
-        {(['x', 'y'] as const).map((key) => (
-          <NumberCell
-            key={key}
-            max={width}
-            onChange={(value) => setPosition((cur) => ({ ...cur, [key]: value }))}
-            precision={3}
-            testId={`dev-move-${key}`}
-            title={key.toUpperCase()}
-            unit="mm"
-            value={position[key]}
-          />
+        {(['x', 'y'] as const).map((key, i) => (
+          <Fragment key={key}>
+            {i === 0 ? <span className={styles.label}>{t.move}</span> : <span />}
+            <NumberCell
+              max={width}
+              onChange={(value) => setPosition((cur) => ({ ...cur, [key]: value }))}
+              precision={3}
+              testId={`dev-move-${key}`}
+              title={key.toUpperCase()}
+              unit="mm"
+              value={position[key]}
+            />
+            {i === 0 && (
+              <>
+                <div className={classNames(styles.side, styles.points)}>
+                  {NINE_POINTS.map(([col, row]) => {
+                    const point = { x: (col * width) / 2, y: (row * width) / 2 };
+
+                    return (
+                      <input
+                        aria-label={`${point.x}, ${point.y}`}
+                        checked={position.x === point.x && position.y === point.y}
+                        data-testid={`dev-move-point-${row * 3 + col}`}
+                        key={`${col}-${row}`}
+                        name="dev-move-point"
+                        onChange={() => setPosition(point)}
+                        type="radio"
+                      />
+                    );
+                  })}
+                </div>
+                <Button
+                  className={styles.action}
+                  data-testid="dev-move-go"
+                  disabled={isBusy}
+                  onClick={handleGoToPosition}
+                  size="small"
+                >
+                  {t.move}
+                </Button>
+              </>
+            )}
+          </Fragment>
         ))}
-        <Button data-testid="dev-move-go" disabled={isBusy} onClick={handleGoToPosition} size="small">
-          {t.move}
-        </Button>
         <span className={styles.label}>{t.pulse}</span>
         <NumberCell
           max={100}
@@ -343,6 +376,16 @@ const DevControlBlock = ({
           unit="%"
           value={pulse.power}
         />
+        <Button
+          className={styles.action}
+          data-testid="dev-pulse-fire"
+          disabled={isBusy}
+          onClick={handlePulse}
+          size="small"
+        >
+          {t.fire}
+        </Button>
+        <span />
         <NumberCell
           max={10000}
           min={1}
@@ -353,9 +396,6 @@ const DevControlBlock = ({
           unit="us"
           value={pulse.time}
         />
-        <Button data-testid="dev-pulse-fire" disabled={isBusy} onClick={handlePulse} size="small">
-          {t.fire}
-        </Button>
         <div className={classNames(blockStyles.hint, styles.hint)}>{sprintf(t.move_hint, width)}</div>
         {(['x', 'y'] as const).map((key, i) => {
           // the galvo axes are swapped against the canvas: the width measured along canvas X corrects scale Y
@@ -382,7 +422,7 @@ const DevControlBlock = ({
               </span>
               {i === 0 && (
                 <Button
-                  className={styles['scale-apply']}
+                  className={styles.action}
                   data-testid="dev-scale-apply"
                   disabled={!isScaleChanged}
                   onClick={handleApplyScale}
