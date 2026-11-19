@@ -33,6 +33,8 @@ class Beamo2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
   private fullAreaGrid = bm2FullAreaPerspectiveGrid;
   private doorChecker = new DoorChecker();
   private originalExposure: null | number = null;
+  /** Set by cancel(): stop setup at its next step boundary, or finish the in-flight camera step but draw nothing */
+  private cancelled = false;
   protected maxMovementSpeed: [number, number] = [45000, 6000]; // mm/min, speed cap of machine
   protected progressType = ProgressTypes.STEPPING;
   protected _supportedPreviewModes = [PreviewMode.REGION, PreviewMode.FULL_AREA];
@@ -56,7 +58,8 @@ class Beamo2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
   private handleSetupError = async (error: unknown): Promise<void> => {
     await this.end();
     console.log('Error when setting up beamo2 Preview Manager', error);
-    handlePreviewSetupError(this.device, error);
+
+    if (!this.silent) handlePreviewSetupError(this.device, error);
   };
 
   private setUpCamera = async (): Promise<boolean> => {
@@ -80,16 +83,19 @@ class Beamo2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
 
       const { cameraCenter } = workarea;
 
-      return await this.doorChecker.doorClosedWrapper(() =>
-        this.fisheyePreviewManager!.setupFisheyePreview({
-          cameraPosition: cameraCenter,
-          closeMessage: () => this.closeMessage(),
-          height: 0,
-          movementFeedrate: this.getMovementSpeed(),
-          shouldKeepInRawMode: true,
-          updateMessage: (message: string) => this.showMessage({ content: message }),
-          useRegionOffsets: this._previewMode === PreviewMode.FULL_AREA,
-        }),
+      return await this.doorChecker.doorClosedWrapper(
+        () =>
+          this.fisheyePreviewManager!.setupFisheyePreview({
+            cameraPosition: cameraCenter,
+            closeMessage: () => this.closeMessage(),
+            height: 0,
+            isCancelled: () => this.cancelled,
+            movementFeedrate: this.getMovementSpeed(),
+            shouldKeepInRawMode: true,
+            updateMessage: (message: string) => this.showMessage({ content: message }),
+            useRegionOffsets: this._previewMode === PreviewMode.FULL_AREA,
+          }),
+        !this.silent,
       );
     } catch (error) {
       await this.handleSetupError(error);
@@ -98,8 +104,15 @@ class Beamo2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
     }
   };
 
-  public setup = async ({ progressId }: { progressId?: string } = {}): Promise<boolean> => {
+  public setup = async ({
+    messagePrefix = '',
+    progressId,
+    silent = false,
+  }: { messagePrefix?: string; progressId?: string; silent?: boolean } = {}): Promise<boolean> => {
     if (progressId) this.progressId = progressId;
+
+    this.silent = silent;
+    this.messagePrefix = messagePrefix;
 
     const { lang } = i18n;
 
@@ -107,6 +120,8 @@ class Beamo2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
       this.showMessage({ content: sprintf(lang.message.connectingMachine, this.device.name) });
 
       await callWithRetry(() => deviceMaster.connectCamera());
+
+      if (this.cancelled) return false;
 
       const res = await this.setUpCamera();
 
@@ -128,7 +143,9 @@ class Beamo2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
         const workarea = getWorkarea(this.device.model, 'fbm2');
         const { cameraRestPosition } = workarea;
 
-        if (cameraRestPosition) {
+        // The park keeps the head out of the camera's view after a preview; a cancelled capture has none, and the
+        // rest position is 13 mm from the camera position, so parking would look like driving to the photo spot
+        if (cameraRestPosition && !this.cancelled) {
           await deviceMaster.rawMove({
             f: this.getMovementSpeed(),
             x: cameraRestPosition[0],
@@ -149,8 +166,15 @@ class Beamo2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
 
       if (this.originalExposure !== null) await setExposure(this.originalExposure);
 
-      deviceMaster.kick();
+      // kick acts on whoever holds the machine's task: a silent (background) capture that lost `task raw` to another
+      // client would take it away from them, so only a user-started preview releases the machine this way
+      if (!this.silent) deviceMaster.kick();
     }
+  };
+
+  /** Stop an in-flight setup at its next step (returns false) or discard previewFullWorkarea's photo; call end() once it returns */
+  cancel = (): void => {
+    this.cancelled = true;
   };
 
   end = async (): Promise<void> => {
@@ -244,6 +268,8 @@ class Beamo2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
       }
 
       const takePictures = async (useLowResolution = false) => {
+        if (this.cancelled) return;
+
         if (this.originalExposure !== null) {
           try {
             await deviceMaster.setCameraExposure(this.originalExposure + 500);
@@ -264,6 +290,8 @@ class Beamo2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
 
           darkImageUrl = await this.getPhotoFromMachine({ useLowResolution });
         }
+
+        if (this.cancelled) return;
 
         await new Promise<void>((resolve) => previewModeBackgroundDrawer.drawFullWorkarea(lightImageUrl, resolve));
 
@@ -286,6 +314,12 @@ class Beamo2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
         }
 
         this.originalExposure = null;
+      }
+
+      if (this.cancelled) {
+        this.closeMessage();
+
+        return false;
       }
 
       this.showMessage({ content: i18n.lang.message.preview.succeeded, duration: 3, level: MessageLevel.SUCCESS });

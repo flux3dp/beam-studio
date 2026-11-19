@@ -20,6 +20,7 @@ const getInitStore = (): GlobalPreference => {
   return {
     'af-offset': preference['af-offset'],
     'anti-aliasing': preference['anti-aliasing'],
+    'auto-full-area-preview': preference['auto-full-area-preview'],
     'auto-switch-tab': preference['auto-switch-tab'],
     auto_align: preference.auto_align,
     continuous_drawing: preference.continuous_drawing,

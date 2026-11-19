@@ -63,10 +63,10 @@ class DoorChecker {
     }, 1000);
   };
 
-  doorClosedWrapper = async (callback: () => Promise<boolean>): Promise<boolean> => {
+  doorClosedWrapper = async (callback: () => Promise<boolean>, showError = true): Promise<boolean> => {
     this.stopDoorCheck();
 
-    let res = await this.checkDoorClosed(true);
+    let res = await this.checkDoorClosed(showError);
 
     if (!res) return res;
 
@@ -76,7 +76,7 @@ class DoorChecker {
 
     this.startDoorCheck();
 
-    res = await this.checkDoorClosed(true);
+    res = await this.checkDoorClosed(showError);
 
     return res;
   };

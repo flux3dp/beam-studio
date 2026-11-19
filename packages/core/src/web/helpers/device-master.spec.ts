@@ -184,6 +184,20 @@ describe('deviceMaster log downloads share the control queue', () => {
     expect(send).not.toHaveBeenCalled();
   });
 
+  test('fetchFisheyeParams waits for the command ahead of it', async () => {
+    const report = deviceMaster.getReport();
+    const params = deviceMaster.fetchFisheyeParams();
+
+    await Promise.resolve();
+    expect(send.mock.calls).toEqual([['play report']]);
+    replyToReport();
+    await expect(report).resolves.toEqual(status);
+    expect(send.mock.calls).toEqual([['play report'], ['fetch_fisheye_params']]);
+    control.emit('command-message', new Blob([JSON.stringify({ k: [1] })]));
+    control.emit('command-message', { cmd: 'fetch_fisheye_params', status: 'ok' });
+    await expect(params).resolves.toEqual({ k: [1] });
+  });
+
   test('the queue continues after a terminal log error', async () => {
     const log = deviceMaster.downloadLog('fluxrobotd.log', undefined, 10_000);
     const rejectedLog = expect(log).rejects.toMatchObject({ error: 'NOT_FOUND' });
@@ -262,6 +276,38 @@ describe('deviceMaster log downloads share the control queue', () => {
       expect(jest.getTimerCount()).toBe(0);
     },
   );
+});
+
+describe('deviceMaster.takeOnePicture', () => {
+  afterEach(() => jest.restoreAllMocks());
+
+  test('a reconnect after a failed shot restores the pose check with the parameters', async () => {
+    const setting = { param: { v: 4 }, poseCheck: true };
+    const restored: string[] = [];
+    const makeCamera = (oneShot: jest.Mock) => ({
+      closeWs: jest.fn(),
+      getFisheyeSetting: () => setting,
+      getRotationAngles: () => undefined,
+      oneShot,
+      setFisheyeParam: jest.fn(async () => restored.push('param')),
+      setPoseCheck: jest.fn(async (enabled: boolean) => restored.push(`pose ${enabled}`)),
+    });
+    const dropped = makeCamera(jest.fn().mockRejectedValue(new Error('socket closed')));
+    const fresh = makeCamera(jest.fn().mockResolvedValue({ imgBlob: new Blob(['jpeg']) }));
+
+    jest.spyOn(console, 'log').mockImplementation(() => {});
+    deviceMaster.currentDevice = { camera: dropped } as any;
+    jest.spyOn(deviceMaster, 'connectCamera').mockImplementation(async () => {
+      deviceMaster.currentDevice!.camera = fresh as any;
+    });
+
+    const res = await deviceMaster.takeOnePicture({ timeout: 5 });
+
+    expect(dropped.closeWs).toHaveBeenCalledTimes(1);
+    expect(restored).toEqual(['param', 'pose true']);
+    expect(fresh.oneShot).toHaveBeenCalledTimes(1);
+    expect(res?.imgBlob).toBeInstanceOf(Blob);
+  });
 });
 
 describe('deviceMaster.setField', () => {

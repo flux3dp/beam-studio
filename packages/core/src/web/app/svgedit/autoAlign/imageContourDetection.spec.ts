@@ -92,7 +92,17 @@ describe('ImageContourDetector', () => {
     detector.init();
   });
 
+  it('detects a draw outside a batch at once (auto full-area preview)', async () => {
+    canvasEventEmitter.emit('preview-background-updated');
+    await flush();
+    await flush();
+
+    expect(mockDetectContours).toHaveBeenCalledTimes(1);
+    expect(detector.contours).toHaveLength(1);
+  });
+
   it('detects the whole canvas once a batch ends and maps results by the crop ratio', async () => {
+    useCameraPreviewStore.setState({ isDrawing: true });
     canvasEventEmitter.emit('preview-background-updated');
     canvasEventEmitter.emit('preview-background-updated');
     expect(mockDetectContours).not.toHaveBeenCalled();
@@ -110,8 +120,8 @@ describe('ImageContourDetector', () => {
   });
 
   it('does not run while drawing or in live mode, and runs when live mode ends', async () => {
-    canvasEventEmitter.emit('preview-background-updated');
     useCameraPreviewStore.setState({ isDrawing: true });
+    canvasEventEmitter.emit('preview-background-updated');
     useCameraPreviewStore.setState({ isLiveMode: true });
     useCameraPreviewStore.setState({ isDrawing: false });
     await flush();

@@ -52,6 +52,7 @@ test('test beambox-preference', () => {
     'anti-aliasing': true,
     'auto-feeder': false,
     'auto-feeder-scale': 1,
+    'auto-full-area-preview': true,
     'auto-switch-tab': true,
     auto_align: true,
     auto_shrink: false,

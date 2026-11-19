@@ -38,6 +38,12 @@ function Camera(): React.JSX.Element {
         label={lang.settings.keep_preview_result}
         onChange={(e) => setPreference('keep-preview-result', e)}
       />
+      <SettingSwitch
+        checked={getPreference('auto-full-area-preview')}
+        id="set-auto-full-area-preview"
+        label={lang.settings.auto_full_area_preview}
+        onChange={(e) => setPreference('auto-full-area-preview', e)}
+      />
       {!isWeb() && hasSwiftray && (
         <SettingSwitch
           checked={getPreference('contour-engine') === 'onnx'}

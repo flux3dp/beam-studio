@@ -67,6 +67,14 @@ jest.mock('@core/app/actions/alert-caller', () => ({
   popUp: (...args) => mockPopUp(...args),
 }));
 
+const mockOpenMessage = jest.fn();
+
+jest.mock('@core/app/actions/message-caller', () => ({
+  __esModule: true,
+  default: { openMessage: (...args) => mockOpenMessage(...args) },
+  MessageLevel: { LOADING: 'loading' },
+}));
+
 const mockCreateObjectURL = jest.fn();
 const mockDeviceInfo = { model: 'fbm1' } as IDeviceInfo;
 
@@ -105,6 +113,19 @@ describe('test BasePreviewManager', () => {
     expect(basePreviewManager.constrainPreviewXY(-50, -50)).toEqual({ x: 0, y: 0 });
   });
 
+  test('showMessage prepends messagePrefix to string content only', () => {
+    const basePreviewManager = new BasePreviewManager(mockDeviceInfo) as any;
+
+    basePreviewManager.messagePrefix = 'Auto preview: ';
+    basePreviewManager.showMessage({ content: 'Capturing' });
+    expect(mockOpenMessage).toHaveBeenLastCalledWith(expect.objectContaining({ content: 'Auto preview: Capturing' }));
+
+    const node = { type: 'span' };
+
+    basePreviewManager.showMessage({ content: node });
+    expect(mockOpenMessage).toHaveBeenLastCalledWith(expect.objectContaining({ content: node }));
+  });
+
   describe('getPhotoFromMachine', () => {
     test('getPhotoFromMachine no alert', async () => {
       const basePreviewManager = new BasePreviewManager(mockDeviceInfo);
@@ -118,6 +139,18 @@ describe('test BasePreviewManager', () => {
       expect(mockPopUp).not.toHaveBeenCalled();
       expect(mockCreateObjectURL).toHaveBeenCalledTimes(1);
       expect(mockCreateObjectURL).toHaveBeenCalledWith('mock-blob');
+    });
+
+    test('getPhotoFromMachine skips the cable alert when silent', async () => {
+      const basePreviewManager = new BasePreviewManager(mockDeviceInfo) as any;
+
+      basePreviewManager.silent = true;
+      mockTakeOnePicture.mockResolvedValue({ imgBlob: 'mock-blob', needCameraCableAlert: true });
+      mockAlertConfigRead.mockReturnValue(false);
+      mockCreateObjectURL.mockReturnValue('mock-url');
+
+      expect(await basePreviewManager.getPhotoFromMachine()).toBe('mock-url');
+      expect(mockPopUp).not.toHaveBeenCalled();
     });
 
     test('getPhotoFromMachine no blob', async () => {

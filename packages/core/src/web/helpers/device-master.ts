@@ -39,6 +39,7 @@ import type {
 } from '@core/interfaces/IDevice';
 import type { Field, GalvoParameters } from '@core/interfaces/Promark';
 
+import type { CameraPose } from './api/camera';
 import Camera from './api/camera';
 import Control from './api/control';
 import { discoverManager } from './api/discover';
@@ -1145,25 +1146,27 @@ class DeviceMaster {
       controlSocket.setProgressListener(onProgress);
     }
 
-    return controlSocket.fetchCameraCalibrateImage!(fileName);
+    // Queued like every other command: run beside one, the first reply would detach both listeners and this would
+    // never settle (fetchFisheyeParams vs. a door poll did that)
+    return controlSocket.addTask(controlSocket.fetchCameraCalibrateImage!, fileName);
   }
 
   async fetchFisheyeParams(): Promise<FisheyeCameraParameters> {
     const controlSocket = await this.getControl();
 
-    return controlSocket.fetchFisheyeParams!() as Promise<FisheyeCameraParameters>;
+    return controlSocket.addTask(controlSocket.fetchFisheyeParams!);
   }
 
   async fetchFisheye3DRotation(): Promise<RotationParameters3D> {
     const controlSocket = await this.getControl();
 
-    return controlSocket.fetchFisheye3DRotation!();
+    return controlSocket.addTask(controlSocket.fetchFisheye3DRotation!);
   }
 
   async fetchAutoLevelingData(dataType: 'bottom_cover' | 'hexa_platform' | 'offset') {
     const controlSocket = await this.getControl();
 
-    return controlSocket.fetchAutoLevelingData!(dataType);
+    return controlSocket.addTask(controlSocket.fetchAutoLevelingData!, dataType);
   }
 
   async getLogsTexts(logs: string[], onProgress: (...args: any[]) => void = () => {}, idleTimeout?: number) {
@@ -1719,6 +1722,10 @@ class DeviceMaster {
     return res;
   }
 
+  async setPoseCheck(enabled: boolean) {
+    return this.currentDevice!.camera!.setPoseCheck(enabled);
+  }
+
   async setFisheyePerspectiveGrid(data: PerspectiveGrid) {
     const res = await this.currentDevice!.camera!.setFisheyePerspectiveGrid(data);
 
@@ -1743,6 +1750,7 @@ class DeviceMaster {
   }: { timeout?: number; useLowResolution?: boolean } = {}): Promise<null | {
     imgBlob?: Blob;
     needCameraCableAlert?: boolean;
+    pose?: CameraPose;
   }> {
     const startTime = Date.now();
     const cameraFishEyeSetting = this.currentDevice!.camera?.getFisheyeSetting();
@@ -1782,6 +1790,11 @@ class DeviceMaster {
 
           if (cameraFishEyeSetting.levelingData) {
             await this.setFisheyeLevelingData(cameraFishEyeSetting.levelingData);
+          }
+
+          // A new camera connection starts without the check; the next shots would carry no pose verdict
+          if (cameraFishEyeSetting.poseCheck) {
+            await this.setPoseCheck(true);
           }
         }
       }
