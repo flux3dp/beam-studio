@@ -7,6 +7,7 @@ import alertCaller from '@core/app/actions/alert-caller';
 import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
 import alertConstants from '@core/app/constants/alert-constants';
 import deviceConstants from '@core/app/constants/device-constants';
+import { controlConfig } from '@core/app/constants/promark-constants';
 import Icons from '@core/app/icons/icons';
 import { useStorageStore } from '@core/app/stores/storageStore';
 import UnitInput from '@core/app/widgets/UnitInput';
@@ -99,7 +100,7 @@ export const ZAxisAdjustment = ({ device, onClose }: Props): React.JSX.Element =
   };
 
   const handleMove = async (distance: number) => {
-    const getTime = (distance: number) => (Math.abs(distance) * 1000) / 3 + 500;
+    const getTime = (distance: number) => (Math.abs(distance) * 1000) / controlConfig.zSpeed + 500;
 
     if (isPreviewing) {
       await stopPreview();

@@ -10,7 +10,7 @@ import {
   printingModules,
   UVModules,
 } from '@core/app/constants/layer-module/layer-modules';
-import { LaserType } from '@core/app/constants/promark-constants';
+import { getPromarkSourceDefaults, LaserType } from '@core/app/constants/promark-constants';
 import { getEngraveDpmm, getPrintingDpmm } from '@core/app/constants/resolutions';
 import { getSupportedModules, getWorkarea } from '@core/app/constants/workarea-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
@@ -451,39 +451,7 @@ export const getDefaultConfig = (): Partial<ConfigKeyTypeMap> => {
     const promarkInfo = getPromarkInfo();
 
     config.speed = 1000;
-    config.frequency = match(promarkInfo)
-      .when(
-        // the weakest output (about 15.6%), so a new layer starts safe; the power follows below
-        ({ laserType }) => laserType === LaserType.UV,
-        () => 200,
-      )
-      .when(
-        ({ laserType, watt }) => laserType === LaserType.MOPA && watt >= 100,
-        () => 55,
-      )
-      .when(
-        ({ laserType, watt }) => laserType === LaserType.MOPA && watt >= 60,
-        () => 40,
-      )
-      .when(
-        ({ laserType }) => laserType === LaserType.MOPA,
-        () => 25,
-      )
-      .when(
-        ({ watt }) => watt >= 50,
-        () => 45,
-      )
-      .when(
-        ({ watt }) => watt >= 30,
-        () => 30,
-      )
-      .otherwise(() => config.frequency);
-    config.pulseWidth = match(promarkInfo)
-      .when(
-        ({ laserType }) => laserType === LaserType.UV,
-        () => 13,
-      )
-      .otherwise(() => config.pulseWidth);
+    Object.assign(config, getPromarkSourceDefaults(promarkInfo));
 
     if (isInnerEngravingActive()) Object.assign(config, innerEngravingDefaults);
 

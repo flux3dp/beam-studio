@@ -478,6 +478,16 @@ export default {
       }
     }
 
+    let { serial } = device;
+
+    if (promarkModels.has(device.model)) {
+      // Swiftray lists a Promark with a placeholder serial until its board is connected; the real
+      // one is read on connection, and select() writes it back into `device`
+      const res = await DeviceMaster.select(device);
+
+      serial = res.success ? device.serial : '-';
+    }
+
     const info = (
       <div>
         <div>
@@ -487,7 +497,7 @@ export default {
           {lang.device.IP}: {device.ipaddr}
         </div>
         <div>
-          {lang.device.serial_number}: {device.serial}
+          {lang.device.serial_number}: {serial}
         </div>
         <div>
           {lang.device.firmware_version}: {device.version}

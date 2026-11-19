@@ -1,4 +1,6 @@
-import type { Field, GalvoParameters, RedDot } from '@core/interfaces/Promark';
+import { match } from 'ts-pattern';
+
+import type { Field, GalvoParameters, PromarkInfo, RedDot } from '@core/interfaces/Promark';
 
 export const promarkWatts = [20, 30, 50] as const;
 export const mopaWatts = [20, 60, 100] as const;
@@ -38,6 +40,42 @@ export const isPromarkWorkareaCompatible = (laserType: LaserType, size: number):
 /** Swiftray currently distinguishes UV from all MOPA-family sources. */
 export const getPromarkLaserSource = (laserType: unknown): PromarkLaserSource =>
   laserType === LaserType.UV ? 'UV' : 'MOPA';
+
+/**
+ * Default frequency (kHz) and pulse width (ns) of a Promark laser source, by laser type and watt; a
+ * new Promark layer starts from these. UV starts at its weakest output (200kHz, about 15.6%) so a new
+ * layer is safe. 27kHz and 500ns are the defaults of every other laser (baseConfig).
+ */
+export const getPromarkSourceDefaults = ({ laserType, watt }: PromarkInfo): { frequency: number; pulseWidth: number } =>
+  match(laserType)
+    .with(LaserType.UV, () => ({ frequency: 200, pulseWidth: 13 }))
+    .with(LaserType.MOPA, () => ({
+      frequency: match(watt)
+        .when(
+          (w) => w >= 100,
+          () => 55,
+        )
+        .when(
+          (w) => w >= 60,
+          () => 40,
+        )
+        .otherwise(() => 25),
+      pulseWidth: 500,
+    }))
+    // Desktop, and whatever a stored info holds: this feeds every new layer, so it must not throw
+    .otherwise(() => ({
+      frequency: match(watt)
+        .when(
+          (w) => w >= 50,
+          () => 45,
+        )
+        .when(
+          (w) => w >= 30,
+          () => 30,
+        )
+        .otherwise(() => 27),
+      pulseWidth: 500,
+    }));
 
 // Recommended layer parameters for the Promark example file, keyed by laser type and watt.
 // pulseWidth only applies to MOPA sources. UV stays empty until hardware defaults are available.
