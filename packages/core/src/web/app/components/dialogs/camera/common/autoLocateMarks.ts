@@ -49,6 +49,7 @@ const autoLocateMarks = async ({
 }: Options): Promise<AutoLocateMarksResult> => {
   const blobs: AutoPnPBlob[][] = [];
   const weak: AutoPnPBlob[][] = [];
+  const shot: Array<number | undefined> = [];
   let originalExposure: number | undefined;
   let wasAutoExposure = false;
 
@@ -85,12 +86,20 @@ const autoLocateMarks = async ({
 
         if (!detectRes.success) return { reason: detectRes.reason as AutoPnPFailReason, success: false };
 
+        shot.push(exposure);
         blobs.push(detectRes.blobs);
         weak.push(detectRes.weak);
       }
 
       matchRes = await cameraCalibrationApi.autoPnPMatch(refPoints, blobs, weak, rMax);
-      console.log('[auto solve pnp]', { exposures: blobs.length, ...matchRes, points: undefined });
+      console.log('[auto solve pnp]', {
+        // the values set for each photo; 'current' when the exposure was left alone
+        exposures: shot.map((e) => e ?? 'current'),
+        restoredTo: originalExposure,
+        wasAutoExposure,
+        ...matchRes,
+        points: undefined,
+      });
 
       // more photos only help when marks are missing; a high residual is about k / d
       if (matchRes.success || matchRes.reason !== 'NOT_ENOUGH_MARKS') break;

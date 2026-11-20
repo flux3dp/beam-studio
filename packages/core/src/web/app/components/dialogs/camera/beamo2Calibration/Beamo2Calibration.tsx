@@ -6,7 +6,6 @@ import { match } from 'ts-pattern';
 import alertCaller from '@core/app/actions/alert-caller';
 import DoorChecker from '@core/app/actions/camera/preview-helper/DoorChecker';
 import progressCaller from '@core/app/actions/progress-caller';
-import alertConstants from '@core/app/constants/alert-constants';
 import {
   bm2FullAreaPerspectiveGrid,
   bm2PnPPoints,
@@ -31,6 +30,7 @@ import downloadCalibrationFile from '../common/downloadCalibrationFile';
 import Instruction from '../common/Instruction';
 import moveLaserHead from '../common/moveLaserHead';
 import ProcessingDialog from '../common/ProcessingDialog';
+import showHighResidualAlert from '../common/showHighResidualAlert';
 import SolvePnP from '../common/SolvePnP';
 
 import autoSolvePnP from './autoSolvePnP';
@@ -285,30 +285,15 @@ const Beamo2Calibration = ({ currentData, isAdvanced, onClose, onSwitchToAdvance
 
                 // back to the paper step first, so that dismissing the alert does not leave this step spinning
                 setStep(Steps.PUT_PAPER);
-                alertCaller.popUp({
-                  buttons: [
-                    { label: tCalibration.auto_solve_pnp_continue_anyway, onClick: applyResult },
-                    isAdvanced
-                      ? {
-                          // already in advanced mode: the intrinsics just measured are the suspect, shoot them again
-                          label: tCalibration.title_capture_calibration_pattern,
-                          onClick: () => setStep(Steps.PRE_CHESSBOARD),
-                          type: 'primary',
-                        }
-                      : {
-                          label: i18n.lang.topbar.menu.calibrate_camera_advanced,
-                          onClick: async () => {
-                            // awaited here: the unmount cleanup does not wait, and the advanced flow moves the head at once
-                            await releaseMachine();
-                            onSwitchToAdvanced();
-                          },
-                          type: 'primary',
-                        },
-                  ],
-                  message: isAdvanced
-                    ? tCalibration.auto_solve_pnp_high_residual_advanced
-                    : tCalibration.auto_solve_pnp_high_residual,
-                  type: alertConstants.SHOW_POPUP_WARNING,
+                showHighResidualAlert({
+                  isAdvanced,
+                  onContinue: applyResult,
+                  onRecapture: () => setStep(Steps.PRE_CHESSBOARD),
+                  onSwitchToAdvanced: async () => {
+                    // awaited here: the unmount cleanup does not wait, and the advanced flow moves the head at once
+                    await releaseMachine();
+                    onSwitchToAdvanced();
+                  },
                 });
 
                 return;
