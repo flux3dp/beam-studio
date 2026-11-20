@@ -44,12 +44,20 @@ const autoSolvePnP = async (params: FisheyeCameraParametersV4Cali): Promise<Auto
   const blobs: AutoPnPBlob[][] = [];
   const weak: AutoPnPBlob[][] = [];
   let originalExposure: number | undefined;
+  let wasAutoExposure = false;
 
   await cameraCalibrationApi.updateData(params);
   await deviceMaster.connectCamera();
 
   try {
     originalExposure = (await getExposureSettings()).value;
+
+    // a fixed exposure is ignored while the camera adjusts it on its own
+    const autoRes = await deviceMaster.getCameraExposureAuto()?.catch(() => null);
+
+    wasAutoExposure = Boolean(autoRes?.success && autoRes.data);
+
+    if (wasAutoExposure) await deviceMaster.setCameraExposureAuto(false);
 
     let matchRes: Awaited<ReturnType<typeof cameraCalibrationApi.autoPnPMatch>> | undefined;
 
@@ -98,6 +106,8 @@ const autoSolvePnP = async (params: FisheyeCameraParametersV4Cali): Promise<Auto
     return result;
   } finally {
     if (originalExposure !== undefined) await setExposure(originalExposure).catch(() => {});
+
+    if (wasAutoExposure) await Promise.resolve(deviceMaster.setCameraExposureAuto(true)).catch(() => {});
 
     deviceMaster.disconnectCamera();
   }
