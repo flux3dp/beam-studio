@@ -350,11 +350,13 @@ class CameraCalibrationApi {
    * Tell which blob is which mark. `blobs` and `weak` are one `autoPnPDetect` result per exposure;
    * `points` comes back ordered like `refPoints` and feeds `solvePnPCalculate`. `filled` counts the
    * marks that were only found among the weak candidates, next to their predicted position.
+   * `rMax` (mm) replaces the backend's residual limit for `HIGH_RESIDUAL`.
    */
   autoPnPMatch = (
     refPoints: Array<[number, number]>,
     blobs: AutoPnPBlob[][],
     weak: AutoPnPBlob[][] = [],
+    rMax?: number,
   ): Promise<
     | { filled: number; matched: number; points: Array<[number, number]>; rms: number; success: true }
     | {
@@ -374,7 +376,7 @@ class CameraCalibrationApi {
       };
       this.events.onError = () => resolve({ reason: 'UNSUPPORTED', success: false });
       this.events.onFatal = (response) => reject(response);
-      this.ws.send(`auto_pnp_match ${JSON.stringify({ blobs, ref_points: refPoints, weak })}`);
+      this.ws.send(`auto_pnp_match ${JSON.stringify({ blobs, r_max: rMax, ref_points: refPoints, weak })}`);
     });
 
   checkPnP = (

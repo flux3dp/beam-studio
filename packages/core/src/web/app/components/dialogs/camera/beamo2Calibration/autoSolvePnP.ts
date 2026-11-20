@@ -1,9 +1,9 @@
 import { bm2PnPPoints } from '@core/app/constants/fisheyeCameraConstants';
-import type { AutoPnPBlob, AutoPnPFailReason } from '@core/helpers/api/camera-calibration';
+import type { AutoPnPFailReason } from '@core/helpers/api/camera-calibration';
 import { cameraCalibrationApi } from '@core/helpers/api/camera-calibration';
-import { getExposureSettings, setExposure } from '@core/helpers/device/camera/cameraExposure';
-import deviceMaster from '@core/helpers/device-master';
 import type { FisheyeCameraParametersV4Cali } from '@core/interfaces/FisheyePreview';
+
+import autoLocateMarks from '../common/autoLocateMarks';
 
 const REGIONS = ['topLeft', 'topRight', 'bottomLeft', 'bottomRight'] as const;
 
@@ -43,87 +43,32 @@ export type AutoSolvePnPResult =
  */
 const autoSolvePnP = async (params: FisheyeCameraParametersV4Cali): Promise<AutoSolvePnPResult> => {
   const refPoints = REGIONS.flatMap((region) => [...bm2PnPPoints[region]]) as Array<[number, number]>;
-  const blobs: AutoPnPBlob[][] = [];
-  const weak: AutoPnPBlob[][] = [];
-  let originalExposure: number | undefined;
-  let wasAutoExposure = false;
+  const located = await autoLocateMarks({ exposureRounds: EXPOSURE_ROUNDS, params, refPoints });
 
-  await cameraCalibrationApi.updateData(params);
-  await deviceMaster.connectCamera();
+  if (!located.success) return located;
 
-  try {
-    originalExposure = (await getExposureSettings()).value;
+  const result = {
+    highResidual: located.highResidual,
+    imgPoints: {},
+    rms: located.rms,
+    rvecs: {},
+    success: true,
+    tvecs: {},
+  } as Extract<AutoSolvePnPResult, { success: true }>;
 
-    // a fixed exposure is ignored while the camera adjusts it on its own
-    const autoRes = await deviceMaster.getCameraExposureAuto()?.catch(() => null);
+  for (let i = 0; i < REGIONS.length; i++) {
+    const region = REGIONS[i];
+    const points = located.points.slice(i * 4, i * 4 + 4);
+    const res = await cameraCalibrationApi.solvePnPCalculate(0, points, [...bm2PnPPoints[region]]);
 
-    wasAutoExposure = Boolean(autoRes?.success && autoRes.data);
+    if (!res.success) return { reason: 'SOLVE_PNP_FAILED', success: false };
 
-    if (wasAutoExposure) await deviceMaster.setCameraExposureAuto(false);
-
-    let matchRes: Awaited<ReturnType<typeof cameraCalibrationApi.autoPnPMatch>> | undefined;
-
-    for (const round of EXPOSURE_ROUNDS) {
-      for (const exposure of round) {
-        await setExposure(exposure);
-
-        const imgBlob = (await deviceMaster.takeOnePicture())?.imgBlob;
-
-        if (!imgBlob) return { reason: 'NO_IMAGE', success: false };
-
-        const detectRes = await cameraCalibrationApi.autoPnPDetect(imgBlob);
-
-        if (!detectRes.success) return { reason: detectRes.reason as AutoPnPFailReason, success: false };
-
-        blobs.push(detectRes.blobs);
-        weak.push(detectRes.weak);
-      }
-
-      matchRes = await cameraCalibrationApi.autoPnPMatch(refPoints, blobs, weak);
-      console.log('[auto solve pnp]', { exposures: blobs.length, ...matchRes, points: undefined });
-
-      // more photos only help when marks are missing; a high residual is about k / d
-      if (matchRes.success || matchRes.reason !== 'NOT_ENOUGH_MARKS') break;
-    }
-
-    if (!matchRes) return { reason: 'NOT_ENOUGH_MARKS', success: false };
-
-    const highResidual = !matchRes.success && matchRes.reason === 'HIGH_RESIDUAL';
-    const allPoints = matchRes.points as Array<[number, number]> | undefined;
-
-    if (!allPoints || (!matchRes.success && !(highResidual && allPoints.every(Boolean)))) {
-      return matchRes as AutoSolvePnPResult;
-    }
-
-    const result = {
-      highResidual,
-      imgPoints: {},
-      rms: matchRes.rms ?? 0,
-      rvecs: {},
-      success: true,
-      tvecs: {},
-    } as Extract<AutoSolvePnPResult, { success: true }>;
-
-    for (let i = 0; i < REGIONS.length; i++) {
-      const region = REGIONS[i];
-      const points = allPoints.slice(i * 4, i * 4 + 4);
-      const res = await cameraCalibrationApi.solvePnPCalculate(0, points, [...bm2PnPPoints[region]]);
-
-      if (!res.success) return { reason: 'SOLVE_PNP_FAILED', success: false };
-
-      result.imgPoints[region] = points;
-      result.rvecs[region] = res.data.rvec;
-      result.tvecs[region] = res.data.tvec;
-    }
-
-    return result;
-  } finally {
-    if (originalExposure !== undefined) await setExposure(originalExposure).catch(() => {});
-
-    if (wasAutoExposure) await Promise.resolve(deviceMaster.setCameraExposureAuto(true)).catch(() => {});
-
-    deviceMaster.disconnectCamera();
+    result.imgPoints[region] = points;
+    result.rvecs[region] = res.data.rvec;
+    result.tvecs[region] = res.data.tvec;
   }
+
+  return result;
 };
 
 export default autoSolvePnP;
