@@ -25,7 +25,7 @@ import deviceMaster from '@core/helpers/device-master';
 import isDev from '@core/helpers/is-dev';
 import useI18n from '@core/helpers/useI18n';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
-import type { PromarkInfo, PromarkStore } from '@core/interfaces/Promark';
+import type { JobLens, PromarkInfo, PromarkStore } from '@core/interfaces/Promark';
 
 import blockStyles from './Block.module.scss';
 import DevControlBlock from './DevControlBlock';
@@ -107,22 +107,26 @@ const PromarkSettings = ({ device, initData, onClose }: Props): React.JSX.Elemen
     return run;
   };
 
-  /** @returns false when the dialog is closing and nothing was sent */
+  /** The lens being edited, the way a laser task or (with the red dot correction) a red light run uses it */
+  const getEditedLens = (shouldApplyRedDot = false): JobLens => ({
+    ...(shouldApplyRedDot ? applyRedDot(redDot, field, galvoParameters) : { field, galvoParameters }),
+    worksize: width,
+  });
+
+  /**
+   * @returns false when nothing may run on the edited lens: the dialog is closing and nothing was
+   * sent, or the machine refused it (a job is starting or running)
+   */
   const handleUpdateParameter = (shouldApplyRedDot = false): Promise<boolean> =>
     queueLensWrite(async () => {
       if (isClosingRef.current) return false;
 
-      if (shouldApplyRedDot) {
-        const { field: newField, galvoParameters: newGalvo } = applyRedDot(redDot, field, galvoParameters);
+      const lens = getEditedLens(shouldApplyRedDot);
 
-        await deviceMaster.setField(width, newField);
-        await deviceMaster.setGalvoParameters(newGalvo);
-      } else {
-        await deviceMaster.setField(width, field);
-        await deviceMaster.setGalvoParameters(galvoParameters);
-      }
+      // two requests: stop at the first refusal instead of leaving the lens half applied
+      if ((await deviceMaster.setField(lens.worksize, lens.field))?.success === false) return false;
 
-      return true;
+      return (await deviceMaster.setGalvoParameters(lens.galvoParameters))?.success !== false;
     });
 
   useEffect(() => {
@@ -138,8 +142,19 @@ const PromarkSettings = ({ device, initData, onClose }: Props): React.JSX.Elemen
   const handlePreview = async () => {
     if (!isPreviewing) {
       await uploadPreviewTask();
-      await handleUpdateParameter(true);
-      await deviceMaster.startFraming();
+
+      if (!(await handleUpdateParameter(true))) return;
+
+      try {
+        // the lens goes along with the start as well: Swiftray applies it in the same request, so
+        // another tab's lens cannot get in between
+        await deviceMaster.startFraming(undefined, getEditedLens(true));
+      } catch (error) {
+        console.error('Failed to start the preview', error);
+
+        return;
+      }
+
       setIsPreviewing(true);
     } else {
       await deviceMaster.stopFraming();
@@ -159,9 +174,11 @@ const PromarkSettings = ({ device, initData, onClose }: Props): React.JSX.Elemen
   const handleMark = async () => {
     await stopPreview();
     await uploadMarkTask();
-    await handleUpdateParameter();
+
+    if (!(await handleUpdateParameter())) return;
+
     try {
-      await deviceMaster.doPromarkCalibration();
+      await deviceMaster.doPromarkCalibration(getEditedLens());
     } catch (err) {
       if (err && err[1] === 'DOOR_OPENED') {
         await deviceMaster.stop();
@@ -293,6 +310,7 @@ const PromarkSettings = ({ device, initData, onClose }: Props): React.JSX.Elemen
             applyParameters={handleUpdateParameter}
             field={field}
             galvoParameters={galvoParameters}
+            getLens={getEditedLens}
             info={info}
             key={getLensProfileId(lens.lensKey)}
             redDot={redDot}

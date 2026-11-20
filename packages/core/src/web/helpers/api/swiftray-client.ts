@@ -701,10 +701,14 @@ class SwiftrayClient extends EventEmitter {
     return this.action(`/devices/${this.port}`, 'getPreview');
   }
 
-  public async startFraming(opt?: TPromarkFramingOpt): Promise<void> {
+  /** `lens`: as in `startTask`, applied in the request that starts the red light run. */
+  public async startFraming(
+    opt?: TPromarkFramingOpt,
+    lens?: { correction: Record<string, number | string>; scanahead: Record<string, number> },
+  ): Promise<{ error?: string; success: boolean }> {
     const { width } = getWorkarea('fpm1');
 
-    return this.action(`/devices/${this.port}`, 'startFraming', { ...opt, width });
+    return this.action(`/devices/${this.port}`, 'startFraming', { ...opt, lens, width });
   }
 
   public async stopFraming(): Promise<void> {

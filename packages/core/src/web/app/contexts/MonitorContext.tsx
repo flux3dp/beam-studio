@@ -966,7 +966,7 @@ export class MonitorContextProvider extends React.Component<Props, State> {
     });
 
     // refused: a job is starting or running, and the machine is on some other lens
-    if (!applied) throw new Error('LENS_REJECTED');
+    if (!applied) throw Object.assign(new Error('LENS_REJECTED'), { error: ['LENS_REJECTED'] });
   };
 
   /**
@@ -1043,6 +1043,9 @@ export class MonitorContextProvider extends React.Component<Props, State> {
             ),
           );
           promarkButtonHandler.setStatus('listening');
+
+          // nothing started: no PLAY / JobStarted, which the usage tracker counts as a real run
+          return null;
         }
       } else if (mode === Mode.FILE_PREVIEW) {
         await DeviceMaster.goFromFile(currentPath.join('/'), fileInfo[0]);

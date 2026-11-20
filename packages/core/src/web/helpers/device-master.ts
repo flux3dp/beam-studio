@@ -796,10 +796,15 @@ class DeviceMaster {
     return controlSocket.addTask(controlSocket.kick);
   }
 
-  async startFraming(opt?: TPromarkFramingOpt) {
+  /** @param lens the lens the red light runs with, applied in the same request as the start (see `go`) */
+  async startFraming(opt?: TPromarkFramingOpt, lens?: JobLens) {
     const controlSocket = (await this.getControl()) as unknown as SwiftrayControl;
+    const startLens = this.toStartLens(lens);
+    const res = await controlSocket.addTask(controlSocket.startFraming, opt, startLens);
 
-    return controlSocket.addTask(controlSocket.startFraming, opt);
+    assertStarted(res, startLens);
+
+    return res;
   }
 
   async stopFraming() {
@@ -988,13 +993,21 @@ class DeviceMaster {
   /**
    * @param onProgress receive the run progress (0–1) instead of the progress dialog
    * @param silent the caller reports a failed task itself instead of the error alert shown here
+   * @param lens Promark: the lens the task runs with, applied in the same request as the start (see `go`)
    */
   doCalibration = async ({
     blob,
     fcodeSource,
+    lens,
     onProgress,
     silent = false,
-  }: { blob?: Blob; fcodeSource?: string; onProgress?: (progress: number) => void; silent?: boolean } = {}) => {
+  }: {
+    blob?: Blob;
+    fcodeSource?: string;
+    lens?: JobLens;
+    onProgress?: (progress: number) => void;
+    silent?: boolean;
+  } = {}) => {
     const vc = VersionChecker(this.currentDevice!.info.version);
 
     if (fcodeSource) {
@@ -1022,7 +1035,7 @@ class DeviceMaster {
       // ignore
     }
     try {
-      await this.go(blob);
+      await this.go(blob, undefined, undefined, lens);
     } catch {
       const err = new Error('UPLOAD_FAILED');
 
@@ -1103,9 +1116,10 @@ class DeviceMaster {
     await this.doCalibration({ fcodeSource: 'fcode/bm2-ir.fc' });
   }
 
-  async doPromarkCalibration() {
+  /** @param lens the lens the loaded task runs with, see `doCalibration` */
+  async doPromarkCalibration(lens?: JobLens) {
     // the Promark dialogs handle the door-opened error themselves
-    await this.doCalibration({ silent: true });
+    await this.doCalibration({ lens, silent: true });
   }
 
   // fs functions

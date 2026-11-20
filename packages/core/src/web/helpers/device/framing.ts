@@ -38,7 +38,7 @@ import versionChecker from '@core/helpers/version-checker';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
-import { applyLensProfile } from './promark/apply-lens-profile';
+import { applyLensProfile, getJobLens } from './promark/apply-lens-profile';
 
 // TODO: add unit test
 export const FramingType = {
@@ -444,14 +444,27 @@ class FramingTaskManager extends EventEmitter {
       return false;
     }
 
-    if (taskCode) {
-      await deviceMaster.startFraming({ taskCode });
-    } else {
-      this.showMessage(i18n.lang.framing.calculating_task, 0);
-      await deviceMaster.startFraming({
-        points: [this.taskPoints[0], this.taskPoints[2]],
-        rotaryInfo: noRotation ? null : this.rotaryInfo,
-      });
+    // The same lens goes along with the start: Swiftray applies it in the request that starts the red
+    // light, so a lens another tab writes after the one above cannot end up under this run.
+    const lens = getJobLens(this.device, { redDot: true });
+
+    try {
+      if (taskCode) {
+        await deviceMaster.startFraming({ taskCode }, lens);
+      } else {
+        this.showMessage(i18n.lang.framing.calculating_task, 0);
+        await deviceMaster.startFraming(
+          { points: [this.taskPoints[0], this.taskPoints[2]], rotaryInfo: noRotation ? null : this.rotaryInfo },
+          lens,
+        );
+      }
+    } catch (error) {
+      // refused: a job is still running or the lens could not be applied, so nothing was started
+      console.error('Failed to start the red light run', error);
+      this.closeMessage();
+      this.changeWorkingStatus(false);
+
+      return false;
     }
 
     if (this.rotaryInfo && !noRotation) {

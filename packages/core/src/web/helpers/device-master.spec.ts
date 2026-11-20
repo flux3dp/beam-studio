@@ -398,6 +398,29 @@ describe('deviceMaster.go / restart with the lens of the job', () => {
     await expect(deviceMaster.restart(lens)).rejects.toMatchObject({ error: ['JOB_RUNNING'] });
   });
 
+  test('startFraming sends the lens and rejects when it is refused', async () => {
+    const framingControl = {
+      addTask: jest.fn().mockResolvedValue({ success: true }),
+      startFraming: jest.fn(),
+    };
+
+    jest.spyOn(deviceMaster, 'getControl').mockResolvedValue(framingControl as unknown as Control);
+    await deviceMaster.startFraming({ taskCode: 'M2' }, lens);
+    expect(framingControl.addTask).toHaveBeenCalledWith(
+      framingControl.startFraming,
+      { taskCode: 'M2' },
+      { ...lens, laserSource: 'UV' },
+    );
+
+    framingControl.addTask.mockResolvedValue({ error: 'JOB_RUNNING', success: false });
+    await expect(deviceMaster.startFraming({ taskCode: 'M2' }, lens)).rejects.toMatchObject({ error: ['JOB_RUNNING'] });
+    // without a lens the answer is not read, as before
+    await expect(deviceMaster.startFraming({ taskCode: 'M2' })).resolves.toEqual({
+      error: 'JOB_RUNNING',
+      success: false,
+    });
+  });
+
   test('restart without a lens is unchanged', async () => {
     const control = makeControl({ error: 'START_FAILED', success: false });
 
@@ -545,6 +568,22 @@ describe('deviceMaster.doCalibration', () => {
     await deviceMaster.doCalibration({ blob, onProgress: jest.fn() });
 
     expect(mockAddFcodeMetadata).toHaveBeenCalledWith(blob, { IGNORE_AIR_ASSIST_WARNING: '1' });
-    expect(deviceMaster.go).toHaveBeenCalledWith(patched);
+    expect(deviceMaster.go).toHaveBeenCalledWith(patched, undefined, undefined, undefined);
+  });
+
+  test('passes the lens of the task on to the start', async () => {
+    const lens = {
+      field: { angle: 0, offsetX: 0, offsetY: 0 },
+      galvoParameters: {
+        x: { bulge: 1, scale: 100, skew: 1, trapezoid: 1 },
+        y: { bulge: 1, scale: 100, skew: 1, trapezoid: 1 },
+      },
+      worksize: 110,
+    };
+    const patched = new Blob(['patched task']);
+
+    mockAddFcodeMetadata.mockResolvedValue(patched);
+    await deviceMaster.doCalibration({ blob: new Blob(['task']), lens, onProgress: jest.fn() });
+    expect(deviceMaster.go).toHaveBeenCalledWith(patched, undefined, undefined, lens);
   });
 });

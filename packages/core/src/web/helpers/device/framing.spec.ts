@@ -210,6 +210,15 @@ describe('framing.ts — getCoords frame-preview coordinate logic (via Promark F
       expect(deviceMaster.setGalvoParameters.mock.invocationCallOrder[0]).toBeLessThan(
         mockStartFraming.mock.invocationCallOrder[0],
       );
+      // the same lens goes along with the start, which Swiftray applies in that one request
+      expect(mockStartFraming.mock.calls[0][1]).toEqual({
+        field: { angle: 0, offsetX: 1.5, offsetY: 2.5 },
+        galvoParameters: {
+          x: { ...galvoParameters.x, scale: expect.closeTo(110) },
+          y: { ...galvoParameters.y, scale: expect.closeTo(90) },
+        },
+        worksize: expect.any(Number),
+      });
 
       // a second run sends it again rather than trusting what is on the machine
       await manager.stopFraming();
@@ -236,6 +245,15 @@ describe('framing.ts — getCoords frame-preview coordinate logic (via Promark F
 
       expect(await manager.startFraming(FramingType.Framing, {})).toBe(false);
       expect(mockStartFraming).not.toHaveBeenCalled();
+    });
+
+    test('reports a start that Swiftray refused instead of throwing', async () => {
+      mockPromarkGet.mockReturnValue({ field, galvoParameters });
+      mockStartFraming.mockRejectedValueOnce(Object.assign(new Error('refused'), { error: ['JOB_RUNNING'] }));
+
+      const manager = new FramingTaskManager(PROMARK_DEVICE);
+
+      expect(await manager.startFraming(FramingType.Framing, {})).toBe(false);
     });
 
     test('resetPromarkParams takes the red dot correction back off', async () => {
