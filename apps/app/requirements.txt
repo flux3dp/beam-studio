@@ -8,7 +8,7 @@ ecdsa==0.16.1
 future==0.18.3
 lazy-object-proxy==1.6.0
 lxml==4.6.3
-msgpack==1.0.8
+msgpack==1.2.1
 numpy==1.24.4
 opencv-python==4.9.0.80
 Pillow==10.2.0
