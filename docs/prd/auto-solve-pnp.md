@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | In progress. `fbm2` implemented on `feat/auto-solve-pnp` (beam-studio) and `feat/auto-pnp` (fluxghost) and passed on the three office units with each unit's own `k` / `d` (§11). The matcher also handles the 8-mark layouts, checked offline on photos of one `fbb2`, one `fhx2rf` and one `ado1`; their dialogs are not wired yet. Pending: other languages, Jest spec, the untested failure paths (§12), decisions 8 and 10 to 12 (Promark needs detector work) |
+| **Status** | In progress. `fbm2` implemented on `feat/auto-solve-pnp` (beam-studio) and `feat/auto-pnp` (fluxghost) and passed on the three office units with each unit's own `k` / `d` (§11). The matcher also handles the 8-mark layouts, checked offline on photos of one `fbb2`, one `fhx2rf` and one `ado1`; their dialogs are not wired yet. The auto-exposure handling, the switch to advanced mode from the high-residual warning and the return to PUT_PAPER were checked on one unit (2026-11-20, §12). Pending: a component spec for the dialog branches, the old-backend path (§12), decisions 8 and 10 to 12 (Promark needs detector work) |
 | **Author** | Beam Studio team |
 | **Created** | 2026-11-16 |
 | **Target product** | Beam Studio (desktop + web), fluxghost (next tag after 2.5.8) |
@@ -140,6 +140,8 @@ quality measure and it is not returned.
   solve still succeeds.
 - S5. Door opened during capture: handled like today (`DoorChecker`), then the capture restarts.
 - S6. Backend without the new commands: the existing manual steps run (decision 4).
+- S7. All marks found but they fit the camera parameters poorly: the user chooses between
+  continuing and recalibrating the camera.
 
 ---
 
@@ -190,6 +192,19 @@ run A1. Result: after the engraving, SOLVE_PNP_INSTRUCTION and the four manual S
 screens appear and behave as on main. With a backend that has the commands, force a match
 failure (A3): the drag screen must not appear.
 
+**A10 (S7) High residual.** Force it by lowering `R_MAX_MM` in fluxghost (0.1) and run A1.
+Result: a warning says the verification error is large, with two buttons. Continue Anyway goes
+on to CHECK_PNP with the 16 points found. Calibrate Camera (Advanced) closes the dialog and
+opens the advanced flow at its first step (PRE_CHESSBOARD), with the machine released in
+between. In advanced mode the same warning recommends capturing the calibration pattern again
+and its second button returns to PRE_CHESSBOARD. Dismissing the warning (Esc) leaves the dialog
+on PUT_PAPER.
+
+**A11 Retry from PUT_PAPER.** Reach CHECK_PNP through the automatic step, press Back, then
+Skip (or Start Engrave). Result: no prompt about a machine in use, the automatic step runs
+again; in advanced mode the ChArUco result is still used. Same after a `NOT_ENOUGH_MARKS`
+failure.
+
 Edge cases and expected behaviour:
 
 | Case | Expected |
@@ -199,6 +214,9 @@ Edge cases and expected behaviour:
 | Camera returns a frame error | Existing `useCamera` retry (2 attempts), then failure alert |
 | User closes the dialog during capture | Capture stops, machine released (`releaseMachine`), nothing saved |
 | Exposure cannot be set | Failure alert, exposure restored to its previous value |
+| Camera auto exposure is on | Turned off before the first photo, turned back on after the exposure value is restored |
+| Auto-exposure state cannot be read (old firmware, timeout) | Treated as off; the run continues |
+| Anything throws inside the automatic step | `failed_to_calibrate_with_pictures`, back to PUT_PAPER; the step never stays on the spinner |
 
 ---
 
@@ -209,12 +227,14 @@ Edge cases and expected behaviour:
 | `helpers/api/camera-calibration.ts` (methods added) | `SolvePnP.tsx` — `solvePnPFindCorners` / `solvePnPCalculate` requests and responses unchanged |
 | | `Beamo2Calibration.tsx`, `WideAngleCamera/index.tsx` (SOLVE_OTHER_PNP) — `solvePnPCalculate` result shape unchanged (a new `rms` field is additive) |
 | `Beamo2Calibration.tsx` (solve steps replaced) | PRE_CHESSBOARD, CHESSBOARD, PUT_PAPER, SOLVE_OTHER_PNP, CHECK_PNP and the saved V4 parameter shape unchanged |
-| | `releaseMachine` on unmount and `DoorChecker` usage unchanged |
+| | `releaseMachine` on unmount and at Finish, and `DoorChecker` usage unchanged. `releaseMachine` now also writes the machine's reported status into `currentDevice.info.st_id` after leaving raw mode (the next discovery broadcast replaces `info` anyway) |
+| | PUT_PAPER reached for the first time (machine not in raw mode) — `checkDeviceStatus` gets the same `info` as before |
+| `beamo2Calibration/index.tsx` (`key` by mode, `onSwitchToAdvanced`) | `showBeamo2Calibration(false / true)` from the menu and from the missing-parameters alert — same dialog, same resolved value (`completed`) |
 | `fisheyeCameraConstants.ts` (read only, or a bracket table added) | `bm2PnPPoints`, `getRegionalPoints` — values and order unchanged, they define the saved region poses |
 | fluxghost `find_corners.py` (not touched: `auto_pnp.py` builds its own detector with the same parameters plus the dark-blob filter) | `camera_calibration.py` manual find-corners and `opencv.py` (`detect_blobs`, Print and Cut mark detection) — untouched |
 | fluxghost `camera_calibration.py` (commands added, `solve_pnp_calculate` returns `rms`) | `solve_pnp_find_corners`, `solve_pnp_calculate` — command strings, arguments, existing response keys and the silent projected-point fallback unchanged |
 | | `tools/ws_smoke.py` — still ends `ALL PASS` |
-| `packages/core/src/web/app/lang/*.ts` (keys added) | No existing key renamed or removed |
+| `packages/core/src/web/app/lang/*.ts` (keys added) | No existing key renamed or removed. Reused as button labels, text unchanged: `topbar.menu.calibrate_camera_advanced`, `calibration.title_capture_calibration_pattern` |
 
 Not touched: `SolvePnP.tsx`, `LaserHeadFisheyeCalibration.tsx`, `WideAngleCamera/`,
 `AdorCalibration/`, `PromarkCalibration.tsx`, `device-master.ts`, `match_points.py`
@@ -241,7 +261,19 @@ built on `ProcessingDialog`:
    manual steps do, call `solvePnPCalculate` for the four quadrants, then continue to the
    unchanged SOLVE_OTHER_PNP and CHECK_PNP. CHECK_PNP's Back returns to PUT_PAPER when the pose
    came from this step.
-5. On rejection, show the reason and return to PUT_PAPER.
+5. On rejection, show the reason and return to PUT_PAPER. A residual over the gate with all
+   marks found is not a rejection: the four quadrants are solved and the user is asked (§7.4).
+
+Before the first photo the step reads the camera's auto-exposure state and turns it off when it
+is on; a fixed exposure would otherwise not be applied. It is turned back on after the exposure
+value is restored, in that order.
+
+PUT_PAPER is reached again from CHECK_PNP's Back, from a failed match and from the
+high-residual warning, each time with the machine still in raw mode. Its Next and Skip
+therefore call `releaseMachine` first, and `releaseMachine` refreshes
+`currentDevice.info.st_id` from `getReport`: that field comes from the discovery broadcast and
+lags, so `checkDeviceStatus` would otherwise see our own finished raw mode as a machine in use
+and offer to kick it, after which the next step fails.
 
 The decision between this step and the manual ones is made inside `Beamo2Calibration.tsx` from
 the call's result: a backend that does not know `auto_pnp_detect` answers `UNSUPPORTED` and the
@@ -368,17 +400,30 @@ No drag screen when the backend has the commands. Results map to:
 | Result | What the user sees |
 |---|---|
 | `NOT_ENOUGH_MARKS` (after both rounds) | `auto_solve_pnp_not_enough_marks` with the number of marks found, then PUT_PAPER |
-| `HIGH_RESIDUAL` | `auto_solve_pnp_high_residual`, then PUT_PAPER |
+| `HIGH_RESIDUAL` with all points (`highResidual` on a successful `autoSolvePnP` result) | Warning, dialog on PUT_PAPER behind it. Basic mode: `auto_solve_pnp_high_residual` with Continue Anyway (`auto_solve_pnp_continue_anyway`, on to SOLVE_OTHER_PNP) and Calibrate Camera (Advanced) (`await releaseMachine()`, then `onSwitchToAdvanced`). Advanced mode: `auto_solve_pnp_high_residual_advanced` with Continue Anyway and Capture Calibration Pattern (PRE_CHESSBOARD) |
+| A thrown error | `failed_to_calibrate_with_pictures`, then PUT_PAPER |
 | `UNSUPPORTED` (backend without the commands) | No message: SOLVE_PNP_INSTRUCTION and the manual steps (decision 4) |
 | `NO_IMAGE`, `SOLVE_PNP_FAILED`, anything else | `failed_to_calibrate_with_pictures` with the reason, then PUT_PAPER |
 
 Retrying re-runs the same task file.
 
+The step moves to PUT_PAPER before the warning opens, not in the buttons' callbacks: the
+warning can be dismissed with Esc, and `ProcessingDialog` runs `process` again on every
+re-render of its parent, so it must not stay mounted while the user decides.
+
+The switch to advanced mode goes through `showBeamo2Calibration(true)` with the same dialog id.
+The element carries `key={isAdvanced ? 'advanced' : 'basic'}`; without it React keeps the
+mounted instance with its step and its stored `k` / `d`.
+
 ### 7.5 i18n
 
 `calibration.auto_solve_pnp_locating` (progress text), `auto_solve_pnp_not_enough_marks`
-(takes the number found) and `auto_solve_pnp_high_residual`, in `en.ts` and `zh-tw.ts`; the
-other languages before the PR. `solve_pnp_step1..3` stay; other dialogs use them.
+(`%(total)d` and `%(found)d`, so the 8-mark machines can share it),
+`auto_solve_pnp_high_residual`, `auto_solve_pnp_high_residual_advanced` and
+`auto_solve_pnp_continue_anyway`, in all 23 languages (machine-drafted outside `en` and
+`zh-tw`, no native review). The messages avoid internal terms: "verification error", not
+residual or camera parameters; "calibration pattern", not ChArUco. `solve_pnp_step1..3` stay;
+other dialogs use them.
 
 ---
 
@@ -402,6 +447,7 @@ Both commands live on the existing `camera-calibration` websocket and need `k` /
    "points": [[x, y], ...],                      // per ref point, undistorted px
    "matched": number, "filled": number, "rms": number}
 ← {"status": "fail", "reason": "NOT_ENOUGH_MARKS" | "HIGH_RESIDUAL",
+   "points": [[x, y] | null, ...],               // null for a missing mark; complete after HIGH_RESIDUAL
    "matched": number, "filled": number, "rms": number | null}
 
 → solve_pnp_calculate ...            // unchanged request
@@ -442,11 +488,10 @@ Command names are final once fluxghost's `cmd_mapping` has them; do not rename a
    `rms` in `solve_pnp_calculate`, fixture tests, `docs/api/camera-calibration.md`,
    `ws_smoke.py` entries. Tag.
 2. beam-studio (`feat/auto-solve-pnp`): API client methods, `autoSolvePnP.ts`, AUTO_SOLVE_PNP
-   step in `Beamo2Calibration.tsx`, en / zh-tw strings (done); other languages, Jest spec,
+   step in `Beamo2Calibration.tsx`, strings in all languages, `autoSolvePnP.spec.ts` (done);
    CD bump, `camera-calibration` skill update (pending).
 3. Hardware pass (§12), thresholds recorded in §11. Done for the happy path and missing marks
-   on three `fbm2`; `HIGH_RESIDUAL`, the old-backend path and the exposure restore are not
-   tested yet.
+   on three `fbm2`; the old-backend path is not tested yet, the rest is listed in §12.
 4. Follow-up PRs per machine (decision 1). The matcher already takes the 8-mark layouts
    (§11); each machine still needs its dialog wired, and Promark needs detector work first
    (decision 12).
@@ -572,7 +617,9 @@ Command names are final once fluxghost's `cmd_mapping` has them; do not rename a
 10. **R_MAX.** 1.0 mm since 2026-11-20 (0.75 before): the preview error inside the mark grid
     is about the gate value at most, so 1.0 aims at a preview within about 1 mm, and a
     calibration that keeps failing costs the user more than a preview that is slightly off.
-    The three office units give 0.38 to 0.47 mm. Revisit with field data. For the 8-mark
+    The three office units give 0.38 to 0.47 mm. Revisit with field data. Since 2026-11-20
+    the gate no longer blocks: over it, the user is warned and may continue to CHECK_PNP
+    (§7.4), because the alternative was engraving again with the same outcome. For the 8-mark
     layouts this value gates almost nothing: correct matches give 0.03 to 0.10 mm, and one
     mark displaced by 1 / 2 / 3 mm gives 0.15 to 0.31 / 0.31 to 0.62 / 0.47 to 0.93 mm
     (simulated on the `fbb2` photo), so a stray up to 3 mm from a missing mark would pass.
@@ -610,9 +657,10 @@ Command names are final once fluxghost's `cmd_mapping` has them; do not rename a
       800. `fhx2rf`, `ado1` and Promark are not swept.
     - Auto exposure. `fbm2`, `fbb2` and `fhx2rf` have an auto-exposure switch
       (`supportCameraAutoExposureModels`), and a fixed exposure presumably has no effect
-      while it is on (not verified on a machine). The automatic step must turn it off before
-      the first photo and restore it with the exposure value. `autoSolvePnP.ts` does not do
-      this yet; to fix before the `fbm2` PR.
+      while it is on. The automatic step must turn it off before the first photo and restore
+      it with the exposure value. Done for `fbm2` in `autoSolvePnP.ts` and passed on one unit
+      with auto exposure on (2026-11-20). `fbb2` needs the firmware check `useCamera` makes
+      (`BB2_AUTO_EXPOSURE`).
 
 ---
 
@@ -833,5 +881,8 @@ number of field units R_MAX blocks.
 | T8 | §7.2, §7.3 | fluxghost `tests/usage/test_auto_pnp.py` (21 tests): `fbm2` exposures, covered marks, faint marks, the 8-mark photos, the websocket commands. Passing |
 | T9 | §6 | `ws_smoke.py` ends `ALL PASS`; `test_camera_match_points.py` unchanged and passing; manual calibration on `fbb2` or `fhx2rf` still works |
 | T10 | §6 | Print and Cut mark detection (`detect_blobs`) unchanged on one alignment run |
-| T11 | Edge cases table | Jest spec for the AUTO_SOLVE_PNP step: failure reasons, exposure restored, close during capture |
+| T11 | Edge cases table | `beamo2Calibration/autoSolvePnP.spec.ts` (11 tests): rounds, failure reasons, high residual with and without points, exposure and auto exposure restored in order, a thrown error. Passing. Not covered: the dialog branches in `Beamo2Calibration.tsx` (warning buttons, `UNSUPPORTED` fallback, close during capture) |
+| T13 | A10 | Hardware, `fbm2`, `R_MAX_MM` lowered: the warning in basic mode. The switch to advanced mode passed on one unit (2026-11-20, after the remount fix); Continue Anyway and the advanced-mode variant have no recorded result |
+| T14 | A11 | Hardware, `fbm2`: Back from CHECK_PNP then Skip, basic and advanced. The stuck spinner and the lost ChArUco result are fixed; the last change (status refresh in `releaseMachine`) not confirmed yet |
+| T15 | Edge cases table | Hardware, `fbm2`, auto exposure on: 16 marks found, auto exposure on again afterwards. Passed on one unit (2026-11-20) |
 | T12 | A9 | Beam Studio against fluxghost 2.5.8: manual steps appear; against the new tag with a forced failure: they do not. Not run yet |
