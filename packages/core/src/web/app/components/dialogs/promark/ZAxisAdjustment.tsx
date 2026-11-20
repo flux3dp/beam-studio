@@ -13,6 +13,7 @@ import { useStorageStore } from '@core/app/stores/storageStore';
 import UnitInput from '@core/app/widgets/UnitInput';
 import { swiftrayClient } from '@core/helpers/api/swiftray-client';
 import checkDeviceStatus from '@core/helpers/check-device-status';
+import { applyLensProfile, getJobLens } from '@core/helpers/device/promark/apply-lens-profile';
 import { generateCalibrationTaskString, loadTaskToSwiftray } from '@core/helpers/device/promark/calibration';
 import deviceMaster from '@core/helpers/device-master';
 import useI18n from '@core/helpers/useI18n';
@@ -92,7 +93,21 @@ export const ZAxisAdjustment = ({ device, onClose }: Props): React.JSX.Element =
   const handlePreview = async () => {
     if (!isPreviewing) {
       await uploadPreviewTask();
-      await deviceMaster.startFraming();
+
+      // The lens is sent before every run and again with the start (Swiftray applies that one in the
+      // request that starts the run): what is on the machine may be another tab's lens by now. The
+      // square is placed in the document's work area, so it is the document's lens, with the red dot
+      // correction for red light.
+      if (!(await applyLensProfile(deviceMaster, device, { redDot: true }))) return;
+
+      try {
+        await deviceMaster.startFraming(undefined, getJobLens(device, { redDot: true }));
+      } catch (error) {
+        console.error('Failed to start the preview', error);
+
+        return;
+      }
+
       setIsPreviewing(true);
     } else {
       await stopPreview();
@@ -121,8 +136,12 @@ export const ZAxisAdjustment = ({ device, onClose }: Props): React.JSX.Element =
     }
 
     await uploadMarkTask();
+
+    // the laser's own lens: the preview leaves its red dot correction on the machine
+    if (!(await applyLensProfile(deviceMaster, device))) return;
+
     try {
-      await deviceMaster.doPromarkCalibration();
+      await deviceMaster.doPromarkCalibration(getJobLens(device));
     } catch (err) {
       if (err && err[1] === 'DOOR_OPENED') {
         await deviceMaster.stop();
