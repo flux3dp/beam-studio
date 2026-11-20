@@ -205,11 +205,11 @@ describe('test AdvancedSettingModal', () => {
     expect(baseElement.querySelector('#frequency')).toBeNull();
   });
 
-  test('line dwell and scattered scan order are for UV only', () => {
+  test('line dwell and scattered scan order are shown for every Promark source', () => {
     const { baseElement, unmount } = render(<AdvancedSettingModal onClose={mockOnClose} />);
 
-    expect(baseElement.querySelector('#fillInterleave')).toBeNull();
-    expect(baseElement.querySelector('#fillDwell')).toBeNull();
+    expect(baseElement.querySelector('#fillInterleave')).not.toBeNull();
+    expect(baseElement.querySelector('#fillDwell')).not.toBeNull();
     unmount();
 
     mockUseIsPromarkUV.mockReturnValue(true);

@@ -394,64 +394,60 @@ const AdvancedSettingModal = ({ onClose }: Props): React.JSX.Element => {
                 onChange={(value) => handleValueChange('crossHatch', value)}
               />
             </div>
-            {isPromarkUV && (
+            <div>
+              <span>
+                <label htmlFor="fillInterleave">{t.fill_interleave}</label>
+                <Tooltip title={t.fill_interleave_hint}>
+                  <QuestionCircleOutlined className={styles.hint} />
+                </Tooltip>
+              </span>
+              <Switch
+                checked={draftValue.fillInterleave.value}
+                id="fillInterleave"
+                onChange={(value) => handleValueChange('fillInterleave', value)}
+              />
+            </div>
+            <div>
+              <span>
+                <label htmlFor="fillDwell">{t.fill_dwell}</label>
+                <Tooltip title={t.fill_dwell_hint}>
+                  <QuestionCircleOutlined className={styles.hint} />
+                </Tooltip>
+              </span>
+              <Switch checked={fillDwellOn} id="fillDwell" onChange={setFillDwell} />
+            </div>
+            {fillDwellOn && (
               <>
                 <div>
-                  <span>
-                    <label htmlFor="fillInterleave">{t.fill_interleave}</label>
-                    <Tooltip title={t.fill_interleave_hint}>
-                      <QuestionCircleOutlined className={styles.hint} />
-                    </Tooltip>
-                  </span>
-                  <Switch
-                    checked={draftValue.fillInterleave.value}
-                    id="fillInterleave"
-                    onChange={(value) => handleValueChange('fillInterleave', value)}
+                  <span>{t.fill_dwell_time}</span>
+                  <Input
+                    hasMultiValue={draftValue.fillDwellTime.hasMultiValue}
+                    id="fillDwellTime"
+                    isInch={false}
+                    max={1000000}
+                    min={1}
+                    onChange={(value) => handleValueChange('fillDwellTime', value)}
+                    precision={0}
+                    step={1000}
+                    unit="us"
+                    value={draftValue.fillDwellTime.value}
                   />
                 </div>
                 <div>
                   <span>
-                    <label htmlFor="fillDwell">{t.fill_dwell}</label>
-                    <Tooltip title={t.fill_dwell_hint}>
+                    <label htmlFor="fillDwellAdaptive">{t.fill_dwell_adaptive}</label>
+                    <Tooltip title={t.fill_dwell_adaptive_hint}>
                       <QuestionCircleOutlined className={styles.hint} />
                     </Tooltip>
                   </span>
-                  <Switch checked={fillDwellOn} id="fillDwell" onChange={setFillDwell} />
+                  <Switch
+                    checked={draftValue.fillDwellAdaptive.value}
+                    className={styles.switch}
+                    id="fillDwellAdaptive"
+                    onChange={(value) => handleValueChange('fillDwellAdaptive', value)}
+                    size="small"
+                  />
                 </div>
-                {fillDwellOn && (
-                  <>
-                    <div>
-                      <span>{t.fill_dwell_time}</span>
-                      <Input
-                        hasMultiValue={draftValue.fillDwellTime.hasMultiValue}
-                        id="fillDwellTime"
-                        isInch={false}
-                        max={1000000}
-                        min={1}
-                        onChange={(value) => handleValueChange('fillDwellTime', value)}
-                        precision={0}
-                        step={1000}
-                        unit="us"
-                        value={draftValue.fillDwellTime.value}
-                      />
-                    </div>
-                    <div>
-                      <span>
-                        <label htmlFor="fillDwellAdaptive">{t.fill_dwell_adaptive}</label>
-                        <Tooltip title={t.fill_dwell_adaptive_hint}>
-                          <QuestionCircleOutlined className={styles.hint} />
-                        </Tooltip>
-                      </span>
-                      <Switch
-                        checked={draftValue.fillDwellAdaptive.value}
-                        className={styles.switch}
-                        id="fillDwellAdaptive"
-                        onChange={(value) => handleValueChange('fillDwellAdaptive', value)}
-                        size="small"
-                      />
-                    </div>
-                  </>
-                )}
               </>
             )}
           </>
