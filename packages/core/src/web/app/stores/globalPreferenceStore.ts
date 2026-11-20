@@ -20,7 +20,8 @@ const getInitStore = (): GlobalPreference => {
   return {
     'af-offset': preference['af-offset'],
     'anti-aliasing': preference['anti-aliasing'],
-    'auto-full-area-preview': preference['auto-full-area-preview'],
+    // not in DEFAULT_PREFERENCE: stays out of storage until set, so this default reaches existing users when flipped
+    'auto-full-area-preview': preference['auto-full-area-preview'] ?? false,
     'auto-switch-tab': preference['auto-switch-tab'],
     auto_align: preference.auto_align,
     continuous_drawing: preference.continuous_drawing,

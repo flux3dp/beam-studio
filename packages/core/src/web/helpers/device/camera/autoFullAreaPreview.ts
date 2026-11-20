@@ -70,7 +70,7 @@ class AutoFullAreaPreview implements BackgroundTask {
   isEnabled = ({ device, mode, workarea }: BackgroundContext): boolean =>
     mode === CanvasMode.Draw &&
     workarea === device?.model &&
-    useGlobalPreferenceStore.getState()['auto-full-area-preview'] &&
+    !!useGlobalPreferenceStore.getState()['auto-full-area-preview'] &&
     !useDocumentStore.getState()['enable-job-origin'];
 
   isBusy = (): boolean => this.capture !== null;
