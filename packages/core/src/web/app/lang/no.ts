@@ -676,10 +676,13 @@ const lang: ILang = {
         frequency: 'Frekvens',
         frequency_hint_uv: 'UV-effekten bestemmes av frekvensen, så å endre frekvensen endrer også effekten. Under 40kHz vises effekten som 100%.',
         galvo_tiling: {
+          auto: 'Automatisk',
+          auto_hint: 'Objekter som får plass i feltet, graveres hver for seg i ett stykke og deles aldri; objekter som ikke får plass, deles automatisk i fliser og settes sammen.',
           grid: 'Rutenett',
           object: 'Etter objekt',
           object_hint: 'Hvert objekt graveres helt innenfor ett felt og deles aldri mellom fliser. Egnet for serieproduksjon av mange separate objekter. Hvert objekt må få plass i feltet.',
           oversize: '%1$d objekt(er) i lag delt etter objekt er større enn feltet på %2$d mm. Gjør dem mindre, eller sett lagene tilbake til Rutenett.',
+          path_stitch_warning: '%1$d objekt(er) med baner er større enn feltet på %2$d mm og blir delt i fliser og satt sammen. Baner kuttes foreløpig bare rett av i en skjøt, så de krever mer nøyaktig justering og viser lettere synlige feil der.',
           select_objects: 'Velg disse objektene',
           title: 'Inndeling',
         },

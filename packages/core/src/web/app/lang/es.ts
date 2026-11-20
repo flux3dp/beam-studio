@@ -676,10 +676,13 @@ const lang: ILang = {
         frequency: 'Frecuencia',
         frequency_hint_uv: 'La potencia UV depende de la frecuencia, así que cambiar la frecuencia también cambia la potencia. Por debajo de 40kHz la potencia se muestra como 100%.',
         galvo_tiling: {
+          auto: 'Automático',
+          auto_hint: 'Los objetos que caben en el campo se graban enteros y nunca se dividen; los que no caben se dividen en mosaicos y se unen automáticamente.',
           grid: 'Cuadrícula',
           object: 'Por objeto',
           object_hint: 'Cada objeto se graba entero dentro de un solo campo, sin dividirse nunca entre mosaicos. Ideal para la producción en serie de muchos objetos separados. Cada objeto debe caber en el campo.',
           oversize: '%1$d objeto(s) en capas con mosaico por objeto superan el campo de %2$d mm. Redúzcalos o vuelva a poner esas capas en Cuadrícula.',
+          path_stitch_warning: '%1$d objeto(s) con trazados son más grandes que el campo de %2$d mm y se dividirán en mosaicos y se unirán. Por ahora los trazados solo se cortan en línea recta en la unión, por lo que requieren una alineación más precisa y es más probable que muestren defectos visibles allí.',
           select_objects: 'Seleccionar estos objetos',
           title: 'Mosaico',
         },

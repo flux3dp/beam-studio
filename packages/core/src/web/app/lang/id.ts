@@ -676,10 +676,13 @@ const lang: ILang = {
         frequency: 'Frekuensi',
         frequency_hint_uv: 'Daya UV ditentukan oleh frekuensi, jadi mengubah frekuensi juga mengubah daya. Di bawah 40kHz daya ditampilkan 100%.',
         galvo_tiling: {
+          auto: 'Otomatis',
+          auto_hint: 'Objek yang muat di dalam bidang diukir utuh dan tidak pernah dipotong; objek yang tidak muat otomatis dibagi menjadi ubin dan disambung.',
           grid: 'Kisi',
           object: 'Per objek',
           object_hint: 'Setiap objek diukir utuh dalam satu bidang dan tidak pernah dibagi antar petak. Cocok untuk produksi massal banyak objek terpisah. Setiap objek harus muat di dalam bidang.',
           oversize: '%1$d objek pada layer yang dibagi per objek lebih besar dari bidang %2$d mm. Perkecil objek tersebut atau kembalikan layer itu ke Kisi.',
+          path_stitch_warning: '%1$d objek yang berisi jalur lebih besar dari bidang %2$d mm dan akan dibagi menjadi ubin lalu disambung. Untuk saat ini jalur hanya dipotong lurus pada sambungan, sehingga memerlukan penyelarasan yang lebih presisi dan lebih mudah menampakkan cacat di sana.',
           select_objects: 'Pilih Objek Ini',
           title: 'Pembagian',
         },

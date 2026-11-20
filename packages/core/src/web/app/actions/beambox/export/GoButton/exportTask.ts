@@ -9,6 +9,7 @@ import { useDocumentStore } from '@core/app/stores/documentStore';
 import workareaManager from '@core/app/svgedit/workarea';
 import alertConfig from '@core/helpers/api/alert-config';
 import checkOldFirmware from '@core/helpers/device/checkOldFirmware';
+import { confirmPathStitching } from '@core/helpers/device/galvoTiling';
 import promarkButtonHandler from '@core/helpers/device/promark/promark-button-handler';
 import isDev from '@core/helpers/is-dev';
 import { hasVariableText } from '@core/helpers/variableText';
@@ -126,6 +127,12 @@ export const exportTask = async (device: IDeviceInfo, byHandler: boolean, lang: 
         type: alertConstants.SHOW_POPUP_WARNING,
       });
     });
+  }
+
+  if (!(await confirmPathStitching())) {
+    progressCaller.popById('preparing-export');
+
+    return;
   }
 
   promarkButtonHandler.setStatus('uploading');

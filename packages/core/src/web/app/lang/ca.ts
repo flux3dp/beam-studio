@@ -676,10 +676,13 @@ const lang: ILang = {
         frequency: 'Freqüència',
         frequency_hint_uv: 'La potència UV depèn de la freqüència, de manera que canviar la freqüència també canvia la potència. Per sota de 40kHz la potència es mostra com a 100%.',
         galvo_tiling: {
+          auto: 'Automàtic',
+          auto_hint: 'Els objectes que caben dins del camp es graven sencers i no es divideixen mai; els que no hi caben es divideixen en mosaics i s’uneixen automàticament.',
           grid: 'Quadrícula',
           object: 'Per objecte',
           object_hint: "Cada objecte es grava sencer dins d'un sol camp, sense dividir-se mai entre mosaics. Ideal per a la producció en sèrie de molts objectes separats. Cada objecte ha de cabre al camp.",
           oversize: '%1$d objecte(s) en capes dividides per objecte superen el camp de %2$d mm. Redueix-los o torna a posar aquestes capes en Quadrícula.',
+          path_stitch_warning: '%1$d objecte(s) amb traçats són més grans que el camp de %2$d mm i es dividiran en mosaics i s’uniran. De moment els traçats només es tallen en línia recta a la unió, de manera que requereixen una alineació més precisa i és més probable que hi mostrin defectes visibles.',
           select_objects: 'Selecciona aquests objectes',
           title: 'Divisió',
         },

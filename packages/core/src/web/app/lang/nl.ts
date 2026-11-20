@@ -676,10 +676,13 @@ const lang: ILang = {
         frequency: 'Frequentie',
         frequency_hint_uv: 'Het UV-vermogen wordt bepaald door de frequentie, dus een andere frequentie verandert ook het vermogen. Onder 40kHz wordt het vermogen als 100% weergegeven.',
         galvo_tiling: {
+          auto: 'Automatisch',
+          auto_hint: 'Objecten die binnen het veld passen worden elk in hun geheel gegraveerd en nooit gesplitst; objecten die niet passen worden automatisch in tegels verdeeld en aan elkaar gezet.',
           grid: 'Raster',
           object: 'Per object',
           object_hint: 'Elk object wordt in zijn geheel binnen één veld gegraveerd en nooit over tegels verdeeld. Geschikt voor serieproductie van veel losse objecten. Elk object moet binnen het veld passen.',
           oversize: '%1$d object(en) in lagen met indeling per object zijn groter dan het veld van %2$d mm. Maak ze kleiner of zet die lagen terug op Raster.',
+          path_stitch_warning: '%1$d object(en) met paden zijn groter dan het veld van %2$d mm en worden in tegels verdeeld en aan elkaar gezet. Paden worden bij een naad voorlopig alleen recht doorgesneden; ze vragen daarom een nauwkeurigere uitlijning en vertonen daar eerder zichtbare fouten.',
           select_objects: 'Deze objecten selecteren',
           title: 'Tegelindeling',
         },

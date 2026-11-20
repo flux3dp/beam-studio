@@ -676,10 +676,13 @@ const lang: ILang = {
         frequency: 'Frequenza',
         frequency_hint_uv: 'La potenza UV dipende dalla frequenza, quindi cambiando la frequenza cambia anche la potenza. Sotto i 40kHz la potenza è indicata come 100%.',
         galvo_tiling: {
+          auto: 'Automatico',
+          auto_hint: 'Gli oggetti che rientrano nel campo vengono incisi interi e mai divisi; quelli che non vi rientrano vengono suddivisi in riquadri e uniti automaticamente.',
           grid: 'Griglia',
           object: 'Per oggetto',
           object_hint: "Ogni oggetto viene inciso per intero all'interno di un unico campo, senza mai essere diviso tra più riquadri. Ideale per la produzione in serie di molti oggetti separati. Ogni oggetto deve rientrare nel campo.",
           oversize: '%1$d oggetto/i nei livelli suddivisi per oggetto superano il campo di %2$d mm. Riducili o riporta quei livelli su Griglia.',
+          path_stitch_warning: '%1$d oggetto/i con tracciati sono più grandi del campo di %2$d mm e verranno suddivisi in riquadri e uniti. Per ora i tracciati vengono solo tagliati di netto sulla giunzione, quindi richiedono un allineamento più preciso ed è più probabile che vi mostrino difetti visibili.',
           select_objects: 'Seleziona questi oggetti',
           title: 'Suddivisione',
         },

@@ -676,10 +676,13 @@ const lang: ILang = {
         frequency: '频率',
         frequency_hint_uv: 'UV 的功率由频率决定，改频率会连动功率；40kHz 以下功率显示为 100%。',
         galvo_tiling: {
+          auto: '自动',
+          auto_hint: '放得进场镜范围的对象各自完整雕刻，不会被切开；放不进的对象自动分块拼接。',
           grid: '固定格点',
           object: '按对象',
           object_hint: '每个对象完整地在一个场镜范围内雕刻，不会被 tile 切开，适合批量生产多个独立对象。每个对象都必须小于场镜尺寸。',
           oversize: '“按对象”图层中有 %1$d 个对象大于 %2$d mm 的场镜。请缩小这些对象，或将图层改回“固定格点”。',
+          path_stitch_warning: '有 %1$d 个含路径的对象超过 %2$d mm 的场镜范围，将分块拼接。路径的拼接目前只有硬切，对位要求较高，接缝处较容易出现明显瑕疵。',
           select_objects: '选取这些对象',
           title: '分块方式',
         },

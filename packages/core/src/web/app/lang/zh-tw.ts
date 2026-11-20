@@ -676,10 +676,13 @@ const lang: ILang = {
         frequency: '頻率',
         frequency_hint_uv: 'UV 的功率由頻率決定，改頻率會連動功率；40kHz 以下功率顯示為 100%。',
         galvo_tiling: {
+          auto: '自動',
+          auto_hint: '放得進場鏡範圍的物件各自完整雕刻，不會被切開；放不進的物件自動分塊拼接。',
           grid: '固定格點',
           object: '依物件',
           object_hint: '每個物件完整在一個場鏡範圍內雕刻，不會被 tile 切開，適合批量生產多個獨立物件。每個物件都必須小於場鏡尺寸。',
           oversize: '「依物件」圖層中有 %1$d 個物件大於 %2$d mm 的場鏡。請縮小這些物件，或將圖層改回「固定格點」。',
+          path_stitch_warning: '有 %1$d 個含路徑的物件超過 %2$d mm 的場鏡範圍，會分塊拼接。路徑的拼接目前只有硬切，對位要求較高，接縫處較容易出現明顯瑕疵。',
           select_objects: '選取這些物件',
           title: '分塊方式',
         },

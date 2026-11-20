@@ -676,10 +676,13 @@ const lang: ILang = {
         frequency: 'Częstotliwość',
         frequency_hint_uv: 'Moc UV zależy od częstotliwości, więc zmiana częstotliwości zmienia też moc. Poniżej 40kHz moc jest wyświetlana jako 100%.',
         galvo_tiling: {
+          auto: 'Automatycznie',
+          auto_hint: 'Obiekty mieszczące się w polu są grawerowane w całości i nigdy nie są dzielone; obiekty, które się nie mieszczą, są automatycznie dzielone na kafle i łączone.',
           grid: 'Siatka',
           object: 'Według obiektu',
           object_hint: 'Każdy obiekt jest grawerowany w całości w obrębie jednego pola i nigdy nie jest dzielony między kafelki. Odpowiednie do produkcji seryjnej wielu oddzielnych obiektów. Każdy obiekt musi zmieścić się w polu.',
           oversize: '%1$d obiekt(ów) na warstwach dzielonych według obiektu jest większych niż pole %2$d mm. Zmniejsz je lub przywróć tym warstwom ustawienie Siatka.',
+          path_stitch_warning: 'Obiekty ze ścieżkami (%1$d) są większe niż pole %2$d mm i zostaną podzielone na kafle i połączone. Ścieżki są na razie na łączeniu tylko prosto przecinane, więc wymagają dokładniejszego wyrównania i łatwiej o widoczne wady w tym miejscu.',
           select_objects: 'Zaznacz te obiekty',
           title: 'Podział',
         },

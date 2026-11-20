@@ -676,10 +676,13 @@ const lang: ILang = {
         frequency: 'Taajuus',
         frequency_hint_uv: 'UV-teho määräytyy taajuuden mukaan, joten taajuuden muuttaminen muuttaa myös tehoa. Alle 40kHz:n teho näytetään 100 %:na.',
         galvo_tiling: {
+          auto: 'Automaattinen',
+          auto_hint: 'Kenttään mahtuvat objektit kaiverretaan kukin kokonaisina eikä niitä koskaan jaeta; objektit, jotka eivät mahdu, jaetaan automaattisesti ruutuihin ja liitetään yhteen.',
           grid: 'Ruudukko',
           object: 'Objekteittain',
           object_hint: 'Jokainen objekti kaiverretaan kokonaan yhden kentän sisällä, eikä sitä koskaan jaeta ruutujen kesken. Sopii monien erillisten objektien sarjatuotantoon. Jokaisen objektin on mahduttava kenttään.',
           oversize: '%1$d objekti(a) objekteittain jaetuilla tasoilla on suurempi kuin %2$d mm:n kenttä. Pienennä niitä tai palauta tasot Ruudukko-tilaan.',
+          path_stitch_warning: '%1$d polkuja sisältävää objektia on suurempia kuin %2$d mm:n kenttä, ja ne jaetaan ruutuihin ja liitetään yhteen. Polut vain katkaistaan toistaiseksi suoraan sauman kohdalta, joten ne vaativat tarkemman kohdistuksen ja niissä näkyy saumassa helpommin virheitä.',
           select_objects: 'Valitse nämä objektit',
           title: 'Jako',
         },

@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | 「依物件」已實作，未上機（2026-11-03）：swiftray `3ce9f62`、`0c4964f`，beam-studio 見 §10。swiftray 本機無法 link，只做過編譯檢查，fcode 比對（§13）尚未跑。「置中格點」只記錄（§7.6），未排程。**2026-11-20 新增「自動」（§7.7，設為預設）與路徑拼接警告（§7.8），兩端都尚未實作** |
+| **Status** | 「依物件」已實作，未上機（2026-11-03）：swiftray `3ce9f62`、`0c4964f`，beam-studio 見 §10。swiftray 本機無法 link，只做過編譯檢查，fcode 比對（§13）尚未跑。「置中格點」只記錄（§7.6），未排程。**2026-11-20 新增「自動」（§7.7，設為預設）與路徑拼接警告（§7.8）：已實作、未上機，swiftray `a1b4759`（只做過語法檢查，沒有 link），beam-studio 見 §10** |
 | **Author** | EstherFu |
 | **Created** | 2026-11-02 |
 | **Target product** | Beam Studio（desktop + web），機型 `fhx2galvo`（HEXA G）；swiftray daemon |
@@ -215,7 +215,7 @@ checkObjectTilingItems(): Promise<{ field: number; items: SVGGraphicsElement[] }
 - **對齊方式**：「tile 中心對物件中心」時，200 mm 的物件配 100 mm tile 會切成 3×3（中間一格、四周半格）；要「剛好 2×2」，對齊的應該是整組 tile 的中心——所需 tile 數為奇數時 tile 中心落在物件中心，偶數時接縫落在物件中心。
 - **整步限制**：`planGalvoBlocks()` 的註解說明格點以機器原點為錨點，是因為 block 位移是整數個馬達整步，龍門只會停在這些位置上。錨點平移後，停靠點不一定落在整步上（單一 block 的情況目前已經是自由停靠點）。要不要把錨點量化到整步、量化後物件中心與 tile 中心最多差半步，需要機構確認。
 
-### 7.7 自動（2026-11-20 新增，未實作）
+### 7.7 自動（2026-11-20 新增）
 
 **定義**：以圖層第一層物件為單位（§7.3 的 `item_key`）。物件放得進一個場鏡、而且找得到可及的停靠點，就依物件處理；否則該物件走格點拼接。
 
@@ -239,15 +239,15 @@ checkObjectTilingItems(): Promise<{ field: number; items: SVGGraphicsElement[] }
 - **全部放得進**＝與 `Object` 相同；**全部放不進**＝與 `Grid` 相同（逐位元組，A9、A10）。
 - **debug 圖**：依物件的 cluster 與拼接批的 tile 畫在同一張，用不同顏色區分。
 
-### 7.8 路徑拼接警告（2026-11-20 新增，未實作）
+### 7.8 路徑拼接警告（2026-11-20 新增）
 
 **原因**：線段（路徑、填色的掃描線、非漸層圖）在 KW 拼接策略下一律硬切（`galvo-seam-kpass-walk.md` Non-goals），兩個停靠點之間只要有一點對位誤差，線條就會錯開或留下縫，比點陣圖明顯得多。
 
 **前端**（`helpers/device/galvoTiling.ts` 新增 `checkPathStitchingItems()`）
 - 範圍：`fhx2galvo` 的每個可見、repeat > 0、`galvoTiling === 'auto'` 的振鏡圖層的第一層物件（`getLayerObjects()`）。
 - 條件：物件外框寬或高 > 場鏡 + `GALVO_FIELD_TOLERANCE_MM`，而且物件含有路徑內容。路徑內容＝物件本身或其子孫（`<use>` 展開後）有任何不是 `<image>` 的可繪製元素。
-- 時機：在 `fetchTaskCodeSwiftray()` 開頭、`checkObjectTilingItems()` 之後。只在送出與匯出 fcode 時跳；預估時間、路徑預覽不跳（這兩個入口會反覆觸發）。
-- 內容：「有 %d 個含路徑的物件超過場鏡範圍（%s mm），會分塊拼接。路徑的拼接目前只有硬切，對位要求較高，接縫處較容易出現明顯瑕疵。」按鈕：繼續／取消／選取這些物件；勾選「不再顯示」寫入 `alert-config.ts` 的新 key `skip-galvo-path-stitch-warning`。
+- 時機：只在送出與匯出 fcode 時跳；預估時間、路徑預覽不跳（這兩個入口會反覆觸發）。`fetchTaskCodeSwiftray()` 分不出是哪個入口呼叫的，所以 `confirmPathStitching()` 放在兩個入口自己的轉檔之前：`export/GoButton/exportTask.ts`（送出，和 job origin、變數文字的警告同一處）與 `export-funcs.ts` 的 `exportFcode`。
+- 內容：「有 %d 個含路徑的物件超過場鏡範圍（%s mm），會分塊拼接。路徑的拼接目前只有硬切，對位要求較高，接縫處較容易出現明顯瑕疵。」按鈕：繼續／選取這些物件／取消；勾選「不再顯示」後按繼續才寫入 `alert-config.ts` 的新 key `skip-galvo-path-stitch-warning`（取消時不記）。
 - i18n：`beambox.right_panel.laser_panel.galvo_tiling.path_stitch_warning`，en／zh-tw 先寫。
 
 **swiftray**：不擋、不回失敗。匯出時 `qWarning` 一行（圖層名、拼接批裡含線段的物件數），方便從 log 對照。
@@ -270,8 +270,14 @@ checkObjectTilingItems(): Promise<{ field: number; items: SVGGraphicsElement[] }
 1. swiftray：解析 `item_key` + Shape 欄位 + 圖層參數（不改匯出，行為不變）— `3ce9f62`。
 2. swiftray：「依物件」的規劃、輸出、停靠順序、失敗回報 — `0c4964f`。
 3. beam-studio：圖層參數、UI、i18n（23 種語言已補齊）、sanitize、前端檢查 — branch `machine/hx2`。
-4. swiftray：`Auto` 的解析、分流、拼接批輸出、debug 圖（§7.7）— 未實作。
-5. beam-studio：`auto` 選項與預設、說明文字、路徑拼接警告、i18n（§7.7、§7.8）— 未實作。等 4 合併後才發，避免前端預設送出舊版 swiftray 不認得的行為。
+4. swiftray：`Auto` 的解析、分流、拼接批輸出、debug 圖（§7.7）— `a1b4759`。
+5. beam-studio：`auto` 選項與預設、說明文字、路徑拼接警告、i18n 23 種語言（§7.7、§7.8）— branch `machine/hx2`。等 4 合併後才發，避免前端預設送出舊版 swiftray 不認得的行為。
+
+「自動」實作與設計的差異（2026-11-20）：
+- swiftray：沒有任何物件放得進場鏡時，不是「拼接批」而是整層退回格點流程（`planGalvoObjectClusters()` 回 false），這樣和 `grid` 逐位元組相同才有保證（形狀進 factory 的順序一樣）。
+- swiftray：拼接批裡含線段的物件數寫在 `qWarning`；判斷是「不是 bitmap 的 Shape」。
+- debug 圖：拼接批的 tile 框用紫色，依物件的停靠點維持綠色。
+- 前端：說明文字的 tooltip 依目前選項顯示（依物件顯示依物件的說明，其餘顯示自動的說明）。
 
 實作與設計的差異（2026-11-03）：
 - 前端檢查另外把多選暫時群組（`#svgcontent > g[data-tempgroup]`，元素帶 `data-original-layer`）裡的物件算回原圖層：多選時元素不在圖層下，要到 `getSvgString()` 才放回去。

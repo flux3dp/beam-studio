@@ -678,10 +678,13 @@ export interface ILang {
         frequency: string;
         frequency_hint_uv: string;
         galvo_tiling: {
+          auto: string;
+          auto_hint: string;
           grid: string;
           object: string;
           object_hint: string;
           oversize: string;
+          path_stitch_warning: string;
           select_objects: string;
           title: string;
         };

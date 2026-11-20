@@ -676,10 +676,13 @@ const lang: ILang = {
         frequency: 'Frequenz',
         frequency_hint_uv: 'Die UV-Leistung wird durch die Frequenz bestimmt, eine Änderung der Frequenz ändert also auch die Leistung. Unter 40kHz wird die Leistung als 100% angezeigt.',
         galvo_tiling: {
+          auto: 'Automatisch',
+          auto_hint: 'Objekte, die in das Feld passen, werden jeweils als Ganzes graviert und nie geteilt; Objekte, die nicht hineinpassen, werden automatisch in Kacheln aufgeteilt und zusammengesetzt.',
           grid: 'Raster',
           object: 'Nach Objekt',
           object_hint: 'Jedes Objekt wird vollständig innerhalb eines Feldes graviert und nie auf Kacheln aufgeteilt. Geeignet für die Serienfertigung vieler einzelner Objekte. Jedes Objekt muss in das Feld passen.',
           oversize: '%1$d Objekt(e) in Ebenen mit Kachelung nach Objekt sind größer als das %2$d-mm-Feld. Verkleinern Sie sie oder stellen Sie diese Ebenen wieder auf Raster.',
+          path_stitch_warning: '%1$d Objekt(e) mit Pfaden sind größer als das %2$d-mm-Feld und werden in Kacheln aufgeteilt und zusammengesetzt. Pfade werden an einer Naht derzeit nur gerade getrennt, benötigen daher eine genauere Ausrichtung und zeigen dort eher sichtbare Fehler.',
           select_objects: 'Diese Objekte auswählen',
           title: 'Kachelung',
         },

@@ -676,10 +676,13 @@ const lang: ILang = {
         frequency: 'Frekvence',
         frequency_hint_uv: 'Výkon UV je určen frekvencí, takže změna frekvence mění i výkon. Pod 40kHz se výkon zobrazuje jako 100%.',
         galvo_tiling: {
+          auto: 'Automaticky',
+          auto_hint: 'Objekty, které se vejdou do pole, se gravírují každý vcelku a nikdy se nedělí; objekty, které se nevejdou, se automaticky rozdělí na dlaždice a spojí.',
           grid: 'Mřížka',
           object: 'Podle objektu',
           object_hint: 'Každý objekt se gravíruje celý v rámci jednoho pole a nikdy se nerozdělí mezi dlaždice. Vhodné pro sériovou výrobu mnoha samostatných objektů. Každý objekt se musí vejít do pole.',
           oversize: '%1$d objekt(ů) ve vrstvách dělených podle objektu je větší než pole %2$d mm. Zmenšete je nebo vraťte tyto vrstvy na Mřížku.',
+          path_stitch_warning: 'Objekty s cestami (%1$d) jsou větší než pole %2$d mm a budou rozděleny na dlaždice a spojeny. Cesty se zatím ve spoji pouze rovně přeříznou, takže vyžadují přesnější zarovnání a snáze se na nich ve spoji objeví viditelné vady.',
           select_objects: 'Vybrat tyto objekty',
           title: 'Dělení',
         },

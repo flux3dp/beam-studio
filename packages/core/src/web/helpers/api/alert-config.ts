@@ -5,6 +5,7 @@ export type AlertConfigKey =
   | 'is-path-engine-dialog-shown'
   | 'skip-auto-feeder-instruction'
   | 'skip-fb-group-invitation'
+  | 'skip-galvo-path-stitch-warning'
   | 'skip-high-power-confirm'
   | 'skip-inner-engraving-focus-reminder'
   | 'skip-interface-tutorial'

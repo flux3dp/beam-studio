@@ -676,10 +676,13 @@ const lang: ILang = {
         frequency: 'Frequência',
         frequency_hint_uv: 'A potência UV é determinada pela frequência, então alterar a frequência também altera a potência. Abaixo de 40kHz a potência aparece como 100%.',
         galvo_tiling: {
+          auto: 'Automático',
+          auto_hint: 'Os objetos que cabem no campo são gravados inteiros e nunca são divididos; os que não cabem são divididos em blocos e unidos automaticamente.',
           grid: 'Grade',
           object: 'Por objeto',
           object_hint: 'Cada objeto é gravado inteiro dentro de um único campo, sem nunca ser dividido entre blocos. Ideal para a produção em série de muitos objetos separados. Cada objeto deve caber no campo.',
           oversize: '%1$d objeto(s) em camadas divididas por objeto são maiores que o campo de %2$d mm. Reduza-os ou volte essas camadas para Grade.',
+          path_stitch_warning: '%1$d objeto(s) com caminhos são maiores que o campo de %2$d mm e serão divididos em blocos e unidos. Por enquanto os caminhos são apenas cortados a direito na junção, pelo que exigem um alinhamento mais preciso e têm maior probabilidade de mostrar defeitos visíveis nesse ponto.',
           select_objects: 'Selecionar estes objetos',
           title: 'Divisão',
         },

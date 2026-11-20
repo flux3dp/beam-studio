@@ -28,6 +28,7 @@ const GalvoTilingBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | '
   const { change, galvoTiling } = useConfigPanelStore(useShallow(pick(['galvoTiling', 'change'])));
   const options = useMemo(
     () => [
+      { label: t.auto, value: GalvoTiling.Auto },
       { label: t.grid, value: GalvoTiling.Grid },
       { label: t.object, value: GalvoTiling.Object },
     ],
@@ -69,7 +70,7 @@ const GalvoTilingBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | '
     <div className={classNames(styles.panel, styles[type])}>
       <span className={styles.title}>
         {t.title}
-        <Tooltip title={t.object_hint}>
+        <Tooltip title={galvoTiling.value === GalvoTiling.Object ? t.object_hint : t.auto_hint}>
           <QuestionCircleOutlined />
         </Tooltip>
       </span>

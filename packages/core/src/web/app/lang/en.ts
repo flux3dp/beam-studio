@@ -676,10 +676,13 @@ const lang: ILang = {
         frequency: 'Frequency',
         frequency_hint_uv: 'UV power is set by the frequency, so changing the frequency also changes the power. Below 40kHz the power shows as 100%.',
         galvo_tiling: {
+          auto: 'Auto',
+          auto_hint: 'Objects that fit within the field are each engraved whole and never split; objects that do not fit are tiled and stitched automatically.',
           grid: 'Grid',
           object: 'By Object',
           object_hint: 'Each object is engraved whole within one field and never split between tiles. Suited to batch production of many separate objects. Every object must fit within the field.',
           oversize: '%1$d object(s) in layers tiled by object are larger than the %2$d mm field. Make them smaller, or set those layers back to Grid.',
+          path_stitch_warning: '%1$d object(s) with paths are larger than the %2$d mm field and will be split into tiles and stitched. Paths are only cut straight at a seam for now, so they need tighter alignment and are more likely to show visible flaws there.',
           select_objects: 'Select These Objects',
           title: 'Tiling',
         },

@@ -163,7 +163,7 @@ export const baseConfig: Partial<ConfigKeyTypeMap> = {
   focusStep: -2,
   focusStepReverse: false,
   frequency: 27,
-  galvoTiling: GalvoTiling.Grid,
+  galvoTiling: GalvoTiling.Auto,
   halftone: 1, // 1 for fm, 2 for am
   height: -3,
   highQuality: false,

@@ -676,10 +676,13 @@ const lang: ILang = {
         frequency: 'Frekuensi',
         frequency_hint_uv: 'Kuasa UV ditentukan oleh frekuensi, jadi menukar frekuensi juga menukar kuasa. Di bawah 40kHz kuasa dipaparkan sebagai 100%.',
         galvo_tiling: {
+          auto: 'Automatik',
+          auto_hint: 'Objek yang muat dalam medan diukir secara utuh dan tidak sekali-kali dipotong; objek yang tidak muat dibahagikan kepada jubin dan dicantum secara automatik.',
           grid: 'Grid',
           object: 'Mengikut objek',
           object_hint: 'Setiap objek diukir sepenuhnya dalam satu medan dan tidak pernah dibahagikan antara jubin. Sesuai untuk pengeluaran pukal banyak objek berasingan. Setiap objek mesti muat dalam medan.',
           oversize: '%1$d objek dalam lapisan yang dibahagikan mengikut objek lebih besar daripada medan %2$d mm. Kecilkan objek tersebut atau tetapkan semula lapisan itu kepada Grid.',
+          path_stitch_warning: '%1$d objek yang mengandungi laluan lebih besar daripada medan %2$d mm dan akan dibahagikan kepada jubin lalu dicantum. Buat masa ini laluan hanya dipotong lurus pada cantuman, jadi ia memerlukan penjajaran yang lebih tepat dan lebih mudah menunjukkan kecacatan yang ketara di situ.',
           select_objects: 'Pilih Objek Ini',
           title: 'Pembahagian',
         },

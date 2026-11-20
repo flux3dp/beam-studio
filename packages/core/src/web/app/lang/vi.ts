@@ -676,10 +676,13 @@ const lang: ILang = {
         frequency: 'Tần Số',
         frequency_hint_uv: 'Công suất UV do tần số quyết định, nên đổi tần số cũng đổi công suất. Dưới 40kHz công suất hiển thị là 100%.',
         galvo_tiling: {
+          auto: 'Tự động',
+          auto_hint: 'Các đối tượng nằm vừa trong trường được khắc nguyên vẹn và không bao giờ bị chia; các đối tượng không vừa sẽ tự động được chia thành ô và ghép lại.',
           grid: 'Lưới cố định',
           object: 'Theo đối tượng',
           object_hint: 'Mỗi đối tượng được khắc trọn vẹn trong một trường và không bao giờ bị chia giữa các ô. Phù hợp để sản xuất hàng loạt nhiều đối tượng riêng biệt. Mỗi đối tượng phải nằm vừa trong trường.',
           oversize: 'Có %1$d đối tượng trong các lớp chia theo đối tượng lớn hơn trường %2$d mm. Hãy thu nhỏ chúng hoặc đặt các lớp đó về Lưới cố định.',
+          path_stitch_warning: '%1$d đối tượng chứa đường path lớn hơn trường %2$d mm và sẽ được chia thành ô rồi ghép lại. Hiện tại đường path chỉ được cắt thẳng tại mối ghép, nên cần căn chỉnh chính xác hơn và dễ lộ khuyết điểm tại đó hơn.',
           select_objects: 'Chọn các đối tượng này',
           title: 'Chia ô',
         },

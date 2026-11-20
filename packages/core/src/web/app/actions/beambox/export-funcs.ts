@@ -16,6 +16,7 @@ import currentFileManager from '@core/app/svgedit/currentFileManager';
 import workareaManager from '@core/app/svgedit/workarea';
 import svgLaserParser from '@core/helpers/api/svg-laser-parser';
 import { hasSwiftray, swiftrayClient } from '@core/helpers/api/swiftray-client';
+import { confirmPathStitching } from '@core/helpers/device/galvoTiling';
 import { getDocumentLensProfile } from '@core/helpers/device/promark/lens-profiles';
 import deviceMaster from '@core/helpers/device-master';
 import { withErrorReportConsent } from '@core/helpers/error-report/consent';
@@ -595,6 +596,8 @@ export default {
     return res.fileTimeCost;
   },
   exportFcode: async (device?: IDeviceInfo): Promise<void> => {
+    if (!(await confirmPathStitching())) return;
+
     const { convertEngine } = getConvertEngine();
     const res = await convertEngine(device);
 

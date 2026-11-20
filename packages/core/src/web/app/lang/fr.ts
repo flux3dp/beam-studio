@@ -676,10 +676,13 @@ const lang: ILang = {
         frequency: 'Fréquence',
         frequency_hint_uv: "La puissance UV dépend de la fréquence : modifier la fréquence modifie aussi la puissance. En dessous de 40kHz, la puissance s'affiche à 100 %.",
         galvo_tiling: {
+          auto: 'Automatique',
+          auto_hint: 'Les objets qui tiennent dans le champ sont gravés chacun en entier, sans jamais être découpés ; ceux qui n’y tiennent pas sont automatiquement divisés en tuiles et raccordés.',
           grid: 'Grille',
           object: 'Par objet',
           object_hint: 'Chaque objet est gravé en entier dans un seul champ, sans jamais être réparti entre plusieurs tuiles. Idéal pour la production en série de nombreux objets séparés. Chaque objet doit tenir dans le champ.',
           oversize: '%1$d objet(s) des calques découpés par objet dépassent le champ de %2$d mm. Réduisez-les ou repassez ces calques en Grille.',
+          path_stitch_warning: '%1$d objet(s) contenant des tracés dépassent le champ de %2$d mm et seront divisés en tuiles puis raccordés. Les tracés sont pour l’instant simplement coupés au raccord ; ils exigent donc un alignement plus précis et risquent davantage d’y présenter des défauts visibles.',
           select_objects: 'Sélectionner ces objets',
           title: 'Découpage',
         },
