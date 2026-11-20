@@ -1,15 +1,15 @@
-# PRD: HEXA G 振鏡圖層分塊方式（依物件：批量生產時每個物件獨立停靠）
+# PRD: HEXA G 振鏡圖層分塊方式（自動／固定格點／依物件）
 
 | | |
 |---|---|
-| **Status** | 「依物件」已實作，未上機（2026-11-03）：swiftray `3ce9f62`、`0c4964f`，beam-studio 見 §10。swiftray 本機無法 link，只做過編譯檢查，fcode 比對（§13）尚未跑。「置中格點」只記錄（§7.6），未排程 |
+| **Status** | 「依物件」已實作，未上機（2026-11-03）：swiftray `3ce9f62`、`0c4964f`，beam-studio 見 §10。swiftray 本機無法 link，只做過編譯檢查，fcode 比對（§13）尚未跑。「置中格點」只記錄（§7.6），未排程。**2026-11-20 新增「自動」（§7.7，設為預設）與路徑拼接警告（§7.8），兩端都尚未實作** |
 | **Author** | EstherFu |
 | **Created** | 2026-11-02 |
 | **Target product** | Beam Studio（desktop + web），機型 `fhx2galvo`（HEXA G）；swiftray daemon |
 | **Owner area** | 圖層參數（`components/beambox/RightPanel/ConfigPanel/`、`helpers/layer/layer-config-helper.ts`）、匯出（`actions/beambox/export-funcs-swiftray.ts`）；swiftray SVG 解析（`src/parser/`）與 fcode 匯出（`src/toolpath_exporter/toolpath-exporter-fcode.cpp`） |
 | **Related code** | 圖層屬性：`packages/core/src/web/helpers/layer/layer-config-helper.ts`、`packages/core/public/js/lib/svgeditor/sanitize.js`、`packages/core/src/web/interfaces/ILayerConfig.d.ts`；UI：`packages/core/src/web/app/components/beambox/RightPanel/ConfigPanel/GalvoTilingBlock.tsx`（放在 `ConfigPanel.tsx` 的解析度下方）；轉檔入口：`packages/core/src/web/app/actions/beambox/export-funcs-swiftray.ts`（`fetchTaskCodeSwiftray`）、`export-funcs.ts`（`getConvertEngine`）；場鏡尺寸：`packages/core/src/web/helpers/device/galvoConfig.ts` |
 | **External repos** | `swiftray`（branch `dev/hx2-galvo-blend`）：`src/parser/my_qsvg_handler_qt6.cpp`（`createGNode`、node→Shape 迴圈）、`src/parser/mysvg/mysvg-functions.h`（`processMySVGNode`、`processUse`）、`src/parser/mysvg/mysvg-types.h`、`src/shape/shape.h`、`src/layer.{h,cpp}`、`src/toolpath_exporter/toolpath-exporter-fcode.{h,cpp}`；相關未實作規格 `docs/galvo-content-blocks.md`（自動 content mode，本 PRD 取代其中「item＝polygon」的定義） |
-| **Companion PRD** | `docs/prd/hexa-ii-galvo/hexa-g-galvo-calibration.md`（§7.11 backlash 旗標、tile 順序） |
+| **Companion PRD** | `docs/prd/hexa-ii-galvo/hexa-g-galvo-calibration.md`（§7.11 backlash 旗標、tile 順序）、`docs/prd/hexa-ii-galvo/galvo-seam-kpass-walk.md`（拼接策略；線段在 KW 下硬切） |
 
 ---
 
@@ -17,7 +17,9 @@
 
 批量生產時畫布上會一次排很多互相獨立的小物件，排列間距跟 tile（block displacement）沒有關係，tile 格線常常切過物件中間，物件被拆到兩個停靠點再靠接縫混合拼回來——又慢又有錯位風險。
 
-這份 PRD 給振鏡圖層一個「分塊方式」參數：「固定格點」是現在的行為（預設）；「依物件」讓圖層裡每個第一層物件都整個在一個停靠點內打完，不切割、不做接縫混合。互相靠近、合起來仍放得進一個場鏡的物件併成同一個停靠點。前端在任何轉檔前檢查每個物件都放得進一個場鏡；後端萬一遇到放不進的，整個轉檔失敗。
+這份 PRD 給振鏡圖層一個「分塊方式」參數：「固定格點」是原本的行為；「依物件」讓圖層裡每個第一層物件都整個在一個停靠點內打完，不切割、不做接縫混合。互相靠近、合起來仍放得進一個場鏡的物件併成同一個停靠點。前端在任何轉檔前檢查每個物件都放得進一個場鏡；後端萬一遇到放不進的，整個轉檔失敗。
+
+**自動（2026-11-20 新增，預設）**：優先用「依物件」的方式處理；單一物件放不進場鏡工作範圍時，只有那個物件改用格點拼接。使用者不必先知道物件大小再選方式，也不會因為一個大物件讓整個轉檔失敗。需要拼接的物件裡若有路徑（向量線段），前端額外跳一次警告：路徑目前只有硬切，對位要求高，接縫比點陣圖更容易看出瑕疵。
 
 另記錄一個低優先的第三種方式「置中格點」：tile 大小不變，但格線以物件中心為準擺放，讓同一個物件不論放在哪裡都被切在同樣的位置（§7.6，未排程）。
 
@@ -42,10 +44,12 @@
 - 物件之間依位置併成停靠點，順序與文件順序無關。
 - 停靠順序避免 X、Y 兩軸的 backlash。
 - 前端在所有轉檔入口檢查物件大小；後端遇到超過時失敗而不是默默切割。
+- 「自動」：同一圖層內，放得進場鏡的物件依物件停靠，放不進的物件走格點拼接；設為新圖層與舊檔的預設。
+- 需要拼接的內容含路徑時，前端在轉檔前警告。
 
 **Non-goals**
 - 單一 bitmap 內部的連通區塊分析（四角裝飾畫在同一張圖裡仍是一個物件）。
-- 同一圖層內混用（大物件走 tile、小物件獨立停靠）。
+- ~~同一圖層內混用（大物件走 tile、小物件獨立停靠）~~ → 2026-11-20 改為 Goal，即「自動」（§7.7）。
 - 場鏡邊緣的校正殘差與品質考量（§11 決策 5）。
 - 停靠點順序的旅行距離最佳化。
 - Promark：不顯示、不讀這個參數。
@@ -58,6 +62,8 @@
 3. **群組物件**：一個由多段 path 組成的 logo 群組成一個 group，整個 logo 在同一個停靠點完成，內部沒有定位錯位。
 4. **物件太大**：圖層裡有一個 120 mm 的物件，送出、預估時間、路徑預覽都被前端擋下並說明是哪些物件。
 5. **重複 2 次**：所有停靠點做完一遍後，從第一個停靠點重新做第二遍。
+6. **自動，大小混排**：一個圖層裡有 30 個 30 mm 吊牌和一張 300 mm 的漸層照片。吊牌依物件併成停靠點、不被切開；照片用格點拼接（接縫依拼接策略）。使用者什麼都不用選。
+7. **自動，大型向量圖**：圖層裡有一個 200 mm 的向量 logo。轉檔前跳出警告說明路徑拼接只有硬切，使用者可以繼續，或回去把它縮小／拆成放得進場鏡的物件。
 
 ## 5. Acceptance criteria
 
@@ -94,11 +100,32 @@
 - 操作：情境 5。
 - 結果：所有停靠點做完一遍後才開始第二遍，第二遍從第一個停靠點的安全起點開始。
 
+**A8 自動是預設**
+- 操作：HEXA G 新文件新增振鏡圖層；另開一個沒有 `data-galvoTiling` 的舊檔。
+- 結果：兩者的「分塊方式」都顯示「自動」；選單有「自動」「固定格點」「依物件」三項；選「自動」寫入 `data-galvoTiling="auto"`。
+- 邊界：舊檔明確存了 `grid` 或 `object` 的圖層維持原值；Promark、非振鏡圖層仍看不到這個選項。
+
+**A9 自動：放得進的物件依物件處理**
+- 操作：情境 1（全部物件都小於場鏡），分塊方式「自動」，匯出 fcode。
+- 結果：fcode 與同一份文件選「依物件」時逐位元組相同。
+- 邊界：圖層只有一個物件且放得進場鏡＝一個停靠點。
+
+**A10 自動：放不進的物件走拼接**
+- 操作：情境 6，匯出 fcode 並輸出 debug 圖。
+- 結果：吊牌全部在依物件的停靠點內完成、沒有被切開；照片被切成格點 tile，接縫依目前的拼接策略；照片單獨放在一個「固定格點」圖層時，那幾個 tile 的 list 內容與這裡相同。前端不擋、swiftray 不回失敗。
+- 邊界：全部物件都放不進＝與「固定格點」逐位元組相同；小物件落在大物件外框內時兩者各自完整打出、不重複；剛好等於場鏡（+0.001 mm 內）算放得進；物件放得進場鏡、但因為靠近行程邊界找不到可及的停靠點時，也歸到拼接那一批（不失敗）。
+
+**A11 路徑拼接警告**
+- 操作：情境 7，分別按送出、匯出 fcode、預估時間、路徑預覽。
+- 結果：送出與匯出 fcode 前跳出警告，說明有幾個含路徑的物件需要拼接、路徑拼接只有硬切；可「繼續」「取消」「選取這些物件」，並可勾選不再顯示。選繼續後照常轉檔。預估時間與路徑預覽不跳警告。
+- 邊界：需要拼接的物件只有漸層點陣圖＝不警告；物件是群組、裡面同時有圖片和路徑＝警告；隱藏圖層、repeat 為 0 的圖層不檢查；勾過不再顯示後不再跳；「依物件」圖層維持 A2 的擋下行為，不走這個警告。
+
 ## 6. Must not change
 
 **beam-studio**
 - `helpers/layer/layer-config-helper.ts`（新增 key）
   - 所有讀寫圖層參數的地方（`getData`／`writeDataLayer`／`initState`）— 既有 key 的預設值與讀寫不變；新 key 不進 `presetRelatedConfigs`，套用預設參數不會改到它。
+  - 「自動」新增後：`galvoTiling` 的預設由 `GalvoTiling.Grid` 改為 `GalvoTiling.Auto`（`layer-config-helper.ts:166`）。**刻意的行為改變**：沒有這個屬性的舊檔顯示並採用「自動」。
 - `public/js/lib/svgeditor/sanitize.js`（`g` 白名單加一項）
   - `sanitizeSvg` 開檔 — 其他屬性的保留／移除不變。
 - `app/svgedit/text/paramsLabel.ts`（`hiddenKeys` 加 `galvoTiling`）
@@ -109,6 +136,7 @@
   - HEXA G 振鏡圖層 — 既有 `biDirectional`、`crossHatch`、`fillAngle`、wobble、focus 的存檔與 undo 不變。
 - `actions/beambox/export-funcs-swiftray.ts`（`fetchTaskCodeSwiftray` 開頭加檢查）
   - `export-funcs.ts` 的 `estimateTime`、`exportFcode`、gcode 系列、`MonitorContext` — 非 HEXA G、或沒有「依物件」圖層時流程與結果完全不變；檢查失敗時在任何畫布暫時修改（文字轉路徑等）之前返回，不留下殘留。
+  - 「自動」新增後：非 HEXA G 流程不變；HEXA G 的「自動」圖層多一個可能的警告（§7.8），使用者取消時同樣在任何畫布暫時修改之前返回；「依物件」圖層的擋下行為（A2）不變。
 
 **swiftray**
 - `src/parser/mysvg/mysvg-functions.h`（`processMySVGNode`、`processUse` 多記 `item_key`）
@@ -119,16 +147,18 @@
   - 所有 Shape 子類、文件序列化（`document-serializer.h`）— 不序列化新欄位，`.swiftray` 檔格式不變。
 - `src/layer.{h,cpp}`（新參數）
   - `setParameters` 的其他欄位 — 不變。
+  - 「自動」新增後：`galvo_tiling` 缺少或不認得時由 `Grid` 改為 `Auto`（`layer.cpp:384`）。**這是刻意的行為改變**：舊檔與舊版前端送來的振鏡圖層會從固定格點變成自動，發 PR 時要列出。
 - `src/toolpath_exporter/toolpath-exporter-fcode.{h,cpp}`
   - 非振鏡圖層、Promark、「固定格點」的振鏡圖層 — 產出的 fcode 逐位元組相同（以同一份 SVG 前後比對）。
   - `planGalvoBlocks()`、`emitGalvoBlocks()` 的格點模式 — 不變。
+  - 「自動」新增後：明確標成 `grid`／`object` 的圖層，fcode 與新增前逐位元組相同。
   - `preprocessLaserLayer()` 振鏡分支改呼叫 `createGalvoFactories()`，建立順序與參數和原本逐行相同；`convertGalvoDepthBitmaps()` 加了預設參數，預設值下行為不變。
 
 ## 7. Design
 
 ### 7.1 圖層參數（前端）
 
-- ConfigKey `galvoTiling: 'grid' | 'object'`（`as const` 物件定義值），屬性 `data-galvoTiling`，預設 `'grid'`；加進 `ILayerConfig.d.ts`、`layer-config-helper.ts` 的屬性對照與預設、`sanitize.js` 的 `g` 白名單。
+- ConfigKey `galvoTiling: 'grid' | 'object'`（`as const` 物件定義值），屬性 `data-galvoTiling`，預設 `'grid'`（§7.7 之後加上 `'auto'` 並改為預設）；加進 `ILayerConfig.d.ts`、`layer-config-helper.ts` 的屬性對照與預設、`sanitize.js` 的 `g` 白名單。
 - UI：圖層參數面板的「解析度」下方新增「分塊方式」（Tiling，`GalvoTilingBlock`），`Select`，選項「固定格點」（Grid）／「依物件」（By Object），只在 `workarea === 'fhx2galvo'` 且目前圖層是振鏡模組時顯示；多圖層值不同時顯示「-」。原本放在進階設定 modal，2026-11-03 依使用者要求移出。
 - 說明文字（依物件）：「每個物件完整在一個場鏡範圍內雕刻，不會被 tile 切開，適合批量生產多個獨立物件。每個物件都必須小於場鏡尺寸。」
 - i18n：`beambox.right_panel.laser_panel.galvo_tiling`（`title`、`grid`、`object`、`object_hint`），en／zh-tw 先寫，其他語言發 PR 前補齊。
@@ -185,9 +215,48 @@ checkObjectTilingItems(): Promise<{ field: number; items: SVGGraphicsElement[] }
 - **對齊方式**：「tile 中心對物件中心」時，200 mm 的物件配 100 mm tile 會切成 3×3（中間一格、四周半格）；要「剛好 2×2」，對齊的應該是整組 tile 的中心——所需 tile 數為奇數時 tile 中心落在物件中心，偶數時接縫落在物件中心。
 - **整步限制**：`planGalvoBlocks()` 的註解說明格點以機器原點為錨點，是因為 block 位移是整數個馬達整步，龍門只會停在這些位置上。錨點平移後，停靠點不一定落在整步上（單一 block 的情況目前已經是自由停靠點）。要不要把錨點量化到整步、量化後物件中心與 tile 中心最多差半步，需要機構確認。
 
+### 7.7 自動（2026-11-20 新增，未實作）
+
+**定義**：以圖層第一層物件為單位（§7.3 的 `item_key`）。物件放得進一個場鏡、而且找得到可及的停靠點，就依物件處理；否則該物件走格點拼接。
+
+**前端**
+- `constants/galvo-tiling.ts` 的 `GalvoTiling` 加 `Auto: 'auto'`；`layer-config-helper.ts:166` 的預設改成 `GalvoTiling.Auto`。
+- `GalvoTilingBlock.tsx` 的選項順序：「自動」（Auto）／「固定格點」／「依物件」。
+- 說明文字（自動）：「放得進場鏡範圍的物件各自完整雕刻，不會被切開；放不進的物件自動分塊拼接。」
+- i18n：`beambox.right_panel.laser_panel.galvo_tiling` 加 `auto`、`auto_hint`。
+- `checkObjectTilingItems()`（`helpers/device/galvoTiling.ts`）只檢查 `object` 圖層，「自動」圖層不擋。
+
+**swiftray**
+- `Layer::GalvoTiling` 加 `Auto`（`layer.h:27`）；`layer.cpp:384` 的解析改成 `"object"` → `Object`、`"grid"` → `Grid`、其餘（含缺少）→ `Auto`。
+- `convertLayer()` 的「依物件」分支（`toolpath-exporter-fcode.cpp:744`）擴成 `Object` 與 `Auto` 共用，差別只在放不進的物件怎麼處理：
+  1. **收集**：同 §7.4 步驟 1。
+  2. **分流**：外框寬或高 > 場鏡 + 容差的組，歸到「拼接批」。`Object` 模式維持丟例外（§7.4 步驟 2）；`Auto` 不丟。
+  3. **合併成停靠點**：其餘的組照 §7.4 步驟 3～5 併成 cluster。單一組找不到可及停靠點時，`Object` 失敗，`Auto` 把它也歸到拼接批。
+  4. **輸出依物件批**：照 §7.5，每個 cluster 一組 factory、一個 block。
+  5. **輸出拼接批**：拼接批的所有 Shape 建一組 factory，交給現有的格點流程（`planGalvoBlocks()`、`emitGalvoBlocks()`），格點仍以機器原點為錨點，內容外框只算拼接批。接縫歸屬與混合照目前的拼接策略，和這些物件單獨放在一個「固定格點」圖層時相同。
+- **順序**：每一遍重複先打依物件批的所有 cluster，再打拼接批的所有 tile。兩批各自是一個 backlash 批次，各自從自己的安全起點進場（§7.5 的規則）。
+- **重複**：維持 `convertLayer()` 的外層迴圈，每一遍兩批都跑完才重來。拼接批的 factory 和依物件批一樣只建一次，不重蹈 §12 記錄的「格點模式每遍重複再加一次圖」。
+- **全部放得進**＝與 `Object` 相同；**全部放不進**＝與 `Grid` 相同（逐位元組，A9、A10）。
+- **debug 圖**：依物件的 cluster 與拼接批的 tile 畫在同一張，用不同顏色區分。
+
+### 7.8 路徑拼接警告（2026-11-20 新增，未實作）
+
+**原因**：線段（路徑、填色的掃描線、非漸層圖）在 KW 拼接策略下一律硬切（`galvo-seam-kpass-walk.md` Non-goals），兩個停靠點之間只要有一點對位誤差，線條就會錯開或留下縫，比點陣圖明顯得多。
+
+**前端**（`helpers/device/galvoTiling.ts` 新增 `checkPathStitchingItems()`）
+- 範圍：`fhx2galvo` 的每個可見、repeat > 0、`galvoTiling === 'auto'` 的振鏡圖層的第一層物件（`getLayerObjects()`）。
+- 條件：物件外框寬或高 > 場鏡 + `GALVO_FIELD_TOLERANCE_MM`，而且物件含有路徑內容。路徑內容＝物件本身或其子孫（`<use>` 展開後）有任何不是 `<image>` 的可繪製元素。
+- 時機：在 `fetchTaskCodeSwiftray()` 開頭、`checkObjectTilingItems()` 之後。只在送出與匯出 fcode 時跳；預估時間、路徑預覽不跳（這兩個入口會反覆觸發）。
+- 內容：「有 %d 個含路徑的物件超過場鏡範圍（%s mm），會分塊拼接。路徑的拼接目前只有硬切，對位要求較高，接縫處較容易出現明顯瑕疵。」按鈕：繼續／取消／選取這些物件；勾選「不再顯示」寫入 `alert-config.ts` 的新 key `skip-galvo-path-stitch-warning`。
+- i18n：`beambox.right_panel.laser_panel.galvo_tiling.path_stitch_warning`，en／zh-tw 先寫。
+
+**swiftray**：不擋、不回失敗。匯出時 `qWarning` 一行（圖層名、拼接批裡含線段的物件數），方便從 log 對照。
+
+**不涵蓋**：「固定格點」圖層（格線位置和模組偏移有關，前端無法只靠物件大小判斷會不會切到）；非漸層點陣圖雖然也是線段、也硬切，第一版不警告（§11 第 11 項）。
+
 ## 8. Data contracts
 
-- **SVG（beam-studio → swiftray）**：圖層 `<g class="layer">` 新屬性 `data-galvoTiling="grid"|"object"`。字串值，`getAttr()` 只回 double 不能用；`createGNode()` 直接讀 `attributes.value("data-galvoTiling")`，缺少或不認得的值一律當 `grid`（往後加的值在舊版 swiftray 上退回現在的行為）。
+- **SVG（beam-studio → swiftray）**：圖層 `<g class="layer">` 新屬性 `data-galvoTiling="auto"|"grid"|"object"`。字串值，`getAttr()` 只回 double 不能用；`createGNode()` 直接讀 `attributes.value("data-galvoTiling")`。「自動」實作前：缺少或不認得的值一律當 `grid`。「自動」實作後：缺少或不認得的值當 `auto`（與前端預設一致）；新版前端配舊版 swiftray 時，`auto` 會被當成 `grid`，等於全部拼接，不會失敗。
 - **轉檔失敗**：沿用 `{success: false, error: {message}}`；beam-studio `export-funcs-swiftray.ts` 既有的錯誤 popup 顯示訊息。
 - 沒有新的 task config key；`galvo_field`、`galvo_fix_backlash` 照舊。
 
@@ -201,6 +270,8 @@ checkObjectTilingItems(): Promise<{ field: number; items: SVGGraphicsElement[] }
 1. swiftray：解析 `item_key` + Shape 欄位 + 圖層參數（不改匯出，行為不變）— `3ce9f62`。
 2. swiftray：「依物件」的規劃、輸出、停靠順序、失敗回報 — `0c4964f`。
 3. beam-studio：圖層參數、UI、i18n（23 種語言已補齊）、sanitize、前端檢查 — branch `machine/hx2`。
+4. swiftray：`Auto` 的解析、分流、拼接批輸出、debug 圖（§7.7）— 未實作。
+5. beam-studio：`auto` 選項與預設、說明文字、路徑拼接警告、i18n（§7.7、§7.8）— 未實作。等 4 合併後才發，避免前端預設送出舊版 swiftray 不認得的行為。
 
 實作與設計的差異（2026-11-03）：
 - 前端檢查另外把多選暫時群組（`#svgcontent > g[data-tempgroup]`，元素帶 `data-original-layer`）裡的物件算回原圖層：多選時元素不在圖層下，要到 `getSvgString()` 才放回去。
@@ -218,6 +289,9 @@ checkObjectTilingItems(): Promise<{ field: number; items: SVGGraphicsElement[] }
 7. 「置中格點」以單一物件中心還是整個圖層內容中心為準？（§7.6）
 8. 「置中格點」對齊的是「某一個 tile 的中心」還是「整組 tile 的中心」？兩者在 tile 數為偶數時不同（§7.6）。
 9. 「置中格點」的格線起點要不要量化到馬達整步？（§7.6）
+10. ~~預設的分塊方式~~ → 新增「自動」並設為預設；沒有屬性的舊檔也採用自動（2026-11-20）。
+11. 路徑拼接警告要不要涵蓋非漸層點陣圖（同樣是線段、同樣硬切）以及「固定格點」圖層？第一版只做「自動」圖層裡含路徑的物件。
+12. 「自動」下，拼接批與依物件批的先後：目前定為先依物件、再拼接。若拼接批的煙塵會影響之後的小物件，或反過來，再調整。
 
 ## 12. Risks & follow-ups
 
@@ -226,6 +300,9 @@ checkObjectTilingItems(): Promise<{ field: number; items: SVGGraphicsElement[] }
 - **`item_key` 用節點位址**：只在單次解析內有效，不可存檔。
 - ~~**格點模式的 backlash 規則**（`8b4034a`，每列退一欄）與本 PRD 的規則不同~~ → 已統一：格點模式也改成整批最左停靠點 − 5 mm、離行程左界至少 1 mm（swiftray `258489a`，2026-11-02）。原本退一欄時，第一欄的批次會退到行程左界，實測龍門會回彈。
 - 後續：bitmap 內連通區塊、混合模式（見 swiftray `docs/galvo-content-blocks.md` Phase 2）。
+- **「自動」讓舊檔的行為改變**：原本整層固定格點的舊檔，重新匯出時小物件會改成依物件停靠，停靠點位置與順序都不同。結果應該更好（不被切開），但和之前打出來的成品不會逐點相同；要完全重現舊結果，把圖層改回「固定格點」。
+- **「自動」下同一圖層兩種停靠方式**：一個剛好超過場鏡一點點的物件會整個改走拼接，外觀上和旁邊略小的同款物件不同（一個有接縫、一個沒有）。門檻就是場鏡尺寸，沒有緩衝。
+- **警告的判斷比實際寬**：超過場鏡的群組只要含有一段路徑就警告，即使那段路徑本身沒有跨接縫。
 - **格點模式既有問題（實作時發現，未修）**：`convertGalvoLaserLayer()` 每一遍重複都呼叫 `prepareGalvoBitmaps()`，把圖片再加進同一個 `laser_raster_factory_`（`add_bitmap()` 只會累加），深度圖也會再 append 進 `galvo_depth_bitmaps_`。重複 ≥ 2 的格點圖層，第 r 遍的 factory 裡有 r 份同樣的圖。點陣圖會經 `mergedEntries()` 合成一張，重疊的份數是否因此只打一次未確認；深度圖沒有合併，第二遍起確定會重打。需要上機或 fcode 比對確認後另外修。「依物件」的 factory 只建一次，沒有這個問題。
 
 ## 13. Test plan
@@ -236,5 +313,7 @@ checkObjectTilingItems(): Promise<{ field: number; items: SVGGraphicsElement[] }
   - gantry 移動序列的 Y 單調、X 往左必經安全起點（A5）；
   - 120 mm 物件回傳失敗訊息（A6）；
   - repeat = 2 的停靠點序列為兩份完整序列（A7）；
+  - 「自動」：情境 1 與 `object` 逐位元組相同（A9）；全部超過場鏡時與 `grid` 逐位元組相同、情境 6 的吊牌各只出現在一個 block、照片的 tile 內容與單獨放在 `grid` 圖層時相同（A10）；repeat = 2 時兩批各跑兩遍、圖沒有重複加入；
   - 未開旗標的振鏡圖層、非振鏡圖層、Promark 的 fcode 與改動前逐位元組相同（Must not change）。
-- **上機**：情境 1 實際雕刻，確認物件完整、無錯位。
+- **beam-studio 單元測試（自動）**：預設值與舊檔顯示（A8）；`checkObjectTilingItems` 不擋 `auto` 圖層；`checkPathStitchingItems` — 只有圖片／群組含路徑／`<use>`／隱藏圖層／剛好等於場鏡；警告只在送出與匯出時出現、取消時不留下暫時修改、勾選不再顯示後不跳（A11）。
+- **上機**：情境 1 實際雕刻，確認物件完整、無錯位；情境 6 確認兩批的停靠與接縫。
