@@ -9,10 +9,17 @@ import { calibrateFromDevicePictures } from './utils';
 export const showAdorCalibration = async ({
   factoryMode = false,
   isAdvanced = false,
-}: { factoryMode?: boolean; isAdvanced?: boolean } = {}): Promise<boolean> => {
+  replaceOpenDialog = false,
+}: {
+  factoryMode?: boolean;
+  isAdvanced?: boolean;
+  /** take the place of a dialog that is being closed in the same tick (the switch to advanced mode) */
+  replaceOpenDialog?: boolean;
+} = {}): Promise<boolean> => {
   const DIALOG_ID = 'fisheye-calibration-v2';
 
-  if (isIdExist(DIALOG_ID)) {
+  // isIdExist still sees a dialog popped in this tick: the list it reads updates on the next render
+  if (isIdExist(DIALOG_ID) && !replaceOpenDialog) {
     return false;
   }
 
@@ -51,9 +58,15 @@ export const showAdorCalibration = async ({
         currentData={currentData}
         factoryMode={factoryMode}
         isAdvanced={isAdvanced}
+        // a switch to advanced mode reuses the dialog id: without the key React keeps the old step and data
+        key={isAdvanced ? 'advanced' : 'basic'}
         onClose={(completed = false) => {
           popDialogById(DIALOG_ID);
           resolve(completed);
+        }}
+        onSwitchToAdvanced={() => {
+          popDialogById(DIALOG_ID);
+          resolve(showAdorCalibration({ isAdvanced: true, replaceOpenDialog: true }));
         }}
       />,
     );
