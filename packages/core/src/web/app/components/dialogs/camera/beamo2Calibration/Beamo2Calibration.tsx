@@ -6,6 +6,7 @@ import { match } from 'ts-pattern';
 import alertCaller from '@core/app/actions/alert-caller';
 import DoorChecker from '@core/app/actions/camera/preview-helper/DoorChecker';
 import progressCaller from '@core/app/actions/progress-caller';
+import alertConstants from '@core/app/constants/alert-constants';
 import {
   bm2FullAreaPerspectiveGrid,
   bm2PnPPoints,
@@ -57,6 +58,8 @@ interface Props {
   currentData?: FisheyeCameraParametersV4Cali;
   isAdvanced: boolean;
   onClose: (completed?: boolean) => void;
+  /** close this dialog and start over in advanced mode; the machine is released before it is called */
+  onSwitchToAdvanced: () => void;
 }
 
 const DEFAULT_POINTS_TL: Array<[number, number]> = [
@@ -87,7 +90,7 @@ const DEFAULT_POINTS_BR: Array<[number, number]> = [
   [3671, 2905],
 ];
 
-const Beamo2Calibration = ({ currentData, isAdvanced, onClose }: Props): ReactNode => {
+const Beamo2Calibration = ({ currentData, isAdvanced, onClose, onSwitchToAdvanced }: Props): ReactNode => {
   const PROGRESS_ID = 'fbm2-calibration';
   const { calibration: tCalibration, device: tDevice, global: tGlobal } = useI18n();
   const calibratingParam = useRef<FisheyeCameraParametersV4Cali>(currentData ?? {});
@@ -254,16 +257,51 @@ const Beamo2Calibration = ({ currentData, isAdvanced, onClose }: Props): ReactNo
 
             if (res.success) {
               const { imgPoints, rvecs, tvecs } = res;
+              const applyResult = () => {
+                isAutoSolved.current = true;
+                updateParam({
+                  imgPoints1: imgPoints,
+                  rvec: rvecs.bottomRight,
+                  rvecs1: rvecs,
+                  tvec: tvecs.bottomRight,
+                  tvecs1: tvecs,
+                });
+                setStep(Steps.SOLVE_OTHER_PNP);
+              };
 
-              isAutoSolved.current = true;
-              updateParam({
-                imgPoints1: imgPoints,
-                rvec: rvecs.bottomRight,
-                rvecs1: rvecs,
-                tvec: tvecs.bottomRight,
-                tvecs1: tvecs,
+              if (!res.highResidual) {
+                applyResult();
+
+                return;
+              }
+
+              // back to the paper step first, so that dismissing the alert does not leave this step spinning
+              setStep(Steps.PUT_PAPER);
+              alertCaller.popUp({
+                buttons: [
+                  { label: tCalibration.auto_solve_pnp_continue_anyway, onClick: applyResult },
+                  isAdvanced
+                    ? {
+                        // already in advanced mode: the intrinsics just measured are the suspect, shoot them again
+                        label: tCalibration.title_capture_calibration_pattern,
+                        onClick: () => setStep(Steps.PRE_CHESSBOARD),
+                        type: 'primary',
+                      }
+                    : {
+                        label: i18n.lang.topbar.menu.calibrate_camera_advanced,
+                        onClick: async () => {
+                          // awaited here: the unmount cleanup does not wait, and the advanced flow moves the head at once
+                          await releaseMachine();
+                          onSwitchToAdvanced();
+                        },
+                        type: 'primary',
+                      },
+                ],
+                message: isAdvanced
+                  ? tCalibration.auto_solve_pnp_high_residual_advanced
+                  : tCalibration.auto_solve_pnp_high_residual,
+                type: alertConstants.SHOW_POPUP_WARNING,
               });
-              setStep(Steps.SOLVE_OTHER_PNP);
 
               return;
             }
@@ -274,12 +312,11 @@ const Beamo2Calibration = ({ currentData, isAdvanced, onClose }: Props): ReactNo
               .with('UNSUPPORTED', () => setStep(Steps.SOLVE_PNP_INSTRUCTION))
               .with('NOT_ENOUGH_MARKS', () => {
                 alertCaller.popUpError({
-                  message: sprintf(tCalibration.auto_solve_pnp_not_enough_marks, res.matched ?? 0),
+                  message: sprintf(tCalibration.auto_solve_pnp_not_enough_marks, {
+                    found: res.matched ?? 0,
+                    total: 16,
+                  }),
                 });
-                setStep(Steps.PUT_PAPER);
-              })
-              .with('HIGH_RESIDUAL', () => {
-                alertCaller.popUpError({ message: tCalibration.auto_solve_pnp_high_residual });
                 setStep(Steps.PUT_PAPER);
               })
               .otherwise((reason) => {

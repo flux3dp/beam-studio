@@ -93,6 +93,7 @@ describe('autoSolvePnP', () => {
       [0, points.slice(12, 16), [...bm2PnPPoints.bottomRight]],
     ]);
     expect(res).toEqual({
+      highResidual: false,
       imgPoints: {
         bottomLeft: points.slice(8, 12),
         bottomRight: points.slice(12, 16),
@@ -132,15 +133,24 @@ describe('autoSolvePnP', () => {
     expect(cameraCalls.at(-1)).toEqual(['exposure', 320]);
   });
 
-  test('does not shoot more photos for a high residual', async () => {
-    mockAutoPnPMatch.mockResolvedValue({ matched: 16, reason: 'HIGH_RESIDUAL', rms: 1.8, success: false });
+  test('solves a high residual anyway, without more photos, and flags it for the caller', async () => {
+    mockAutoPnPMatch.mockResolvedValue({ matched: 16, points, reason: 'HIGH_RESIDUAL', rms: 1.8, success: false });
 
     const res = await autoSolvePnP(params);
 
-    expect(res).toEqual({ matched: 16, reason: 'HIGH_RESIDUAL', rms: 1.8, success: false });
+    expect(res).toMatchObject({ highResidual: true, rms: 1.8, success: true });
     expect(mockTakeOnePicture).toHaveBeenCalledTimes(firstRound.length);
-    expect(mockSolvePnPCalculate).not.toHaveBeenCalled();
+    expect(mockSolvePnPCalculate).toHaveBeenCalledTimes(4);
     expect(cameraCalls.at(-1)).toEqual(['exposure', 320]);
+  });
+
+  test('reports a high residual that comes without usable points', async () => {
+    mockAutoPnPMatch.mockResolvedValue({ matched: 16, reason: 'HIGH_RESIDUAL', rms: 1.8, success: false });
+    expect(await autoSolvePnP(params)).toEqual({ matched: 16, reason: 'HIGH_RESIDUAL', rms: 1.8, success: false });
+
+    mockAutoPnPMatch.mockResolvedValue({ points: [null, ...points.slice(1)], reason: 'HIGH_RESIDUAL', success: false });
+    expect((await autoSolvePnP(params)).success).toBe(false);
+    expect(mockSolvePnPCalculate).not.toHaveBeenCalled();
   });
 
   test('stops at the first photo when the backend does not know the command', async () => {

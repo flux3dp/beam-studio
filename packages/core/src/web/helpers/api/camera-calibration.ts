@@ -357,7 +357,15 @@ class CameraCalibrationApi {
     weak: AutoPnPBlob[][] = [],
   ): Promise<
     | { filled: number; matched: number; points: Array<[number, number]>; rms: number; success: true }
-    | { filled?: number; matched?: number; reason: AutoPnPFailReason; rms?: null | number; success: false }
+    | {
+        filled?: number;
+        matched?: number;
+        /** null for a mark that was not found; complete after HIGH_RESIDUAL */
+        points?: Array<[number, number] | null>;
+        reason: AutoPnPFailReason;
+        rms?: null | number;
+        success: false;
+      }
   > =>
     new Promise((resolve, reject) => {
       this.events.onMessage = ({ status, ...rest }) => {

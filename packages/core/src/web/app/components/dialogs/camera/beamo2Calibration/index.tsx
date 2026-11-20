@@ -47,6 +47,10 @@ export const showBeamo2Calibration = async (isAdvanced = false): Promise<boolean
           onClose();
           resolve(completed);
         }}
+        onSwitchToAdvanced={() => {
+          onClose();
+          resolve(showBeamo2Calibration(true));
+        }}
       />,
     );
   });

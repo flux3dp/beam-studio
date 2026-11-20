@@ -22,6 +22,8 @@ export const EXPOSURE_ROUNDS = [
 
 export type AutoSolvePnPResult =
   | {
+      /** every mark was found but the residual is over the gate: the caller asks the user before going on */
+      highResidual: boolean;
       imgPoints: Record<Region, Array<[number, number]>>;
       rms: number;
       rvecs: Record<Region, number[][]>;
@@ -84,16 +86,27 @@ const autoSolvePnP = async (params: FisheyeCameraParametersV4Cali): Promise<Auto
       if (matchRes.success || matchRes.reason !== 'NOT_ENOUGH_MARKS') break;
     }
 
-    if (!matchRes?.success) return (matchRes ?? { reason: 'NOT_ENOUGH_MARKS', success: false }) as AutoSolvePnPResult;
+    if (!matchRes) return { reason: 'NOT_ENOUGH_MARKS', success: false };
 
-    const result = { imgPoints: {}, rms: matchRes.rms, rvecs: {}, success: true, tvecs: {} } as Extract<
-      AutoSolvePnPResult,
-      { success: true }
-    >;
+    const highResidual = !matchRes.success && matchRes.reason === 'HIGH_RESIDUAL';
+    const allPoints = matchRes.points as Array<[number, number]> | undefined;
+
+    if (!allPoints || (!matchRes.success && !(highResidual && allPoints.every(Boolean)))) {
+      return matchRes as AutoSolvePnPResult;
+    }
+
+    const result = {
+      highResidual,
+      imgPoints: {},
+      rms: matchRes.rms ?? 0,
+      rvecs: {},
+      success: true,
+      tvecs: {},
+    } as Extract<AutoSolvePnPResult, { success: true }>;
 
     for (let i = 0; i < REGIONS.length; i++) {
       const region = REGIONS[i];
-      const points = matchRes.points.slice(i * 4, i * 4 + 4);
+      const points = allPoints.slice(i * 4, i * 4 + 4);
       const res = await cameraCalibrationApi.solvePnPCalculate(0, points, [...bm2PnPPoints[region]]);
 
       if (!res.success) return { reason: 'SOLVE_PNP_FAILED', success: false };
