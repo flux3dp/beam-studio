@@ -25,7 +25,7 @@ import { Mode } from '@core/app/constants/monitor-constants';
 import checkDeviceStatus from '@core/helpers/check-device-status';
 import { backUpCalibrationData } from '@core/helpers/device/camera/backUpCalibrationData';
 import { checkBlockedSerial } from '@core/helpers/device/checkBlockedSerial';
-import { confirmCachedTaskLensProfile } from '@core/helpers/device/promark/cached-task-lens';
+import { prepareCachedTaskRerun } from '@core/helpers/device/promark/cached-task-lens';
 import checkFirmware from '@core/helpers/device/updateFirmware/checkFirmware';
 import firmwareUpdater from '@core/helpers/device/updateFirmware/firmwareUpdater';
 import DeviceMaster from '@core/helpers/device-master';
@@ -332,9 +332,12 @@ export default {
       const vtElemHandler = extractVariableText(false) ?? undefined;
       const isPromark = promarkModels.has(device.model);
       const isIdle = device.st_id <= 0;
-      const previewTask = isIdle && isPromark ? exportFuncs.getCachedPromarkTask(device.serial) : undefined;
+      const cachedTask = isIdle && isPromark ? exportFuncs.getCachedPromarkTask(device.serial) : undefined;
+      // A copy for this monitor, with the lens picked for this run: the cache keeps the lens the task
+      // was generated for, so asking again later (after another document change) starts from the truth
+      const previewTask = await prepareCachedTaskRerun(device.serial, cachedTask);
 
-      if (!(await confirmCachedTaskLensProfile(device.serial, previewTask))) return;
+      if (previewTask === false) return;
 
       await MonitorController.showMonitor(
         device,

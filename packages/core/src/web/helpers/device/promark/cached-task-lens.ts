@@ -10,25 +10,26 @@ import { getDocumentLensProfileKey, isSameLensProfileKey } from './lens-profiles
 import promarkDataStore from './promark-data-store';
 
 /**
- * Before the dashboard reruns the cached task: the task was generated for the lens in
- * `task.lensProfileKey`, which is what the monitor sends before it starts the task. When the current
- * document asks for another lens, asks which one to run with; picking the document's replaces the
- * task's key, so every later start of this task follows the choice. Resolves false when the user
- * cancels.
+ * Before the dashboard reruns the cached task: the task was generated for `cachedKey`, which is the
+ * lens the monitor sends before it starts the task. When the current document asks for another lens,
+ * asks which one to run with.
+ *
+ * The cached task is never changed: its key is the only record of the lens the task was generated
+ * for. The answer is the lens for this run, which the caller hands to the monitor on a copy.
+ *
+ * @returns false when the user cancels, otherwise the lens to run with (none when the task has none)
  */
 export const confirmCachedTaskLensProfile = async (
   serial: string,
-  task?: { lensProfileKey?: LensProfileKey },
-): Promise<boolean> => {
-  const cachedKey = task?.lensProfileKey;
-
-  if (!cachedKey) return true;
+  cachedKey?: LensProfileKey,
+): Promise<false | { lensProfileKey?: LensProfileKey }> => {
+  if (!cachedKey) return {};
 
   const store = promarkDataStore.get(serial);
   const info = store.info ?? { laserType: LaserType.Desktop, watt: 20 };
   const documentKey = getDocumentLensProfileKey(info);
 
-  if (isSameLensProfileKey(cachedKey, documentKey)) return true;
+  if (isSameLensProfileKey(cachedKey, documentKey)) return { lensProfileKey: cachedKey };
 
   const t = i18n.lang.promark_settings;
   const choice = await new Promise<'cached' | 'cancel' | 'document'>((resolve) => {
@@ -49,7 +50,22 @@ export const confirmCachedTaskLensProfile = async (
 
   if (choice === 'cancel') return false;
 
-  if (choice === 'document') task.lensProfileKey = documentKey;
+  return { lensProfileKey: choice === 'document' ? documentKey : cachedKey };
+};
 
-  return true;
+/**
+ * The cached task as the monitor should run it: a copy carrying the lens picked for this run (see
+ * `confirmCachedTaskLensProfile`). The cached task itself keeps the lens it was generated for.
+ *
+ * @returns false when the user cancels; undefined when there is no cached task to rerun
+ */
+export const prepareCachedTaskRerun = async <T extends { lensProfileKey?: LensProfileKey }>(
+  serial: string,
+  cachedTask?: T,
+): Promise<false | T | undefined> => {
+  const choice = await confirmCachedTaskLensProfile(serial, cachedTask?.lensProfileKey);
+
+  if (!choice) return false;
+
+  return cachedTask && { ...cachedTask, lensProfileKey: choice.lensProfileKey };
 };
