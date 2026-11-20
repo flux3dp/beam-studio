@@ -74,7 +74,8 @@ export type DocumentStateKey = keyof DocumentState;
 export type GlobalPreference = {
   'af-offset': number;
   'anti-aliasing': boolean;
-  'auto-full-area-preview': boolean;
+  /** Unset until the user touches the switch, so the default can change later; the store resolves it */
+  'auto-full-area-preview'?: boolean;
   'auto-switch-tab': boolean;
   auto_align: boolean;
   continuous_drawing: boolean;

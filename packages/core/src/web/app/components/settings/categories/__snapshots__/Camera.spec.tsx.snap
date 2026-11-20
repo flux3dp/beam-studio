@@ -56,7 +56,7 @@ exports[`test Camera settings should render correctly 1`] = `
     Auto Full-Area Preview
     url:
     checked:
-    undefined
+    false
     disabled:
     undefined
     <input

@@ -39,7 +39,7 @@ function Camera(): React.JSX.Element {
         onChange={(e) => setPreference('keep-preview-result', e)}
       />
       <SettingSwitch
-        checked={getPreference('auto-full-area-preview')}
+        checked={!!getPreference('auto-full-area-preview')}
         id="set-auto-full-area-preview"
         label={lang.settings.auto_full_area_preview}
         onChange={(e) => setPreference('auto-full-area-preview', e)}
