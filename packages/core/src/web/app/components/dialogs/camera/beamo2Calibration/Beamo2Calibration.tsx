@@ -109,6 +109,9 @@ const Beamo2Calibration = ({ currentData, isAdvanced, onClose, onSwitchToAdvance
       try {
         await deviceMaster.rawLooseMotor();
         await deviceMaster.endSubTask();
+        // info.st_id comes from the discovery broadcast and would still say raw for a moment: a status check
+        // right after this (PUT_PAPER) must not take our own finished raw mode for a running task
+        deviceMaster.currentDevice!.info.st_id = (await deviceMaster.getReport()).st_id;
       } catch {
         console.error('Failed to release machine');
       } finally {
@@ -182,6 +185,10 @@ const Beamo2Calibration = ({ currentData, isAdvanced, onClose, onSwitchToAdvance
     })
     .with(Steps.PUT_PAPER, () => {
       const handleNext = async (doEngraving = true) => {
+        // coming back from the solve or check steps the machine is still held in raw mode; the status check
+        // below would take that for a running task and offer to abort it, which breaks the steps that follow
+        await releaseMachine();
+
         const deviceStatus = await checkDeviceStatus(deviceMaster.currentDevice!.info);
 
         if (!deviceStatus) return;
@@ -235,94 +242,101 @@ const Beamo2Calibration = ({ currentData, isAdvanced, onClose, onSwitchToAdvance
           onClose={onClose}
           onNext={() => {}}
           process={async () => {
-            const moved = await doorChecker.current?.doorClosedWrapper(() =>
-              moveLaserHead(undefined, { shouldKeepPosition: true }),
-            );
-
-            if (!moved) {
-              setStep(Steps.PUT_PAPER);
-
-              return;
-            }
-
-            progressCaller.openNonstopProgress({ id: PROGRESS_ID, message: tCalibration.auto_solve_pnp_locating });
-
-            let res: Awaited<ReturnType<typeof autoSolvePnP>>;
-
             try {
-              res = await autoSolvePnP(calibratingParam.current);
-            } finally {
-              progressCaller.popById(PROGRESS_ID);
-            }
+              const moved = await doorChecker.current?.doorClosedWrapper(() =>
+                moveLaserHead(undefined, { shouldKeepPosition: true }),
+              );
 
-            if (res.success) {
-              const { imgPoints, rvecs, tvecs } = res;
-              const applyResult = () => {
-                isAutoSolved.current = true;
-                updateParam({
-                  imgPoints1: imgPoints,
-                  rvec: rvecs.bottomRight,
-                  rvecs1: rvecs,
-                  tvec: tvecs.bottomRight,
-                  tvecs1: tvecs,
-                });
-                setStep(Steps.SOLVE_OTHER_PNP);
-              };
-
-              if (!res.highResidual) {
-                applyResult();
+              if (!moved) {
+                setStep(Steps.PUT_PAPER);
 
                 return;
               }
 
-              // back to the paper step first, so that dismissing the alert does not leave this step spinning
-              setStep(Steps.PUT_PAPER);
-              alertCaller.popUp({
-                buttons: [
-                  { label: tCalibration.auto_solve_pnp_continue_anyway, onClick: applyResult },
-                  isAdvanced
-                    ? {
-                        // already in advanced mode: the intrinsics just measured are the suspect, shoot them again
-                        label: tCalibration.title_capture_calibration_pattern,
-                        onClick: () => setStep(Steps.PRE_CHESSBOARD),
-                        type: 'primary',
-                      }
-                    : {
-                        label: i18n.lang.topbar.menu.calibrate_camera_advanced,
-                        onClick: async () => {
-                          // awaited here: the unmount cleanup does not wait, and the advanced flow moves the head at once
-                          await releaseMachine();
-                          onSwitchToAdvanced();
+              progressCaller.openNonstopProgress({ id: PROGRESS_ID, message: tCalibration.auto_solve_pnp_locating });
+
+              let res: Awaited<ReturnType<typeof autoSolvePnP>>;
+
+              try {
+                res = await autoSolvePnP(calibratingParam.current);
+              } finally {
+                progressCaller.popById(PROGRESS_ID);
+              }
+
+              if (res.success) {
+                const { imgPoints, rvecs, tvecs } = res;
+                const applyResult = () => {
+                  isAutoSolved.current = true;
+                  updateParam({
+                    imgPoints1: imgPoints,
+                    rvec: rvecs.bottomRight,
+                    rvecs1: rvecs,
+                    tvec: tvecs.bottomRight,
+                    tvecs1: tvecs,
+                  });
+                  setStep(Steps.SOLVE_OTHER_PNP);
+                };
+
+                if (!res.highResidual) {
+                  applyResult();
+
+                  return;
+                }
+
+                // back to the paper step first, so that dismissing the alert does not leave this step spinning
+                setStep(Steps.PUT_PAPER);
+                alertCaller.popUp({
+                  buttons: [
+                    { label: tCalibration.auto_solve_pnp_continue_anyway, onClick: applyResult },
+                    isAdvanced
+                      ? {
+                          // already in advanced mode: the intrinsics just measured are the suspect, shoot them again
+                          label: tCalibration.title_capture_calibration_pattern,
+                          onClick: () => setStep(Steps.PRE_CHESSBOARD),
+                          type: 'primary',
+                        }
+                      : {
+                          label: i18n.lang.topbar.menu.calibrate_camera_advanced,
+                          onClick: async () => {
+                            // awaited here: the unmount cleanup does not wait, and the advanced flow moves the head at once
+                            await releaseMachine();
+                            onSwitchToAdvanced();
+                          },
+                          type: 'primary',
                         },
-                        type: 'primary',
-                      },
-                ],
-                message: isAdvanced
-                  ? tCalibration.auto_solve_pnp_high_residual_advanced
-                  : tCalibration.auto_solve_pnp_high_residual,
-                type: alertConstants.SHOW_POPUP_WARNING,
-              });
-
-              return;
-            }
-
-            isAutoSolved.current = false;
-            match(res.reason)
-              // backend without the commands: the manual steps still work
-              .with('UNSUPPORTED', () => setStep(Steps.SOLVE_PNP_INSTRUCTION))
-              .with('NOT_ENOUGH_MARKS', () => {
-                alertCaller.popUpError({
-                  message: sprintf(tCalibration.auto_solve_pnp_not_enough_marks, {
-                    found: res.matched ?? 0,
-                    total: 16,
-                  }),
+                  ],
+                  message: isAdvanced
+                    ? tCalibration.auto_solve_pnp_high_residual_advanced
+                    : tCalibration.auto_solve_pnp_high_residual,
+                  type: alertConstants.SHOW_POPUP_WARNING,
                 });
-                setStep(Steps.PUT_PAPER);
-              })
-              .otherwise((reason) => {
-                alertCaller.popUpError({ message: `${tCalibration.failed_to_calibrate_with_pictures} (${reason})` });
-                setStep(Steps.PUT_PAPER);
-              });
+
+                return;
+              }
+
+              isAutoSolved.current = false;
+              match(res.reason)
+                // backend without the commands: the manual steps still work
+                .with('UNSUPPORTED', () => setStep(Steps.SOLVE_PNP_INSTRUCTION))
+                .with('NOT_ENOUGH_MARKS', () => {
+                  alertCaller.popUpError({
+                    message: sprintf(tCalibration.auto_solve_pnp_not_enough_marks, {
+                      found: res.matched ?? 0,
+                      total: 16,
+                    }),
+                  });
+                  setStep(Steps.PUT_PAPER);
+                })
+                .otherwise((reason) => {
+                  alertCaller.popUpError({ message: `${tCalibration.failed_to_calibrate_with_pictures} (${reason})` });
+                  setStep(Steps.PUT_PAPER);
+                });
+            } catch (error) {
+              // never leave this step spinning: the paper step can start it again
+              console.error('Auto solve pnp failed', error);
+              alertCaller.popUpError({ message: tCalibration.failed_to_calibrate_with_pictures });
+              setStep(Steps.PUT_PAPER);
+            }
           }}
         />
       );
