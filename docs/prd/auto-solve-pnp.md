@@ -338,7 +338,7 @@ homography. That model needs no pose prior and no pixel constants. `match_marks`
 5. **Gates**, both required:
    - every mark matched (each region pose needs its four marks; decision 5), else
      `NOT_ENOUGH_MARKS`,
-   - RMS residual to the homography ≤ R_MAX (`R_MAX_MM`, 0.75 mm for now; decision 10), else
+   - RMS residual to the homography ≤ R_MAX (`R_MAX_MM`, 1.0 mm; decision 10), else
      `HIGH_RESIDUAL`.
 6. **Cross-check.** Each quadrant's `solve_pnp_calculate` returns an RMS reprojection error
    (per-point distance, replacing the cancelling mean in the log and added to the response).
@@ -569,11 +569,17 @@ Command names are final once fluxghost's `cmd_mapping` has them; do not rename a
    against 5.8 in the centre, so a centre-size mark falls under the detector's 15 px area).
    Corner marks also bring back the exposure bracket (bottom-left needs about 200, the rest
    75 to 125).
-10. **R_MAX.** 0.75 mm for now, chosen low on purpose to see how many units it blocks: a
-    calibration that keeps failing costs the user more than a preview that is slightly off,
-    so the value is revisited with field data rather than set from the three office units
-    (0.38 to 0.47 mm). For the 8-mark layouts 0.75 mm gates almost nothing (correct matches
-    give 0.03 to 0.10 mm); they need their own value before their dialogs are wired.
+10. **R_MAX.** 1.0 mm since 2026-11-20 (0.75 before): the preview error inside the mark grid
+    is about the gate value at most, so 1.0 aims at a preview within about 1 mm, and a
+    calibration that keeps failing costs the user more than a preview that is slightly off.
+    The three office units give 0.38 to 0.47 mm. Revisit with field data. For the 8-mark
+    layouts this value gates almost nothing: correct matches give 0.03 to 0.10 mm, and one
+    mark displaced by 1 / 2 / 3 mm gives 0.15 to 0.31 / 0.31 to 0.62 / 0.47 to 0.93 mm
+    (simulated on the `fbb2` photo), so a stray up to 3 mm from a missing mark would pass.
+    They need their own value before their dialogs are wired, and it has to be per machine:
+    about 0.2 mm suits the laser-head cameras, but a correct Promark match already gives
+    0.265 mm (0.6 px at 2.4 px per mm). Not added yet: nothing calls the matcher with 8
+    marks today.
 11. **Mark size.** The `fbm2` marks have a 0.3 mm radius and show as about 1.0 mm (burn
     spread plus blur): 5 to 6 px across in the bottom two rows, an area of about 20 px against
     the detector's minimum of 15. At a 0.5 mm radius every mark of the third unit is found by
@@ -583,13 +589,30 @@ Command names are final once fluxghost's `cmd_mapping` has them; do not rename a
 12. **8-mark layouts** (`fbb2` / `fhx2rf` laser head, `ado1`, Promark). The layout stays: two
     concentric rectangles carry a fixed 1 : 2 ratio that a row of old marks cannot imitate,
     and a 4×4 grid would only add room for filling. Open before wiring them:
-    - Promark: the marks are bright dots on a dark sheet, about 2.4 px across, and the dark
-      detector finds none (§11). Needs a bright-blob detector, a larger mark, and a check of
-      the upright assumption against the camera rotation setting.
+    - Promark: the marks are bright dots on a dark sheet, 2.3 to 3.2 px across, below the
+      15 px minimum area of both the automatic (dark only) and the manual (any colour)
+      detector (§11). Needs a larger mark first, about 2.5 mm across to reach 6 px at 2.4 px
+      per mm; then a bright-blob option on `auto_pnp_detect`, the red pointer off during the
+      capture, and a check of the upright assumption against the camera rotation setting.
     - Matching cost without a full lattice grows with the cube of the blob count when a mark
-      is missing: 5 s at 40 blobs, 41 s at 54. Bound it before more than one exposure is
-      merged on these machines.
-    - `ado1` solves at two heights; the flow runs twice.
+      is missing: it was 5 s at 40 blobs and 41 s at 54, because the seed's own four blobs
+      satisfied the nearby-blob check. The check now asks for half of the other marks too:
+      1.5 s and 2 s. Still unbounded for several merged exposures.
+    - `ado1` solves at two heights. Agreed 2026-11-20: two separate passes, engrave, find,
+      ask the user to raise the material, engrave, find.
+    - Exposure. The manual 8-mark dialogs set none; only `fbm2` passes `initExposure`. Each
+      machine needs its own rounds from a sweep. `fbb2` laser head, one unit, one lighting
+      (2026-11-20, 16 single photos from 50 to 3000, no weak list): 8 of 8 at every value
+      from 100 to 800 (rms 0.042 to 0.050 mm, mark positions within 0.64 px of each other,
+      best contrast at 200 to 300); 7 of 8 at 50 and from 900 up. Over-exposure is the
+      expensive side: 89 to 97 blobs at 2000 / 3000 and 22 to 38 s in the matcher, ending in
+      a failure. Proposed for `fbb2`: one photo at about 250, then `[100, 500]`, never above
+      800. `fhx2rf`, `ado1` and Promark are not swept.
+    - Auto exposure. `fbm2`, `fbb2` and `fhx2rf` have an auto-exposure switch
+      (`supportCameraAutoExposureModels`), and a fixed exposure presumably has no effect
+      while it is on (not verified on a machine). The automatic step must turn it off before
+      the first photo and restore it with the exposure value. `autoSolvePnP.ts` does not do
+      this yet; to fix before the `fbm2` PR.
 
 ---
 
@@ -773,7 +796,8 @@ so every photo carries old marks of the same look.
 | `fhx2rf` laser head | 12 | 8 of 8 | 0.10 mm | 8.5 to 12.5 px | oblique view; stored `k` still has skew 4.41 |
 | `ado1`, first height | 40 | 8 of 8 | 0.042 mm | 4.7 to 6.5 px | whole chassis in view |
 | `ado1`, second height | 39 | 8 of 8 | 0.050 mm | 4.7 to 6.5 px | one mark on the stroke of an engraved letter, still found |
-| Promark, 220 mm lens | 54 | 0 of 8 | n/a | about 2.4 px, bright | dark detector finds no mark |
+| Promark, 220 mm lens, used sheet | 54 | 0 of 8 | n/a | 2.3 to 2.5 px, bright | dark detector finds no mark |
+| Promark, same unit, plain black sheet | 48 | 0 of 8 | n/a | 2.5 to 3.2 px, bright | dark detector finds no mark |
 
 - With any one mark hidden, every case returns 7 marks and `NOT_ENOUGH_MARKS`; no old mark is
   ever taken for a missing one. Two faults found on the way and fixed: an old mark 14 mm from
@@ -783,8 +807,12 @@ so every photo carries old marks of the same look.
   but they are snapped to the same detector, so they confirm the choice of blobs, not the
   position accuracy.
 - The upright assumption holds on all four machines, including this Promark.
-- Promark: a bright-blob detector with a minimum area of 4 px finds 7 of the 8 marks within
-  1 px of the hand-placed points, among 85 blobs. The image has 2.4 px per mm.
+- Promark, bright-blob detector (not in the code): at the normal minimum area of 15 px it
+  finds no mark on either sheet. At 4 px it finds 7 of 8 on the used sheet (85 blobs); on
+  the plain sheet 8 of 8 in one photo (90 blobs, matched 8 of 8, RMS 0.265 mm, within 1.7 px
+  of the hand-placed points) and 7 of 8 in a second photo of the same engraving 30 s later.
+  The image has 2.4 px per mm, so the residual is about 0.6 px: the size of the marks, not a
+  wrong match. A cleaner sheet removes strays but not the cause; the marks are too small.
 
 Still to measure: A6 manual vs automatic accuracy on check marks, A8 spread, capture time, the
 number of field units R_MAX blocks.
