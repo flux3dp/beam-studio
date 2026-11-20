@@ -961,7 +961,12 @@ export class MonitorContextProvider extends React.Component<Props, State> {
   private applyTaskLens = async (): Promise<void> => {
     if (!this.isPromark) return;
 
-    await applyLensProfile(DeviceMaster, this.props.device, { key: this.state.previewTask?.lensProfileKey });
+    const applied = await applyLensProfile(DeviceMaster, this.props.device, {
+      key: this.state.previewTask?.lensProfileKey,
+    });
+
+    // refused: a job is starting or running, and the machine is on some other lens
+    if (!applied) throw new Error('LENS_REJECTED');
   };
 
   onPlay = async (forceResend = false): Promise<null | number> => {

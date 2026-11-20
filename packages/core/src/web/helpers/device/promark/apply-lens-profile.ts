@@ -2,7 +2,7 @@ import deviceConstants from '@core/app/constants/device-constants';
 import { defaultField, defaultGalvoParameters } from '@core/app/constants/promark-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
-import type { Field, GalvoParameters, LensProfileKey } from '@core/interfaces/Promark';
+import type { Field, GalvoParameters, LensProfileKey, LensWriteResult } from '@core/interfaces/Promark';
 
 import applyRedDot from './apply-red-dot';
 import { getDocumentLensProfile, getLensProfile } from './lens-profiles';
@@ -33,9 +33,12 @@ const JOB_IN_PROGRESS_STATUSES: ReadonlySet<number> = new Set([
 export const isJobInProgress = (statusId: number): boolean => JOB_IN_PROGRESS_STATUSES.has(statusId);
 
 interface LensTarget {
-  setField: (worksize: number, field?: Field) => Promise<unknown>;
-  setGalvoParameters: (data: GalvoParameters) => Promise<unknown>;
+  setField: (worksize: number, field?: Field) => Promise<LensWriteResult | unknown>;
+  setGalvoParameters: (data: GalvoParameters) => Promise<LensWriteResult | unknown>;
 }
+
+/** Only an explicit `success: false` is a refusal; older backends answer without the field. */
+const isRefused = (result: unknown): boolean => (result as LensWriteResult | undefined)?.success === false;
 
 export interface ApplyLensOptions {
   /** the lens a task was generated for; the current document's lens when left out */
@@ -49,12 +52,15 @@ export interface ApplyLensOptions {
  * before it starts (a job, a red light preview, a test mark) instead of relying on what is on the
  * machine: the backend keeps the lens of the last sender, which can be another tab, another lens of
  * the same document, or a red light preview that added its red dot correction.
+ *
+ * @returns false when the machine refused the lens (a job is starting or running): the caller must
+ * not start its movement, since the machine is on some other lens.
  */
 export const applyLensProfile = async (
   target: LensTarget,
   { model, serial }: Pick<IDeviceInfo, 'model' | 'serial'>,
   { key, redDot = false }: ApplyLensOptions = {},
-): Promise<void> => {
+): Promise<boolean> => {
   const profile = key ? getLensProfile(serial, key) : getDocumentLensProfile(serial);
   const width = key ? key.workarea : getWorkarea(model).width;
   let { field = defaultField, galvoParameters = defaultGalvoParameters } = profile;
@@ -66,13 +72,20 @@ export const applyLensProfile = async (
   // Always sent, defaults included: the backend keeps whatever the previous machine set, and the
   // correction also carries the laser source it is for, so a machine without local calibration
   // data would otherwise run with another machine's lens and source.
-  await target.setField(width, field);
   console.log('Applying lens profile', profile.key, profile.source, redDot ? 'with red dot' : '', galvoParameters);
-  await target.setGalvoParameters(galvoParameters);
+
+  // the field and the correction are two requests: stop at the first refusal instead of leaving half
+  if (isRefused(await target.setField(width, field)) || isRefused(await target.setGalvoParameters(galvoParameters))) {
+    console.warn('The machine refused the lens profile: a job is starting or running');
+
+    return false;
+  }
+
+  return true;
 };
 
 /** Applies the lens parameters the current document asks for, picked by `getDocumentLensProfile`. */
 export const applyDocumentLensProfile = (
   target: LensTarget,
   device: Pick<IDeviceInfo, 'model' | 'serial'>,
-): Promise<void> => applyLensProfile(target, device);
+): Promise<boolean> => applyLensProfile(target, device);

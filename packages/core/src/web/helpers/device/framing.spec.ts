@@ -228,6 +228,16 @@ describe('framing.ts — getCoords frame-preview coordinate logic (via Promark F
       expect(deviceMaster.setGalvoParameters).toHaveBeenLastCalledWith(galvoParameters);
     });
 
+    test('does not start the red light when the machine refuses the lens', async () => {
+      mockPromarkGet.mockReturnValue({ field, galvoParameters });
+      deviceMaster.setField.mockResolvedValueOnce({ error: 'LENS_REJECTED', success: false });
+
+      const manager = new FramingTaskManager(PROMARK_DEVICE);
+
+      expect(await manager.startFraming(FramingType.Framing, {})).toBe(false);
+      expect(mockStartFraming).not.toHaveBeenCalled();
+    });
+
     test('resetPromarkParams takes the red dot correction back off', async () => {
       mockPromarkGet.mockReturnValue({
         field,

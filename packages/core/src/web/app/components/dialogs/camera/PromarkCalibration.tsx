@@ -190,8 +190,12 @@ const PromarkCalibration = ({
             message: tCali.drawing_calibration_image,
           });
           await loadCameraCalibrationTask(model, workareaWidth);
+
           // the image must be marked with the document's lens, whatever was sent to the machine last
-          await applyLensProfile(deviceMaster, deviceMaster.currentDevice!.info);
+          if (!(await applyLensProfile(deviceMaster, deviceMaster.currentDevice!.info))) {
+            throw new Error('LENS_REJECTED');
+          }
+
           await deviceMaster.doPromarkCalibration();
         }
 

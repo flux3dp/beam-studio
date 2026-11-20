@@ -7,7 +7,7 @@ import type { SwiftrayClient } from '@core/helpers/api/swiftray-client';
 import type { RawChipSettings } from './Cartridge';
 import type { FisheyeCameraParameters, RotationParameters3D } from './FisheyePreview';
 import type { FirmwareType, IDeviceDetailInfo, IDeviceInfoFlux, IReport } from './IDevice';
-import type { ButtonState, Field, LensCorrection } from './Promark';
+import type { ButtonState, Field, LensCorrection, LensWriteResult } from './Promark';
 import type { WrappedWebSocket } from './WebSocket';
 
 export type Mode = '' | 'cartridge_io' | 'raw' | 'red_laser_measure' | 'z_speed_limit_test';
@@ -96,12 +96,12 @@ interface IControlSocket extends EventEmitter {
   setDeviceSetting(name: string, value: string): Promise<unknown>;
   setFan(fanSpeed: number): Promise<unknown>;
   setFanTemp(fanSpeed: number): Promise<unknown>;
-  setField(worksize: number, fieldData: Field): Promise<boolean>;
+  setField(worksize: number, fieldData: Field): Promise<LensWriteResult>;
   setLaserPower(power: number): Promise<unknown>;
   setLaserPowerTemp(power: number): Promise<unknown>;
   setLaserSpeed(speed: number): Promise<unknown>;
   setLaserSpeedTemp(speed: number): Promise<unknown>;
-  setLensCorrection(x: LensCorrection, y: LensCorrection, laserSource: PromarkLaserSource): Promise<boolean>;
+  setLensCorrection(x: LensCorrection, y: LensCorrection, laserSource: PromarkLaserSource): Promise<LensWriteResult>;
   setOriginX(x: number): Promise<unknown>;
   setOriginY(y: number): Promise<unknown>;
   setProgressListener(listener: (...args: unknown[]) => void): void;

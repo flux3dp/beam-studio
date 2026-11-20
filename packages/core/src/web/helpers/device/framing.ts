@@ -431,7 +431,14 @@ class FramingTaskManager extends EventEmitter {
     // settings dialog may have changed the lens on the machine since. The frame is drawn from the
     // current canvas, so it is the document's lens, with the red dot correction on top.
     this.showMessage(i18n.lang.message.connecting);
-    await applyLensProfile(deviceMaster, this.device, { redDot: true });
+
+    if (!(await applyLensProfile(deviceMaster, this.device, { redDot: true }))) {
+      // refused: a job is starting or running, so the red light would run on its lens
+      this.closeMessage();
+      this.changeWorkingStatus(false);
+
+      return false;
+    }
 
     if (this.interrupted) {
       return false;

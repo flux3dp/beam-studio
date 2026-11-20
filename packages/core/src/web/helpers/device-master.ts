@@ -37,7 +37,7 @@ import type {
   IDeviceInfo,
   IDeviceInfoFlux,
 } from '@core/interfaces/IDevice';
-import type { Field, GalvoParameters } from '@core/interfaces/Promark';
+import type { Field, GalvoParameters, LensWriteResult } from '@core/interfaces/Promark';
 
 import type { CameraPose } from './api/camera';
 import Camera from './api/camera';
@@ -1610,13 +1610,15 @@ class DeviceMaster {
     return controlSocket.addTask(controlSocket.setDeviceSetting, name, value);
   }
 
-  async setField(worksize: number, fieldData: Field = defaultField) {
+  /** Swiftray refuses lens writes while a job is starting or a laser job is running: check `success`. */
+  async setField(worksize: number, fieldData: Field = defaultField): Promise<LensWriteResult> {
     const controlSocket = await this.getControl();
 
     return controlSocket.addTask(controlSocket.setField, worksize, fieldData);
   }
 
-  async setGalvoParameters(data: GalvoParameters) {
+  /** Refused like `setField` while a job is starting or a laser job is running. */
+  async setGalvoParameters(data: GalvoParameters): Promise<LensWriteResult> {
     const controlSocket = await this.getControl();
     const laserSource = getPromarkLaserSource(getPromarkInfo().laserType);
 

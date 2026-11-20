@@ -8,7 +8,7 @@ import type { FisheyeCameraParameters, RotationParameters3D } from '@core/interf
 import type { Mode, TPromarkFramingOpt } from '@core/interfaces/IControlSocket';
 import type IControlSocket from '@core/interfaces/IControlSocket';
 import type { FirmwareType, IDeviceDetailInfo, IDeviceInfoFlux } from '@core/interfaces/IDevice';
-import type { Field, LensCorrection } from '@core/interfaces/Promark';
+import type { Field, LensCorrection, LensWriteResult } from '@core/interfaces/Promark';
 
 import type { SwiftrayClient } from './swiftray-client';
 import { getDeviceClient } from './swiftray-client';
@@ -520,7 +520,7 @@ class SwiftrayControl extends EventEmitter implements IControlSocket {
 
   setOriginY = async (y: number) => this.sc.setDeviceParam('origin_y', y);
 
-  setField = async (worksize: number, fieldData: Field) => {
+  setField = async (worksize: number, fieldData: Field): Promise<LensWriteResult> => {
     const data = {
       angle: fieldData.angle,
       worksize,
@@ -531,7 +531,11 @@ class SwiftrayControl extends EventEmitter implements IControlSocket {
     return this.sc.setScanaheadParams(data);
   };
 
-  setLensCorrection = async (x: LensCorrection, y: LensCorrection, laserSource: PromarkLaserSource) => {
+  setLensCorrection = async (
+    x: LensCorrection,
+    y: LensCorrection,
+    laserSource: PromarkLaserSource,
+  ): Promise<LensWriteResult> => {
     const data = {
       bucketX: x.bulge,
       bucketY: y.bulge,

@@ -93,6 +93,26 @@ describe('test applyLensProfile', () => {
     expect(target.setGalvoParameters).toHaveBeenCalledWith(galvoParameters);
   });
 
+  test('reports whether the machine took the lens', async () => {
+    expect(await applyLensProfile(target, { model: 'fpm1', serial: 'serial' })).toBe(true);
+
+    // an older backend answers without the field
+    target.setField.mockResolvedValueOnce({});
+    target.setGalvoParameters.mockResolvedValueOnce({ success: true });
+    expect(await applyLensProfile(target, { model: 'fpm1', serial: 'serial' })).toBe(true);
+  });
+
+  test('a refused field stops before the correction, so the lens is not left half applied', async () => {
+    target.setField.mockResolvedValueOnce({ error: 'LENS_REJECTED', success: false });
+    expect(await applyLensProfile(target, { model: 'fpm1', serial: 'serial' })).toBe(false);
+    expect(target.setGalvoParameters).not.toHaveBeenCalled();
+  });
+
+  test('a refused correction is reported too', async () => {
+    target.setGalvoParameters.mockResolvedValueOnce({ error: 'LENS_REJECTED', success: false });
+    expect(await applyLensProfile(target, { model: 'fpm1', serial: 'serial' })).toBe(false);
+  });
+
   test('a task key picks that lens and its work area instead of the document', async () => {
     const taskField = { angle: 0, offsetX: 9, offsetY: 9 };
 

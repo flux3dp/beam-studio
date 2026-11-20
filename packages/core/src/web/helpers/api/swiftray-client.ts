@@ -26,7 +26,7 @@ import communicator from '@core/implementations/communicator';
 import type { SwiftrayConvertType, TPromarkFramingOpt } from '@core/interfaces/IControlSocket';
 import type { FirmwareType, IDeviceDetailInfo, IDeviceInfo, IReport } from '@core/interfaces/IDevice';
 import type { IWrappedSwiftrayTaskFile } from '@core/interfaces/IWrappedFile';
-import type { ButtonState } from '@core/interfaces/Promark';
+import type { ButtonState, LensWriteResult } from '@core/interfaces/Promark';
 
 interface ErrorObject {
   code: number;
@@ -619,11 +619,13 @@ class SwiftrayClient extends EventEmitter {
     return this.action(`/devices/${this.port}`, 'setParam', { name, value });
   }
 
-  public async setScanaheadParams(params: Record<string, number>): Promise<boolean> {
+  /** Refused, with `success: false`, while a job is starting or a laser job is running. */
+  public async setScanaheadParams(params: Record<string, number>): Promise<LensWriteResult> {
     return this.action(`/devices/${this.port}`, 'setScanaheadParams', params);
   }
 
-  public async setDeviceCorrection(data: Record<string, number | string>): Promise<boolean> {
+  /** Refused, with `success: false`, while a job is starting or a laser job is running. */
+  public async setDeviceCorrection(data: Record<string, number | string>): Promise<LensWriteResult> {
     return this.action(`/devices/${this.port}`, 'setCorrection', data);
   }
 
