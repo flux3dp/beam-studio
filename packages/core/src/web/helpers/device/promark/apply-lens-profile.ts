@@ -2,7 +2,7 @@ import deviceConstants from '@core/app/constants/device-constants';
 import { defaultField, defaultGalvoParameters } from '@core/app/constants/promark-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
-import type { Field, GalvoParameters, LensProfileKey, LensWriteResult } from '@core/interfaces/Promark';
+import type { Field, GalvoParameters, JobLens, LensProfileKey, LensWriteResult } from '@core/interfaces/Promark';
 
 import applyRedDot from './apply-red-dot';
 import { getDocumentLensProfile, getLensProfile } from './lens-profiles';
@@ -48,6 +48,25 @@ export interface ApplyLensOptions {
 }
 
 /**
+ * The values one lens stands for: the document's lens or the one a task was generated for, with the
+ * red dot correction on top for red light.
+ */
+export const getJobLens = (
+  { model, serial }: Pick<IDeviceInfo, 'model' | 'serial'>,
+  { key, redDot = false }: ApplyLensOptions = {},
+): JobLens => {
+  const profile = key ? getLensProfile(serial, key) : getDocumentLensProfile(serial);
+  const worksize = key ? key.workarea : getWorkarea(model).width;
+  let { field = defaultField, galvoParameters = defaultGalvoParameters } = profile;
+
+  if (redDot && profile.redDot) {
+    ({ field, galvoParameters } = applyRedDot(profile.redDot, field, galvoParameters));
+  }
+
+  return { field, galvoParameters, worksize };
+};
+
+/**
  * Sends the lens parameters of one lens to the machine. Whatever moves the galvo calls this right
  * before it starts (a job, a red light preview, a test mark) instead of relying on what is on the
  * machine: the backend keeps the lens of the last sender, which can be another tab, another lens of
@@ -58,24 +77,26 @@ export interface ApplyLensOptions {
  */
 export const applyLensProfile = async (
   target: LensTarget,
-  { model, serial }: Pick<IDeviceInfo, 'model' | 'serial'>,
-  { key, redDot = false }: ApplyLensOptions = {},
+  device: Pick<IDeviceInfo, 'model' | 'serial'>,
+  options: ApplyLensOptions = {},
 ): Promise<boolean> => {
-  const profile = key ? getLensProfile(serial, key) : getDocumentLensProfile(serial);
-  const width = key ? key.workarea : getWorkarea(model).width;
-  let { field = defaultField, galvoParameters = defaultGalvoParameters } = profile;
+  const { field, galvoParameters, worksize } = getJobLens(device, options);
 
-  if (redDot && profile.redDot) {
-    ({ field, galvoParameters } = applyRedDot(profile.redDot, field, galvoParameters));
-  }
+  console.log(
+    'Applying lens profile',
+    options.key ?? 'document',
+    options.redDot ? 'with red dot' : '',
+    galvoParameters,
+  );
 
   // Always sent, defaults included: the backend keeps whatever the previous machine set, and the
   // correction also carries the laser source it is for, so a machine without local calibration
   // data would otherwise run with another machine's lens and source.
-  console.log('Applying lens profile', profile.key, profile.source, redDot ? 'with red dot' : '', galvoParameters);
-
-  // the field and the correction are two requests: stop at the first refusal instead of leaving half
-  if (isRefused(await target.setField(width, field)) || isRefused(await target.setGalvoParameters(galvoParameters))) {
+  // The field and the correction are two requests: stop at the first refusal instead of leaving half.
+  if (
+    isRefused(await target.setField(worksize, field)) ||
+    isRefused(await target.setGalvoParameters(galvoParameters))
+  ) {
     console.warn('The machine refused the lens profile: a job is starting or running');
 
     return false;

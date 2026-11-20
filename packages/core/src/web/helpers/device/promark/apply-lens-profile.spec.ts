@@ -2,7 +2,7 @@ import { defaultField, defaultGalvoParameters } from '@core/app/constants/promar
 
 import deviceConstants from '@core/app/constants/device-constants';
 
-import { applyDocumentLensProfile, applyLensProfile, isJobInProgress } from './apply-lens-profile';
+import { applyDocumentLensProfile, applyLensProfile, getJobLens, isJobInProgress } from './apply-lens-profile';
 
 const mockGetDocumentLensProfile = jest.fn();
 const mockGetLensProfile = jest.fn();
@@ -91,6 +91,21 @@ describe('test applyLensProfile', () => {
     await applyLensProfile(target, { model: 'fpm1', serial: 'serial' }, { redDot: true });
     expect(target.setField).toHaveBeenCalledWith(200, field);
     expect(target.setGalvoParameters).toHaveBeenCalledWith(galvoParameters);
+  });
+
+  test('getJobLens gives the same values without sending them, for the start of a job', () => {
+    const device = { model: 'fpm1' as const, serial: 'serial' };
+
+    expect(getJobLens(device)).toEqual({ field, galvoParameters, worksize: 200 });
+    expect(getJobLens(device, { redDot: true }).field).toEqual({ angle: 1, offsetX: 2.5, offsetY: 2.5 });
+
+    mockGetLensProfile.mockReturnValue({ key: inner70, source: 'fallback' });
+    expect(getJobLens(device, { key: inner70 })).toEqual({
+      field: defaultField,
+      galvoParameters: defaultGalvoParameters,
+      worksize: 70,
+    });
+    expect(target.setField).not.toHaveBeenCalled();
   });
 
   test('reports whether the machine took the lens', async () => {

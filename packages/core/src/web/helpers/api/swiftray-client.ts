@@ -595,8 +595,17 @@ class SwiftrayClient extends EventEmitter {
     return this.action(`/devices/${port}`, 'connect', undefined, undefined, CONNECT_TIMEOUT_MS);
   }
 
-  public async startTask(taskTime?: number): Promise<{ error?: ErrorObject; success: boolean }> {
-    return this.action(`/devices/${this.port}`, 'start', { taskTime });
+  /**
+   * `lens`: applied by Swiftray in the same request, right before the job starts; `scanahead` and
+   * `correction` are the params of setScanaheadParams and setCorrection. With it, the answer is
+   * `success: false` (error JOB_RUNNING / LENS_REJECTED / START_FAILED) when nothing was started. A
+   * Swiftray that does not know the field ignores it and starts as usual.
+   */
+  public async startTask(
+    taskTime?: number,
+    lens?: { correction: Record<string, number | string>; scanahead: Record<string, number> },
+  ): Promise<{ error?: ErrorObject | string; success: boolean }> {
+    return this.action(`/devices/${this.port}`, 'start', { lens, taskTime });
   }
 
   public async pauseTask(): Promise<{ error?: ErrorObject; success: boolean }> {

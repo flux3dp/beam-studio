@@ -37,7 +37,7 @@ import type {
   IDeviceInfo,
   IDeviceInfoFlux,
 } from '@core/interfaces/IDevice';
-import type { Field, GalvoParameters, LensWriteResult } from '@core/interfaces/Promark';
+import type { Field, GalvoParameters, JobLens, LensWriteResult } from '@core/interfaces/Promark';
 
 import type { CameraPose } from './api/camera';
 import Camera from './api/camera';
@@ -51,6 +51,23 @@ import { applyDocumentLensProfile, isJobInProgress } from './device/promark/appl
 import { getPromarkInfo } from './device/promark/promark-info';
 import i18n from './i18n';
 import VersionChecker from './version-checker';
+
+/**
+ * A start that carried a lens answers `success: false` when Swiftray applied and started nothing: a
+ * job was still active, the lens was refused, or the job could not start. The error has the `error`
+ * list the monitor reads from start failures. Without a lens the answer is not checked, as before.
+ */
+const assertStarted = (result: unknown, lens: unknown): void => {
+  if (!lens) return;
+
+  const { error, success } = (result ?? {}) as { error?: unknown; success?: boolean };
+
+  if (success !== false) return;
+
+  const code = typeof error === 'string' ? error : 'START_FAILED';
+
+  throw Object.assign(new Error(`Unable to start the job: ${code}`), { error: [code] });
+};
 
 export type TakePictureOptions = { timeout?: number; useLowResolution?: boolean };
 
@@ -691,7 +708,11 @@ class DeviceMaster {
   }
 
   // Player functions
-  async go(data: Blob, onProgress?: (...args: any[]) => void, taskTime?: number) {
+  /**
+   * @param lens Promark: the lens the task runs with. Swiftray applies it in the same request as the
+   * start, so no lens from another tab can get in between; rejects when it could not start that way.
+   */
+  async go(data: Blob, onProgress?: (...args: any[]) => void, taskTime?: number, lens?: JobLens) {
     const controlSocket = await this.getControl();
 
     if (!data || !(data instanceof Blob)) {
@@ -703,10 +724,17 @@ class DeviceMaster {
     }
 
     await controlSocket.addTask(controlSocket.upload, data);
-    await controlSocket.addTask(controlSocket.start, taskTime);
+
+    const startLens = this.toStartLens(lens);
+
+    assertStarted(await controlSocket.addTask(controlSocket.start, taskTime, startLens), startLens);
 
     return null;
   }
+
+  /** The correction also carries the laser source it is for, like `setGalvoParameters` */
+  private toStartLens = (lens?: JobLens) =>
+    lens && { ...lens, laserSource: getPromarkLaserSource(getPromarkInfo().laserType) };
 
   async goFromFile(path: string, fileName: string) {
     const controlSocket = await this.getControl();
@@ -739,10 +767,15 @@ class DeviceMaster {
     return controlSocket.addTask(controlSocket.abort);
   }
 
-  async restart() {
+  /** @param lens Promark: the lens the task runs with, see `go` */
+  async restart(lens?: JobLens) {
     const controlSocket = await this.getControl();
+    const startLens = this.toStartLens(lens);
+    const res = await controlSocket.addTask(controlSocket.restart, startLens);
 
-    return controlSocket.addTask(controlSocket.restart);
+    assertStarted(res, startLens);
+
+    return res;
   }
 
   async quit() {

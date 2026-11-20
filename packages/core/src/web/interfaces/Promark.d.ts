@@ -37,6 +37,17 @@ export interface LensWriteResult {
   success: boolean;
 }
 
+/**
+ * The lens a job runs with. Sent along with the start, so that Swiftray applies it and starts the job
+ * in one request and no lens from another tab can get in between.
+ */
+export interface JobLens {
+  field: Field;
+  galvoParameters: GalvoParameters;
+  /** the field size the lens is for, mm */
+  worksize: number;
+}
+
 export interface LensCorrection {
   bulge: number;
   scale: number;

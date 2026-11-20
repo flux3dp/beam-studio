@@ -7,7 +7,7 @@ import type { SwiftrayClient } from '@core/helpers/api/swiftray-client';
 import type { RawChipSettings } from './Cartridge';
 import type { FisheyeCameraParameters, RotationParameters3D } from './FisheyePreview';
 import type { FirmwareType, IDeviceDetailInfo, IDeviceInfoFlux, IReport } from './IDevice';
-import type { ButtonState, Field, LensCorrection, LensWriteResult } from './Promark';
+import type { ButtonState, Field, JobLens, LensCorrection, LensWriteResult } from './Promark';
 import type { WrappedWebSocket } from './WebSocket';
 
 export type Mode = '' | 'cartridge_io' | 'raw' | 'red_laser_measure' | 'z_speed_limit_test';
@@ -90,7 +90,8 @@ interface IControlSocket extends EventEmitter {
   rawUnlock(): Promise<string | void>;
   removeCommandListeners(): void;
   report(): Promise<{ device_status: IReport }>;
-  restart(): Promise<unknown>;
+  /** `lens`: Promark only, see `start` */
+  restart(lens?: JobLens & { laserSource: PromarkLaserSource }): Promise<unknown>;
   resume(): Promise<unknown>;
   select(path: string[], fileName: string): Promise<{ status: string }>;
   setDeviceSetting(name: string, value: string): Promise<unknown>;
@@ -105,7 +106,11 @@ interface IControlSocket extends EventEmitter {
   setOriginX(x: number): Promise<unknown>;
   setOriginY(y: number): Promise<unknown>;
   setProgressListener(listener: (...args: unknown[]) => void): void;
-  start(): Promise<unknown>;
+  /**
+   * `lens`: Promark only. Applied by Swiftray in the same request as the start; the answer has
+   * `success: false` when it could not be applied or the job could not start.
+   */
+  start(taskTime?: number, lens?: JobLens & { laserSource: PromarkLaserSource }): Promise<unknown>;
   takeReferenceZ?: (args?: { F?: number; H?: number; X?: number; Y?: number }) => Promise<number>;
   updateFirmware(file: File, type: FirmwareType): Promise<unknown>;
   updateFisheye3DRotation?: (data: RotationParameters3D) => Promise<{ status: string }>;
