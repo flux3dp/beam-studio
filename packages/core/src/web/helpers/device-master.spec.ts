@@ -26,6 +26,8 @@ jest.mock('./device/taskPausePrompt', () => ({
   },
 }));
 jest.mock('./device/promark/promark-data-store', () => ({}));
+// LaserType.UV
+jest.mock('./device/promark/promark-info', () => ({ getPromarkInfo: () => ({ laserType: 2, watt: 5 }) }));
 jest.mock('./version-checker', () => () => ({ meetRequirement: () => false }));
 
 const mockAddFcodeMetadata = jest.fn();
@@ -326,6 +328,107 @@ describe('deviceMaster.setField', () => {
   });
 });
 
+describe('deviceMaster.go / restart with the lens of the job', () => {
+  const lens = {
+    field: { angle: 1, offsetX: 2, offsetY: 3 },
+    galvoParameters: {
+      x: { bulge: 1, scale: 80, skew: 1, trapezoid: 1 },
+      y: { bulge: 1, scale: 81, skew: 1, trapezoid: 1 },
+    },
+    worksize: 200,
+  };
+  const blob = new Blob(['M2']);
+  const makeControl = (startResult: unknown) => {
+    const control = {
+      addTask: jest.fn(async (fn: unknown) =>
+        fn === control.start || fn === control.restart ? startResult : undefined,
+      ),
+      restart: jest.fn(),
+      setProgressListener: jest.fn(),
+      start: jest.fn(),
+      upload: jest.fn(),
+    };
+
+    jest.spyOn(deviceMaster, 'getControl').mockResolvedValue(control as unknown as Control);
+
+    return control;
+  };
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  test('go sends the lens, with the laser source, in the start that follows the upload', async () => {
+    const control = makeControl({ success: true });
+
+    await deviceMaster.go(blob, undefined, 12, lens);
+    expect(control.addTask.mock.calls).toEqual([
+      [control.upload, blob],
+      [control.start, 12, { ...lens, laserSource: 'UV' }],
+    ]);
+  });
+
+  test('go without a lens starts as before and does not read the answer', async () => {
+    const control = makeControl({ error: 'START_FAILED', success: false });
+
+    await expect(deviceMaster.go(blob, undefined, 12)).resolves.toBeNull();
+    expect(control.addTask).toHaveBeenLastCalledWith(control.start, 12, undefined);
+  });
+
+  test.each(['JOB_RUNNING', 'LENS_REJECTED', 'START_FAILED'])(
+    'go rejects with the reason when the start with a lens is refused: %s',
+    async (error) => {
+      makeControl({ error, success: false });
+      await expect(deviceMaster.go(blob, undefined, 12, lens)).rejects.toMatchObject({ error: [error] });
+    },
+  );
+
+  test('an answer without success (an older Swiftray) counts as started', async () => {
+    makeControl({});
+    await expect(deviceMaster.go(blob, undefined, 12, lens)).resolves.toBeNull();
+  });
+
+  test('restart sends the lens and rejects when it is refused', async () => {
+    const control = makeControl({ success: true });
+
+    await deviceMaster.restart(lens);
+    expect(control.addTask).toHaveBeenCalledWith(control.restart, { ...lens, laserSource: 'UV' });
+
+    makeControl({ error: 'JOB_RUNNING', success: false });
+    await expect(deviceMaster.restart(lens)).rejects.toMatchObject({ error: ['JOB_RUNNING'] });
+  });
+
+  test('startFraming sends the lens and rejects when it is refused', async () => {
+    const framingControl = {
+      addTask: jest.fn().mockResolvedValue({ success: true }),
+      startFraming: jest.fn(),
+    };
+
+    jest.spyOn(deviceMaster, 'getControl').mockResolvedValue(framingControl as unknown as Control);
+    await deviceMaster.startFraming({ taskCode: 'M2' }, lens);
+    expect(framingControl.addTask).toHaveBeenCalledWith(
+      framingControl.startFraming,
+      { taskCode: 'M2' },
+      { ...lens, laserSource: 'UV' },
+    );
+
+    framingControl.addTask.mockResolvedValue({ error: 'JOB_RUNNING', success: false });
+    await expect(deviceMaster.startFraming({ taskCode: 'M2' }, lens)).rejects.toMatchObject({ error: ['JOB_RUNNING'] });
+    // without a lens the answer is not read, as before
+    await expect(deviceMaster.startFraming({ taskCode: 'M2' })).resolves.toEqual({
+      error: 'JOB_RUNNING',
+      success: false,
+    });
+  });
+
+  test('restart without a lens is unchanged', async () => {
+    const control = makeControl({ error: 'START_FAILED', success: false });
+
+    await expect(deviceMaster.restart()).resolves.toEqual({ error: 'START_FAILED', success: false });
+    expect(control.addTask).toHaveBeenCalledWith(control.restart, undefined);
+  });
+});
+
 describe('deviceMaster.waitTillStatusPredicate', () => {
   const { ABORTED, ALARM, COMPLETED, IDLE, PAUSED_FROM_STARTING, RUNNING } = DeviceConstants.status;
   const AIR_ASSIST = ['HARDWARE_ERROR', 'AIR_ASSIST_OUT_OF_RANGE'];
@@ -465,6 +568,22 @@ describe('deviceMaster.doCalibration', () => {
     await deviceMaster.doCalibration({ blob, onProgress: jest.fn() });
 
     expect(mockAddFcodeMetadata).toHaveBeenCalledWith(blob, { IGNORE_AIR_ASSIST_WARNING: '1' });
-    expect(deviceMaster.go).toHaveBeenCalledWith(patched);
+    expect(deviceMaster.go).toHaveBeenCalledWith(patched, undefined, undefined, undefined);
+  });
+
+  test('passes the lens of the task on to the start', async () => {
+    const lens = {
+      field: { angle: 0, offsetX: 0, offsetY: 0 },
+      galvoParameters: {
+        x: { bulge: 1, scale: 100, skew: 1, trapezoid: 1 },
+        y: { bulge: 1, scale: 100, skew: 1, trapezoid: 1 },
+      },
+      worksize: 110,
+    };
+    const patched = new Blob(['patched task']);
+
+    mockAddFcodeMetadata.mockResolvedValue(patched);
+    await deviceMaster.doCalibration({ blob: new Blob(['task']), lens, onProgress: jest.fn() });
+    expect(deviceMaster.go).toHaveBeenCalledWith(patched, undefined, undefined, lens);
   });
 });

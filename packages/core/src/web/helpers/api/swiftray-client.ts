@@ -26,7 +26,7 @@ import communicator from '@core/implementations/communicator';
 import type { SwiftrayConvertType, TPromarkFramingOpt } from '@core/interfaces/IControlSocket';
 import type { FirmwareType, IDeviceDetailInfo, IDeviceInfo, IReport } from '@core/interfaces/IDevice';
 import type { IWrappedSwiftrayTaskFile } from '@core/interfaces/IWrappedFile';
-import type { ButtonState } from '@core/interfaces/Promark';
+import type { ButtonState, LensWriteResult } from '@core/interfaces/Promark';
 
 interface ErrorObject {
   code: number;
@@ -595,8 +595,17 @@ class SwiftrayClient extends EventEmitter {
     return this.action(`/devices/${port}`, 'connect', undefined, undefined, CONNECT_TIMEOUT_MS);
   }
 
-  public async startTask(taskTime?: number): Promise<{ error?: ErrorObject; success: boolean }> {
-    return this.action(`/devices/${this.port}`, 'start', { taskTime });
+  /**
+   * `lens`: applied by Swiftray in the same request, right before the job starts; `scanahead` and
+   * `correction` are the params of setScanaheadParams and setCorrection. With it, the answer is
+   * `success: false` (error JOB_RUNNING / LENS_REJECTED / START_FAILED) when nothing was started. A
+   * Swiftray that does not know the field ignores it and starts as usual.
+   */
+  public async startTask(
+    taskTime?: number,
+    lens?: { correction: Record<string, number | string>; scanahead: Record<string, number> },
+  ): Promise<{ error?: ErrorObject | string; success: boolean }> {
+    return this.action(`/devices/${this.port}`, 'start', { lens, taskTime });
   }
 
   public async pauseTask(): Promise<{ error?: ErrorObject; success: boolean }> {
@@ -619,11 +628,13 @@ class SwiftrayClient extends EventEmitter {
     return this.action(`/devices/${this.port}`, 'setParam', { name, value });
   }
 
-  public async setScanaheadParams(params: Record<string, number>): Promise<boolean> {
+  /** Refused, with `success: false`, while a job is starting or a laser job is running. */
+  public async setScanaheadParams(params: Record<string, number>): Promise<LensWriteResult> {
     return this.action(`/devices/${this.port}`, 'setScanaheadParams', params);
   }
 
-  public async setDeviceCorrection(data: Record<string, number | string>): Promise<boolean> {
+  /** Refused, with `success: false`, while a job is starting or a laser job is running. */
+  public async setDeviceCorrection(data: Record<string, number | string>): Promise<LensWriteResult> {
     return this.action(`/devices/${this.port}`, 'setCorrection', data);
   }
 
@@ -690,10 +701,14 @@ class SwiftrayClient extends EventEmitter {
     return this.action(`/devices/${this.port}`, 'getPreview');
   }
 
-  public async startFraming(opt?: TPromarkFramingOpt): Promise<void> {
+  /** `lens`: as in `startTask`, applied in the request that starts the red light run. */
+  public async startFraming(
+    opt?: TPromarkFramingOpt,
+    lens?: { correction: Record<string, number | string>; scanahead: Record<string, number> },
+  ): Promise<{ error?: string; success: boolean }> {
     const { width } = getWorkarea('fpm1');
 
-    return this.action(`/devices/${this.port}`, 'startFraming', { ...opt, width });
+    return this.action(`/devices/${this.port}`, 'startFraming', { ...opt, lens, width });
   }
 
   public async stopFraming(): Promise<void> {

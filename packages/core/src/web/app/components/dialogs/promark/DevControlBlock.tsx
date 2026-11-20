@@ -22,7 +22,7 @@ import { generateFactoryTestCard, getFactoryTestCardName } from '@core/helpers/d
 import deviceMaster from '@core/helpers/device-master';
 import useI18n from '@core/helpers/useI18n';
 import dialog from '@core/implementations/dialog';
-import type { Field, GalvoParameters, PromarkInfo, RedDot } from '@core/interfaces/Promark';
+import type { Field, GalvoParameters, JobLens, PromarkInfo, RedDot } from '@core/interfaces/Promark';
 
 import blockStyles from './Block.module.scss';
 import styles from './DevControlBlock.module.scss';
@@ -134,6 +134,11 @@ interface Props {
   applyParameters: (shouldApplyRedDot: boolean) => Promise<boolean>;
   field: Field;
   galvoParameters: GalvoParameters;
+  /**
+   * the same lens as a value, to send along with the start: Swiftray applies it in the request that
+   * starts the task, so a lens another tab writes after `applyParameters` cannot end up under it
+   */
+  getLens: (shouldApplyRedDot: boolean) => JobLens;
   info: PromarkInfo;
   redDot: RedDot;
   /** the board's serial number, which is what Swiftray reports as the device serial */
@@ -158,6 +163,7 @@ const DevControlBlock = ({
   applyParameters,
   field,
   galvoParameters,
+  getLens,
   info,
   redDot,
   serial,
@@ -257,7 +263,7 @@ const DevControlBlock = ({
       // the red light lands where the red dot parameters put it
       if (!(await applyParameters(true)) || isUnmountedRef.current) return;
 
-      await deviceMaster.go(new Blob([generateMoveTask({ ...position, width })]));
+      await deviceMaster.go(new Blob([generateMoveTask({ ...position, width })]), undefined, undefined, getLens(true));
     } catch (error) {
       console.error('Failed to move the galvo', error);
     } finally {
@@ -281,7 +287,7 @@ const DevControlBlock = ({
 
       if (!(await applyParameters(false)) || isUnmountedRef.current) return;
 
-      await deviceMaster.doCalibration({ blob: new Blob([task]) });
+      await deviceMaster.doCalibration({ blob: new Blob([task]), lens: getLens(false) });
     } catch (error) {
       if (Array.isArray(error) && error[1] === 'DOOR_OPENED') {
         await deviceMaster.stop();

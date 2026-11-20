@@ -9,6 +9,7 @@ import { promarkPnPPoints } from '@core/app/constants/fisheyeCameraConstants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { cameraCalibrationApi } from '@core/helpers/api/camera-calibration';
 import checkDeviceStatus from '@core/helpers/check-device-status';
+import { applyLensProfile, getJobLens } from '@core/helpers/device/promark/apply-lens-profile';
 import { loadCameraCalibrationTask } from '@core/helpers/device/promark/calibration';
 import { getInitialCameraRotation, isCameraRotated } from '@core/helpers/device/promark/camera-rotation';
 import promarkDataStore from '@core/helpers/device/promark/promark-data-store';
@@ -189,7 +190,16 @@ const PromarkCalibration = ({
             message: tCali.drawing_calibration_image,
           });
           await loadCameraCalibrationTask(model, workareaWidth);
-          await deviceMaster.doPromarkCalibration();
+
+          // the image must be marked with the document's lens, whatever was sent to the machine last
+          const device = deviceMaster.currentDevice!.info;
+
+          if (!(await applyLensProfile(deviceMaster, device))) {
+            throw new Error('LENS_REJECTED');
+          }
+
+          // and again with the start, which Swiftray applies in the same request
+          await deviceMaster.doPromarkCalibration(getJobLens(device));
         }
 
         setStep(Steps.SOLVE_PNP_INSTRUCTION);

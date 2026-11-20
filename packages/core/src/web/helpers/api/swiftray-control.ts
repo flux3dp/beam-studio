@@ -8,7 +8,7 @@ import type { FisheyeCameraParameters, RotationParameters3D } from '@core/interf
 import type { Mode, TPromarkFramingOpt } from '@core/interfaces/IControlSocket';
 import type IControlSocket from '@core/interfaces/IControlSocket';
 import type { FirmwareType, IDeviceDetailInfo, IDeviceInfoFlux } from '@core/interfaces/IDevice';
-import type { Field, LensCorrection } from '@core/interfaces/Promark';
+import type { Field, JobLens, LensCorrection, LensWriteResult } from '@core/interfaces/Promark';
 
 import type { SwiftrayClient } from './swiftray-client';
 import { getDeviceClient } from './swiftray-client';
@@ -19,6 +19,36 @@ const EVENT_COMMAND_FATAL = 'command-fatal';
 const EVENT_COMMAND_PROGRESS = 'command-progress';
 
 const MAX_TASK_QUEUE = 30;
+
+type StartLens = JobLens & { laserSource: PromarkLaserSource };
+
+/** The params of Swiftray's setScanaheadParams */
+const toScanaheadParams = (worksize: number, field: Field) => ({
+  angle: field.angle,
+  worksize,
+  xOffset: field.offsetX,
+  yOffset: field.offsetY,
+});
+
+/** The params of Swiftray's setCorrection */
+const toCorrectionParams = (x: LensCorrection, y: LensCorrection, laserSource: PromarkLaserSource) => ({
+  bucketX: x.bulge,
+  bucketY: y.bulge,
+  laserSource,
+  paralleX: x.skew,
+  paralleY: y.skew,
+  scaleX: x.scale,
+  scaleY: y.scale,
+  trapeX: x.trapezoid,
+  trapeY: y.trapezoid,
+});
+
+/** The optional `lens` of Swiftray's start: both sets, applied in the request that starts the job */
+const toStartLensParams = (lens?: StartLens) =>
+  lens && {
+    correction: toCorrectionParams(lens.galvoParameters.x, lens.galvoParameters.y, lens.laserSource),
+    scanahead: toScanaheadParams(lens.worksize, lens.field),
+  };
 
 class SwiftrayControl extends EventEmitter implements IControlSocket {
   public isConnected = false;
@@ -395,17 +425,17 @@ class SwiftrayControl extends EventEmitter implements IControlSocket {
     return this.sc.quitTask();
   };
 
-  start = async (taskTime?: number) => {
+  start = async (taskTime?: number, lens?: StartLens) => {
     console.log('SwiftrayControl.start');
 
-    return this.sc.startTask(taskTime);
+    return this.sc.startTask(taskTime, toStartLensParams(lens));
   };
 
   pause = async () => this.sc.pauseTask();
 
   resume = async () => this.sc.resumeTask();
 
-  restart = async () => this.sc.startTask();
+  restart = async (lens?: StartLens) => this.sc.startTask(undefined, toStartLensParams(lens));
 
   kick = async () => this.sc.kick();
 
@@ -431,10 +461,10 @@ class SwiftrayControl extends EventEmitter implements IControlSocket {
     return [{}, await this.sc.getPreview()];
   };
 
-  startFraming = async (opt?: TPromarkFramingOpt) => {
+  startFraming = async (opt?: TPromarkFramingOpt, lens?: StartLens) => {
     console.log('SwiftrayControl.startFraming');
 
-    return this.sc.startFraming(opt);
+    return this.sc.startFraming(opt, toStartLensParams(lens));
   };
 
   stopFraming = async () => {
@@ -520,32 +550,14 @@ class SwiftrayControl extends EventEmitter implements IControlSocket {
 
   setOriginY = async (y: number) => this.sc.setDeviceParam('origin_y', y);
 
-  setField = async (worksize: number, fieldData: Field) => {
-    const data = {
-      angle: fieldData.angle,
-      worksize,
-      xOffset: fieldData.offsetX,
-      yOffset: fieldData.offsetY,
-    };
+  setField = async (worksize: number, fieldData: Field): Promise<LensWriteResult> =>
+    this.sc.setScanaheadParams(toScanaheadParams(worksize, fieldData));
 
-    return this.sc.setScanaheadParams(data);
-  };
-
-  setLensCorrection = async (x: LensCorrection, y: LensCorrection, laserSource: PromarkLaserSource) => {
-    const data = {
-      bucketX: x.bulge,
-      bucketY: y.bulge,
-      laserSource,
-      paralleX: x.skew,
-      paralleY: y.skew,
-      scaleX: x.scale,
-      scaleY: y.scale,
-      trapeX: x.trapezoid,
-      trapeY: y.trapezoid,
-    };
-
-    return this.sc.setDeviceCorrection(data);
-  };
+  setLensCorrection = async (
+    x: LensCorrection,
+    y: LensCorrection,
+    laserSource: PromarkLaserSource,
+  ): Promise<LensWriteResult> => this.sc.setDeviceCorrection(toCorrectionParams(x, y, laserSource));
 
   getDoorOpen = async () => this.sc.getDeviceParam<string>('door_open');
 

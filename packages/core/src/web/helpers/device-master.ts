@@ -37,7 +37,7 @@ import type {
   IDeviceInfo,
   IDeviceInfoFlux,
 } from '@core/interfaces/IDevice';
-import type { Field, GalvoParameters } from '@core/interfaces/Promark';
+import type { Field, GalvoParameters, JobLens, LensWriteResult } from '@core/interfaces/Promark';
 
 import type { CameraPose } from './api/camera';
 import Camera from './api/camera';
@@ -47,10 +47,27 @@ import { swiftrayClient } from './api/swiftray-client';
 import SwiftrayControl from './api/swiftray-control';
 import Touch from './api/touch';
 import { showBb2FirmwareWarning } from './device/bb2FirmwareWarning';
-import { applyDocumentLensProfile } from './device/promark/apply-lens-profile';
+import { applyDocumentLensProfile, isJobInProgress } from './device/promark/apply-lens-profile';
 import { getPromarkInfo } from './device/promark/promark-info';
 import i18n from './i18n';
 import VersionChecker from './version-checker';
+
+/**
+ * A start that carried a lens answers `success: false` when Swiftray applied and started nothing: a
+ * job was still active, the lens was refused, or the job could not start. The error has the `error`
+ * list the monitor reads from start failures. Without a lens the answer is not checked, as before.
+ */
+const assertStarted = (result: unknown, lens: unknown): void => {
+  if (!lens) return;
+
+  const { error, success } = (result ?? {}) as { error?: unknown; success?: boolean };
+
+  if (success !== false) return;
+
+  const code = typeof error === 'string' ? error : 'START_FAILED';
+
+  throw Object.assign(new Error(`Unable to start the job: ${code}`), { error: [code] });
+};
 
 export type TakePictureOptions = { timeout?: number; useLowResolution?: boolean };
 
@@ -515,7 +532,15 @@ class DeviceMaster {
       }
 
       if (promarkModels.has(device.info.model)) {
-        await applyDocumentLensProfile(this, device.info);
+        // Every connect sends the lens of this tab's document, including the background reconnects
+        // and a new tab selecting the machine; never over a job that is still running.
+        const statusId = await this.getPromarkStatusId();
+
+        if (statusId !== null && isJobInProgress(statusId)) {
+          console.log('Promark is running a job, keeping its lens parameters. st_id:', statusId);
+        } else {
+          await applyDocumentLensProfile(this, device.info);
+        }
       }
 
       Progress.popById('select-device');
@@ -683,7 +708,11 @@ class DeviceMaster {
   }
 
   // Player functions
-  async go(data: Blob, onProgress?: (...args: any[]) => void, taskTime?: number) {
+  /**
+   * @param lens Promark: the lens the task runs with. Swiftray applies it in the same request as the
+   * start, so no lens from another tab can get in between; rejects when it could not start that way.
+   */
+  async go(data: Blob, onProgress?: (...args: any[]) => void, taskTime?: number, lens?: JobLens) {
     const controlSocket = await this.getControl();
 
     if (!data || !(data instanceof Blob)) {
@@ -695,10 +724,17 @@ class DeviceMaster {
     }
 
     await controlSocket.addTask(controlSocket.upload, data);
-    await controlSocket.addTask(controlSocket.start, taskTime);
+
+    const startLens = this.toStartLens(lens);
+
+    assertStarted(await controlSocket.addTask(controlSocket.start, taskTime, startLens), startLens);
 
     return null;
   }
+
+  /** The correction also carries the laser source it is for, like `setGalvoParameters` */
+  private toStartLens = (lens?: JobLens) =>
+    lens && { ...lens, laserSource: getPromarkLaserSource(getPromarkInfo().laserType) };
 
   async goFromFile(path: string, fileName: string) {
     const controlSocket = await this.getControl();
@@ -731,10 +767,15 @@ class DeviceMaster {
     return controlSocket.addTask(controlSocket.abort);
   }
 
-  async restart() {
+  /** @param lens Promark: the lens the task runs with, see `go` */
+  async restart(lens?: JobLens) {
     const controlSocket = await this.getControl();
+    const startLens = this.toStartLens(lens);
+    const res = await controlSocket.addTask(controlSocket.restart, startLens);
 
-    return controlSocket.addTask(controlSocket.restart);
+    assertStarted(res, startLens);
+
+    return res;
   }
 
   async quit() {
@@ -755,10 +796,15 @@ class DeviceMaster {
     return controlSocket.addTask(controlSocket.kick);
   }
 
-  async startFraming(opt?: TPromarkFramingOpt) {
+  /** @param lens the lens the red light runs with, applied in the same request as the start (see `go`) */
+  async startFraming(opt?: TPromarkFramingOpt, lens?: JobLens) {
     const controlSocket = (await this.getControl()) as unknown as SwiftrayControl;
+    const startLens = this.toStartLens(lens);
+    const res = await controlSocket.addTask(controlSocket.startFraming, opt, startLens);
 
-    return controlSocket.addTask(controlSocket.startFraming, opt);
+    assertStarted(res, startLens);
+
+    return res;
   }
 
   async stopFraming() {
@@ -947,13 +993,21 @@ class DeviceMaster {
   /**
    * @param onProgress receive the run progress (0–1) instead of the progress dialog
    * @param silent the caller reports a failed task itself instead of the error alert shown here
+   * @param lens Promark: the lens the task runs with, applied in the same request as the start (see `go`)
    */
   doCalibration = async ({
     blob,
     fcodeSource,
+    lens,
     onProgress,
     silent = false,
-  }: { blob?: Blob; fcodeSource?: string; onProgress?: (progress: number) => void; silent?: boolean } = {}) => {
+  }: {
+    blob?: Blob;
+    fcodeSource?: string;
+    lens?: JobLens;
+    onProgress?: (progress: number) => void;
+    silent?: boolean;
+  } = {}) => {
     const vc = VersionChecker(this.currentDevice!.info.version);
 
     if (fcodeSource) {
@@ -981,7 +1035,7 @@ class DeviceMaster {
       // ignore
     }
     try {
-      await this.go(blob);
+      await this.go(blob, undefined, undefined, lens);
     } catch {
       const err = new Error('UPLOAD_FAILED');
 
@@ -1062,9 +1116,10 @@ class DeviceMaster {
     await this.doCalibration({ fcodeSource: 'fcode/bm2-ir.fc' });
   }
 
-  async doPromarkCalibration() {
+  /** @param lens the lens the loaded task runs with, see `doCalibration` */
+  async doPromarkCalibration(lens?: JobLens) {
     // the Promark dialogs handle the door-opened error themselves
-    await this.doCalibration({ silent: true });
+    await this.doCalibration({ lens, silent: true });
   }
 
   // fs functions
@@ -1602,13 +1657,15 @@ class DeviceMaster {
     return controlSocket.addTask(controlSocket.setDeviceSetting, name, value);
   }
 
-  async setField(worksize: number, fieldData: Field = defaultField) {
+  /** Swiftray refuses lens writes while a job is starting or a laser job is running: check `success`. */
+  async setField(worksize: number, fieldData: Field = defaultField): Promise<LensWriteResult> {
     const controlSocket = await this.getControl();
 
     return controlSocket.addTask(controlSocket.setField, worksize, fieldData);
   }
 
-  async setGalvoParameters(data: GalvoParameters) {
+  /** Refused like `setField` while a job is starting or a laser job is running. */
+  async setGalvoParameters(data: GalvoParameters): Promise<LensWriteResult> {
     const controlSocket = await this.getControl();
     const laserSource = getPromarkLaserSource(getPromarkInfo().laserType);
 
@@ -1626,6 +1683,19 @@ class DeviceMaster {
 
     return controlSocket.addTask(controlSocket.deviceInfoFlux);
   }
+
+  /** null when the status cannot be read, so the caller falls back to its usual behaviour */
+  private getPromarkStatusId = async (): Promise<null | number> => {
+    try {
+      const { st_id } = await this.getReport();
+
+      return st_id;
+    } catch (error) {
+      console.warn('Failed to read the Promark status', error);
+
+      return null;
+    }
+  };
 
   async getReport() {
     const controlSocket = await this.getControl();

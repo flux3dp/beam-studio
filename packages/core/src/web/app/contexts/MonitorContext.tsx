@@ -12,6 +12,7 @@ import { Mode } from '@core/app/constants/monitor-constants';
 import { setVariableTextState, useVariableTextState } from '@core/app/stores/variableText';
 import { swiftrayClient } from '@core/helpers/api/swiftray-client';
 import doZSpeedLimitTest from '@core/helpers/device/doZSpeedLimitTest';
+import { applyLensProfile, getJobLens } from '@core/helpers/device/promark/apply-lens-profile';
 import promarkButtonHandler from '@core/helpers/device/promark/promark-button-handler';
 import DeviceErrorHandler from '@core/helpers/device-error-handler';
 import DeviceMaster from '@core/helpers/device-master';
@@ -28,7 +29,7 @@ import dialog from '@core/implementations/dialog';
 import type { IDeviceInfo, IReport } from '@core/interfaces/IDevice';
 import type { IProgress } from '@core/interfaces/IProgress';
 import type { TaskMetaData } from '@core/interfaces/ITask';
-import type { LensProfileKey } from '@core/interfaces/Promark';
+import type { JobLens, LensProfileKey } from '@core/interfaces/Promark';
 
 const eventEmitter = eventEmitterFactory.createEventEmitter('monitor');
 const deviceEventEmitter = eventEmitterFactory.createEventEmitter('device');
@@ -952,6 +953,31 @@ export class MonitorContextProvider extends React.Component<Props, State> {
     });
   };
 
+  /**
+   * Promark: sends the lens the task was generated for, right before every start. What is on the
+   * machine cannot be trusted by then: the task may have been exported long ago, and another tab, a
+   * red light preview or the settings dialog can have sent another lens since.
+   */
+  private applyTaskLens = async (): Promise<void> => {
+    if (!this.isPromark) return;
+
+    const applied = await applyLensProfile(DeviceMaster, this.props.device, {
+      key: this.state.previewTask?.lensProfileKey,
+    });
+
+    // refused: a job is starting or running, and the machine is on some other lens
+    if (!applied) throw Object.assign(new Error('LENS_REJECTED'), { error: ['LENS_REJECTED'] });
+  };
+
+  /**
+   * Promark: the same lens, sent along with the start. Swiftray applies it in the request that starts
+   * the job, which closes the gap `applyTaskLens` leaves: another tab's lens arriving while the task
+   * uploads. `applyTaskLens` still runs first, for a Swiftray that does not read the lens of a start
+   * and to fail before the upload when the machine is busy.
+   */
+  private getTaskLens = (): JobLens | undefined =>
+    this.isPromark ? getJobLens(this.props.device, { key: this.state.previewTask?.lensProfileKey }) : undefined;
+
   onPlay = async (forceResend = false): Promise<null | number> => {
     const { device } = this.props;
     const { currentPath, fileInfo, mode, report } = this.state;
@@ -986,12 +1012,14 @@ export class MonitorContextProvider extends React.Component<Props, State> {
         totalTaskTime = taskTime;
         this.setState({ totalTaskTime });
         try {
+          await this.applyTaskLens();
           await DeviceMaster.go(
             taskBlob,
             ({ step, total }: IProgress) => {
               this.setState({ uploadProgress: Math.floor((step / total) * 100) });
             },
             totalTaskTime,
+            this.getTaskLens(),
           );
 
           const { advanceBy, autoAdvance, current } = useVariableTextState.getState();
@@ -1015,12 +1043,24 @@ export class MonitorContextProvider extends React.Component<Props, State> {
             ),
           );
           promarkButtonHandler.setStatus('listening');
+
+          // nothing started: no PLAY / JobStarted, which the usage tracker counts as a real run
+          return null;
         }
       } else if (mode === Mode.FILE_PREVIEW) {
         await DeviceMaster.goFromFile(currentPath.join('/'), fileInfo[0]);
       }
     } else if (MonitorStatus.isAbortedOrCompleted(report)) {
-      DeviceMaster.restart();
+      try {
+        await this.applyTaskLens();
+        await DeviceMaster.restart(this.getTaskLens());
+      } catch (error) {
+        // never rerun on whatever lens happens to be on the machine
+        console.error('Failed to rerun the task with its lens', error);
+        Alert.popUp({ message: LANG.message.unable_to_start, type: AlertConstants.SHOW_POPUP_ERROR });
+
+        return null;
+      }
     } else {
       // PAUSED
       DeviceMaster.resume();

@@ -214,7 +214,8 @@ describe('test PromarkSettings', () => {
     });
 
     await act(async () => fireEvent.click(previewBtn));
-    expect(mockApplyRedDot).toHaveBeenCalledTimes(1);
+    // once for the lens request, once for the lens that goes along with the start
+    expect(mockApplyRedDot).toHaveBeenCalledTimes(2);
     expect(mockApplyRedDot).toHaveBeenCalledWith(
       {
         offsetX: 0,
@@ -243,6 +244,11 @@ describe('test PromarkSettings', () => {
     expect(mockLoadTaskToSwiftray).toHaveBeenCalledTimes(1);
     expect(mockLoadTaskToSwiftray).toHaveBeenCalledWith('task', 'fpm1', 150);
     expect(mockStartFraming).toHaveBeenCalledTimes(1);
+    expect(mockStartFraming).toHaveBeenCalledWith(undefined, {
+      field: 'mock-field',
+      galvoParameters: 'mock-galvoParameters',
+      worksize: 150,
+    });
     expect(mockStopFraming).not.toHaveBeenCalled();
     await act(async () => fireEvent.click(previewBtn));
     expect(mockStopFraming).toHaveBeenCalledTimes(1);
@@ -267,6 +273,16 @@ describe('test PromarkSettings', () => {
     expect(mockLoadTaskToSwiftray).toHaveBeenCalledTimes(1);
     expect(mockLoadTaskToSwiftray).toHaveBeenCalledWith('task', 'fpm1', 150);
     expect(mockDoPromarkCalibration).toHaveBeenCalledTimes(1);
+    // the edited lens, without the red dot correction, goes along with the start
+    expect(mockDoPromarkCalibration).toHaveBeenCalledWith({
+      field: { angle: 0, offsetX: 0, offsetY: 0 },
+      galvoParameters: {
+        x: { bulge: 1, scale: 100, skew: 1, trapezoid: 1 },
+        y: { bulge: 1, scale: 100, skew: 1, trapezoid: 1 },
+      },
+      worksize: 150,
+    });
+    expect(mockApplyRedDot).not.toHaveBeenCalled();
     expect(mockStartFraming).not.toHaveBeenCalled();
   });
 
