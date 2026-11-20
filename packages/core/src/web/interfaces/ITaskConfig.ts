@@ -1,4 +1,9 @@
-import type { GalvoBlendProfile, GalvoRunEmission, GalvoStrategy } from '@core/app/constants/galvo-dev-settings';
+import type {
+  GalvoBlendProfile,
+  GalvoDither,
+  GalvoRunEmission,
+  GalvoStrategy,
+} from '@core/app/constants/galvo-dev-settings';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import type { GalvoWorkarea } from '@core/helpers/device/galvoConfig';
 import type { BBox } from '@core/interfaces/ICurveEngraving';
@@ -87,7 +92,17 @@ export type TFcodeOptionalConfig = Partial<{
    * the same as sending its default -- it is what lets the two sides stay in step. See
    * `@core/app/constants/galvo-dev-settings` for what each one does.
    */
+  /**
+   * How far short of a park the gantry goes first on each axis, mm, so that it arrives moving +Y
+   * then +X. Sent from the `galvo-fix-backlash` storage key (5 / 5 when on, 0 / 0 when off); a
+   * developer override replaces it.
+   */
+  galvo_backlash_x: number;
+  galvo_backlash_y: number;
+  galvo_blank_jump_min: number;
+  galvo_blank_jump_wait: number;
   galvo_block: [number, number];
+  galvo_block_start_delay: number;
   /**
    * Travel the parked module heads cost the gantry, in mm per edge, matching swiftray's
    * InwardRect. Not widened by the galvo's reach -- the exporter does that itself.
@@ -97,6 +112,7 @@ export type TFcodeOptionalConfig = Partial<{
    */
   galvo_boundary: { bottom: number; left: number; right: number; top: number };
   galvo_debug_image: string;
+  galvo_dither: GalvoDither;
   galvo_dot_blend_grain: number;
   galvo_dot_blend_line_core: boolean;
   galvo_dot_blend_overlap: number;
@@ -113,10 +129,13 @@ export type TFcodeOptionalConfig = Partial<{
    */
   galvo_field_correction: { dx: number[]; dy: number[]; field: number; size: number };
   /**
-   * Walk every row of blocks left to right, from a park a column left of the batch, instead of
-   * as a serpentine. Read from the `galvo-fix-backlash` storage key, not the dev settings.
+   * Walk every row of blocks left to right instead of as a serpentine, and approach every park
+   * from the same side. Read from the `galvo-fix-backlash` storage key, not the dev settings.
+   * swiftray reads the two distances above; this stays for one from before it had them.
    */
   galvo_fix_backlash: boolean;
+  galvo_hseam_spread: number;
+  galvo_hseam_walk: number;
   galvo_jump_speed: number;
   galvo_laser_off_delay: number;
   galvo_laser_on_delay: number;
@@ -127,6 +146,9 @@ export type TFcodeOptionalConfig = Partial<{
   galvo_max_list_commands: number;
   galvo_mo_delay: number;
   galvo_mopa_pulse_length: number;
+  galvo_pass_directions: string;
+  galvo_pass_pause: number;
+  galvo_passes: number;
   galvo_process_dot_jump_speed: number;
   galvo_process_dot_laser_off_delay: number;
   galvo_process_dot_laser_on_delay: number;
@@ -136,6 +158,8 @@ export type TFcodeOptionalConfig = Partial<{
   galvo_process_dot_pulse_period: number;
   galvo_scanner_mark_delay: number;
   galvo_scanner_polygon_delay: number;
+  galvo_seam_min_cost: boolean;
+  galvo_seam_walk_length: number;
   galvo_standby: boolean;
   galvo_standby_period: number;
   galvo_standby_width: number;
@@ -144,11 +168,15 @@ export type TFcodeOptionalConfig = Partial<{
    * Read before the individual keys above, so one of them still overrides it.
    */
   galvo_strategy: GalvoStrategy;
+  galvo_threshold: number;
+  galvo_tile_pause: number;
   /** Tone remap of a gradient image before dithering: darkness t -> min + (max - min) x t. */
   galvo_tone_max: number;
   galvo_tone_min: number;
   /** gantry travel speed while a galvo layer runs, mm/min; ordinary layers keep using `ts` */
   galvo_ts: number;
+  galvo_vseam_spread: number;
+  galvo_vseam_walk: number;
   gc: boolean; // output gcode
   /**
    * 4C ink color order by cartridge slot, e.g. 'cymk' (default cmyk)

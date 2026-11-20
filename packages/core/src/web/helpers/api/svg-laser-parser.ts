@@ -12,6 +12,7 @@ import Progress from '@core/app/actions/progress-caller';
 import { getMaterialHeightMm, getMaterialZRangeMm } from '@core/app/components/beambox/InnerEngraving/utils/material';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import AlertConstants from '@core/app/constants/alert-constants';
+import { getActiveGalvoDevOverrides } from '@core/app/constants/galvo-dev-settings';
 import {
   DetectedLayerModule,
   galvoModulesArray,
@@ -30,7 +31,7 @@ import { getAutoFeeder, getPassThrough } from '@core/helpers/addOn';
 import { isInnerEngravingActive } from '@core/helpers/addOn/innerEngraving';
 import { getRotaryInfo, getSpinningAxis } from '@core/helpers/addOn/rotary';
 import AlertConfig from '@core/helpers/api/alert-config';
-import { getFixBacklash } from '@core/helpers/device/galvoCalibration/backlash';
+import { BACKLASH_OVERSHOOT_MM, getFixBacklash } from '@core/helpers/device/galvoCalibration/backlash';
 import { getGalvoConfig } from '@core/helpers/device/galvoConfig';
 import { isFieldCorrectionUsable } from '@core/helpers/device/galvoFieldCorrection';
 import { getGantryTravelBoundary } from '@core/helpers/device/gantryTravelRange';
@@ -157,15 +158,22 @@ export const getExportOpt = async (
     // canvas boundary is -- a head parked on the machine limits travel whatever this job uses.
     config.galvo_boundary = getGantryTravelBoundary(model);
 
-    // The same flag the field-lens calibration overshoots by: on, every row of blocks runs left to
-    // right from a park a column left of the batch, so the gantry takes up its backlash the same
-    // way at every park; off, the rows run as a serpentine.
-    config.galvo_fix_backlash = getFixBacklash();
+    // The same flag the field-lens calibration overshoots by: on, the gantry backs off on both
+    // axes before every park and arrives moving +Y then +X, so it takes up its backlash the same
+    // way each time, and the rows of blocks all run left to right; off, no approach, and the rows
+    // run as a serpentine. The two distances are what swiftray reads; the flag stays for a
+    // swiftray from before it had them. A developer's own distances below override these.
+    const fixBacklash = getFixBacklash();
+
+    config.galvo_fix_backlash = fixBacklash;
+    config.galvo_backlash_x = fixBacklash ? BACKLASH_OVERSHOOT_MM : 0;
+    config.galvo_backlash_y = fixBacklash ? BACKLASH_OVERSHOOT_MM : 0;
 
     // Everything else that governs splitting and seam blending has a default inside the
     // exporter, so only what a developer has actually overridden is sent -- an absent key means
-    // "use yours", which is what keeps the two sides from drifting apart.
-    Object.assign(config, storage.get('galvo-dev-settings') ?? {});
+    // "use yours", which is what keeps the two sides from drifting apart. A field the strategy in
+    // use does not read is hidden in the panel, and is not sent either.
+    Object.assign(config, getActiveGalvoDevOverrides(storage.get('galvo-dev-settings')));
   }
 
   if (addOnInfo.sCurve && vc.meetVersion(addOnInfo.sCurve)) {

@@ -8,6 +8,7 @@ import { match } from 'ts-pattern';
 import alertCaller from '@core/app/actions/alert-caller';
 import {
   GALVO_DEV_SETTING_FIELDS,
+  isGalvoDevFieldActive,
   GALVO_DEV_SETTING_GROUPS,
   type GalvoDevConfigKey,
   type GalvoDevOverrides,
@@ -391,7 +392,9 @@ const GalvoDevSettings = ({ onClose }: Props): React.JSX.Element => {
                     <div className={styles.readOnly}>{row.value}</div>
                   </div>
                 ))
-              : GALVO_DEV_SETTING_FIELDS.filter((field) => field.group === group.key).map((field) => (
+              : GALVO_DEV_SETTING_FIELDS.filter(
+                  (field) => field.group === group.key && isGalvoDevFieldActive(field, draft.galvo_strategy),
+                ).map((field) => (
                   <div className={styles.row} key={field.key}>
                     <div className={styles.label}>
                       {field.label}

@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | 草稿，參數已和使用者逐項確認（2026-11-18），尚未實作；2026-11-19 加入「空白跳躍前等待」（7.7，已上機驗證）；2026-11-20 拍板：跳躍速度預設 7000、直縫最小成本路徑納入實作（開關，預設開）、停頓預設維持 0、PWM 不動、色階對應暫不實作 |
+| **Status** | 參數已和使用者逐項確認（2026-11-18、11-20）。**2026-11-20 已實作、未上機**：swiftray `dev/hx2-galvo-blend` `ce9a94a`（預設值、backlash X/Y、tile 停頓）、`fd5dacf`（KW、最小成本路徑、門檻、藍噪聲、空白跳躍前等待、seams debug 圖），Beam Studio 面板見第 9 節。swiftray 只做過語法檢查與接縫模組的獨立執行測試，整個 app 沒有 link、沒有匯出過 fcode。**jump delay（PR 4）未實作**，等韌體確認 |
 | **Author** | EstherFu |
 | **Created** | 2026-11-18 |
 | **Target product** | Beam Studio（desktop + web）開發設定，機型 `fhx2galvo`（HEXA G）；swiftray fcode 匯出；HEXA G 韌體（bsl） |
@@ -105,7 +105,7 @@
 | A8 | tile 停頓 20、趟停頓 8 | 第一個停靠點之外，每個停靠點開打前停 20 s；KW 每個停靠點的趟與趟之間停 8 s；預估時間包含這些停頓 | 0＝不插入停頓指令；非 KW 策略忽略趟停頓 |
 | A9 | backlash X 5、Y 5 | 每個有內容的停靠點都是先 −Y 5 mm、再 −X 5 mm 退後，然後 +Y、+X 進場 | X、Y 任一為 0 時不處理該軸；兩者皆 0 等同舊的 `galvo_fix_backlash = false` |
 | A10 | 停靠後等待未改 | 每個停靠點第一個 list 的 ENABLE 之後有 150 ms LONG_DELAY | 0＝不等待 |
-| A11 | jump delay 設 100 | 該工作期間每次跳躍固定延遲 100 µs，工作結束後恢復內插預設 | 0＝預設內插；超過 65535 被拒絕 |
+| A11（未實作，等 PR 4） | jump delay 設 100 | 該工作期間每次跳躍固定延遲 100 µs，工作結束後恢復內插預設 | 0＝預設內插；超過 65535 被拒絕 |
 | A12 | 設 debug 圖路徑後匯出 KW | 多一張 `<前綴>-layerN-seams.png`：全圖疊上每條縫各趟切點（各趟一色）、右側是中央縫交叉 24 mm 局部 | 只有一個 tile 時不輸出這張 |
 | A14 | 空白跳躍前等待 300、門檻 0.5，匯出一張有空白間隔的漸層圖 | 每一次跨過 ≥ 0.5 mm 原圖空白的跳躍（列內或換列）之前有一筆 300 µs 的 LONG_DELAY；路徑上沒有那麼長空白的跳躍沒有；點的位置與數量和關閉時相同；預估時間增加＝次數 × 300 µs | 等待設 0＝沒有任何插入；門檻比圖上所有空白都大＝沒有任何插入；淡色區內部點距超過門檻但原圖不是空白＝不等 |
 | A15 | KW、最小成本路徑開（預設），匯出一張直縫附近有空白的漸層圖 | 直縫切點落在名義線 ± 直縫漫步幅度內；「切點左右一格內有點」的列數不多於關閉時；路徑所在處有寬 ≥ 1 mm 的原圖空白時，該列各趟切點重合在空白裡；點的集合與關閉時相同，只有 tile 歸屬不同；seams debug 圖標題註明「最小成本路徑」 | 關閉＝與純漫步的輸出逐位元相同；整片是墨或整片空白的縫＝路徑等於漫步；某個 tile 剩不到 200 點且全部落在左右鄰居可打範圍內＝交給鄰居、該停靠點跳過；直縫漫步幅度為 0（或被空間限制縮成 0）＝路徑就是名義線 |
@@ -344,6 +344,28 @@ swiftray → 韌體：fcode 新增 list opcode `SET_JUMP_DELAY`（暫定 17，1 
 5. Beam Studio：面板改組、顯示條件、新欄位、預設值同步、匯出時排除隱藏欄位。
 
 1～3 可以分開上機驗證；Beam Studio 那支 PR 要等 1～3 都合併後才發，避免面板顯示 swiftray 還不認得的欄位。
+
+**實作狀態（2026-11-20）**
+
+| PR | 狀態 |
+|---|---|
+| 1 | swiftray `ce9a94a` |
+| 2、3 | swiftray `fd5dacf`（合在一個 commit） |
+| 4 | 未實作。`galvo_jump_delay` 沒有加進面板，也沒有送出 |
+| 5 | beam-studio branch `machine/hx2`：欄位表、顯示條件、匯出時排除隱藏欄位、backlash 距離 |
+
+**實作與設計的差異**
+
+- **接縫模組獨立成一個類別**：`swiftray src/toolpath_exporter/factories/galvo-kpass-seams.{h,cpp}`（`GalvoKpassSeams`），整個格點算一次、所有區塊共用。`LaserRasterGalvoFactory` 只問「這顆點歸誰」。單元測試 `tests/test_galvo_kpass_seams.h`（7 項）。
+- **同一趟內的左右來回**：依「行號 ÷ K」的奇偶決定方向，不是依「這一趟實際有點的第幾行」。同一個位置在每個區塊的方向因此一致；和 `test61.py` 的行序不完全相同，點的歸屬不受影響。
+- **趟停頓與 tile 停頓**：趟停頓是「關雷射 → fcode sleep → 下一個 list 重新開雷射」（`GalvoListWriter::pause()`），和 playground 的做法相同。只要這個停位已經打過東西就會停，即使接下來那一趟在這個區塊沒有點。tile 停頓以圖層為單位：每個圖層第一個有內容的停位不停。
+- **backlash**：swiftray 單獨收到 `galvo_fix_backlash = true`（沒有兩個距離）時解讀成 X 5、Y 0；Beam Studio 現在一律送兩個距離，場鏡校正面板的「修正 backlash」開是 5／5、關是 0／0，開發設定的覆寫再蓋過它。`getFixBacklash()` 沒有改成讀距離：校正流程仍然讀原本那個開關（Must not change 那一列因此不需要動）。進場點離行程的左端與上端至少 1 mm。
+- **KW 下的裁切範圍**：區塊對點陣的裁切放寬到整個場（區塊外推「場半寬 − 區塊半寬」），歸屬完全由接縫決定；這樣被併過來的零星點不會被裁掉。
+- **空白跳躍前等待放在 `LaserRasterGalvoFactory::emitLine`**，在打點記錄切分之前判斷（`GalvoListWriter::dwell()` 會先結束目前的打點記錄）。跨 list 邊界不等。不同張圖之間不等（同一個區塊內多張圖會先合成一張，所以實務上只有點陣／線段兩類之間不等）。
+- **門檻之後的原圖**以 8-bit 灰階另存一份在點陣工廠裡（最小成本路徑與空白判斷都讀它），記憶體多一份圖的大小。
+- **debug 階段圖改名**：`2-remapped`／`3-dithered` 變成 `2-threshold`／`3-remapped`／`4-dithered`。
+- **seams debug 圖**：左圖最寬 1600 px，右圖 24 mm 放大兩倍；標題是英文。被併走的 tile 只寫在標題的數量與 log，沒有在圖上標位置。
+- **面板**：`galvo_line_blend_emission`、`galvo_dot_blend_line_core` 從欄位表移除後，之前存在本機的覆寫仍會照送（沒有欄位描述的 key 原樣通過），要清掉得按「全部還原」。
 
 ## 10. Open decisions
 
