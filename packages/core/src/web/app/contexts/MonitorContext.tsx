@@ -12,6 +12,7 @@ import { Mode } from '@core/app/constants/monitor-constants';
 import { setVariableTextState, useVariableTextState } from '@core/app/stores/variableText';
 import { swiftrayClient } from '@core/helpers/api/swiftray-client';
 import doZSpeedLimitTest from '@core/helpers/device/doZSpeedLimitTest';
+import { applyLensProfile } from '@core/helpers/device/promark/apply-lens-profile';
 import promarkButtonHandler from '@core/helpers/device/promark/promark-button-handler';
 import DeviceErrorHandler from '@core/helpers/device-error-handler';
 import DeviceMaster from '@core/helpers/device-master';
@@ -952,6 +953,17 @@ export class MonitorContextProvider extends React.Component<Props, State> {
     });
   };
 
+  /**
+   * Promark: sends the lens the task was generated for, right before every start. What is on the
+   * machine cannot be trusted by then: the task may have been exported long ago, and another tab, a
+   * red light preview or the settings dialog can have sent another lens since.
+   */
+  private applyTaskLens = async (): Promise<void> => {
+    if (!this.isPromark) return;
+
+    await applyLensProfile(DeviceMaster, this.props.device, { key: this.state.previewTask?.lensProfileKey });
+  };
+
   onPlay = async (forceResend = false): Promise<null | number> => {
     const { device } = this.props;
     const { currentPath, fileInfo, mode, report } = this.state;
@@ -986,6 +998,7 @@ export class MonitorContextProvider extends React.Component<Props, State> {
         totalTaskTime = taskTime;
         this.setState({ totalTaskTime });
         try {
+          await this.applyTaskLens();
           await DeviceMaster.go(
             taskBlob,
             ({ step, total }: IProgress) => {
@@ -1020,6 +1033,16 @@ export class MonitorContextProvider extends React.Component<Props, State> {
         await DeviceMaster.goFromFile(currentPath.join('/'), fileInfo[0]);
       }
     } else if (MonitorStatus.isAbortedOrCompleted(report)) {
+      try {
+        await this.applyTaskLens();
+      } catch (error) {
+        // never rerun on whatever lens happens to be on the machine
+        console.error('Failed to apply the lens of the task', error);
+        Alert.popUp({ message: LANG.message.unable_to_start, type: AlertConstants.SHOW_POPUP_ERROR });
+
+        return null;
+      }
+
       DeviceMaster.restart();
     } else {
       // PAUSED

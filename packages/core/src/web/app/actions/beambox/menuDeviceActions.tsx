@@ -334,7 +334,7 @@ export default {
       const isIdle = device.st_id <= 0;
       const previewTask = isIdle && isPromark ? exportFuncs.getCachedPromarkTask(device.serial) : undefined;
 
-      if (!(await confirmCachedTaskLensProfile(device.serial, previewTask?.lensProfileKey))) return;
+      if (!(await confirmCachedTaskLensProfile(device.serial, previewTask))) return;
 
       await MonitorController.showMonitor(
         device,

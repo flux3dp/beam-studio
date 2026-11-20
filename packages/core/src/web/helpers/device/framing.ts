@@ -13,8 +13,6 @@ import { getAddOnInfo } from '@core/app/constants/addOn';
 import deviceConstants from '@core/app/constants/device-constants';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import NS from '@core/app/constants/namespaces';
-import { defaultField, defaultGalvoParameters } from '@core/app/constants/promark-constants';
-import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import selectionManager from '@core/app/svgedit/selection';
@@ -40,8 +38,7 @@ import versionChecker from '@core/helpers/version-checker';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
-import applyRedDot from './promark/apply-red-dot';
-import { getDocumentLensProfile } from './promark/lens-profiles';
+import { applyLensProfile } from './promark/apply-lens-profile';
 
 // TODO: add unit test
 export const FramingType = {
@@ -354,7 +351,6 @@ class FramingTaskManager extends EventEmitter {
   private taskCache: { [type in TFramingType]?: Task } = {};
   private taskCodeCache: { [type in TFramingType]?: string } = {};
   private taskPoints: Array<[number, number]> = [];
-  private hasAppliedRedLight = false;
   private initialized = false;
   private withVT = false;
   private shouldCheckDoor = false;
@@ -431,25 +427,11 @@ class FramingTaskManager extends EventEmitter {
       return false;
     }
 
-    if (!this.hasAppliedRedLight) {
-      this.showMessage(i18n.lang.message.connecting);
-
-      const {
-        field = defaultField,
-        galvoParameters = defaultGalvoParameters,
-        redDot,
-      } = getDocumentLensProfile(this.device!.serial);
-
-      if (redDot) {
-        const { field: newField, galvoParameters: newGalvo } = applyRedDot(redDot, field, galvoParameters);
-        const { width } = getWorkarea(this.device.model);
-
-        await deviceMaster.setField(width, newField);
-        await deviceMaster.setGalvoParameters(newGalvo);
-      }
-
-      this.hasAppliedRedLight = true;
-    }
+    // Sent before every red light run, never assumed from an earlier one: another tab, a job or the
+    // settings dialog may have changed the lens on the machine since. The frame is drawn from the
+    // current canvas, so it is the document's lens, with the red dot correction on top.
+    this.showMessage(i18n.lang.message.connecting);
+    await applyLensProfile(deviceMaster, this.device, { redDot: true });
 
     if (this.interrupted) {
       return false;
@@ -508,23 +490,12 @@ class FramingTaskManager extends EventEmitter {
     this.interrupted = true;
   };
 
+  /**
+   * Takes the red dot correction back off after the red light. Laser tasks send their own lens before
+   * they start, so this only keeps the machine from being left on red light parameters.
+   */
   public resetPromarkParams = async (): Promise<void> => {
-    if (this.hasAppliedRedLight) {
-      const {
-        field = defaultField,
-        galvoParameters = defaultGalvoParameters,
-        redDot,
-      } = getDocumentLensProfile(this.device!.serial);
-
-      if (redDot) {
-        const { width } = getWorkarea(this.device.model);
-
-        await deviceMaster.setField(width, field);
-        await deviceMaster.setGalvoParameters(galvoParameters);
-      }
-
-      this.hasAppliedRedLight = false;
-    }
+    await applyLensProfile(deviceMaster, this.device);
   };
 
   private moveTo = async ({

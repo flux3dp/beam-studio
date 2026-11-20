@@ -3,19 +3,25 @@ import { sprintf } from 'sprintf-js';
 import alertCaller from '@core/app/actions/alert-caller';
 import { describeLensProfileKey } from '@core/app/components/dialogs/promark/useLensProfiles';
 import { LaserType } from '@core/app/constants/promark-constants';
-import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
 import type { LensProfileKey } from '@core/interfaces/Promark';
 
-import { getDocumentLensProfileKey, isSameLensProfileKey, resolveLensProfile } from './lens-profiles';
+import { getDocumentLensProfileKey, isSameLensProfileKey } from './lens-profiles';
 import promarkDataStore from './promark-data-store';
 
 /**
- * Before the dashboard reruns the cached task: `select` has applied the current document's lens, but
- * the task was generated for `cachedKey`. When they differ, asks which lens to apply and applies the
- * cached one if picked. Resolves false when the user cancels.
+ * Before the dashboard reruns the cached task: the task was generated for the lens in
+ * `task.lensProfileKey`, which is what the monitor sends before it starts the task. When the current
+ * document asks for another lens, asks which one to run with; picking the document's replaces the
+ * task's key, so every later start of this task follows the choice. Resolves false when the user
+ * cancels.
  */
-export const confirmCachedTaskLensProfile = async (serial: string, cachedKey?: LensProfileKey): Promise<boolean> => {
+export const confirmCachedTaskLensProfile = async (
+  serial: string,
+  task?: { lensProfileKey?: LensProfileKey },
+): Promise<boolean> => {
+  const cachedKey = task?.lensProfileKey;
+
   if (!cachedKey) return true;
 
   const store = promarkDataStore.get(serial);
@@ -43,14 +49,7 @@ export const confirmCachedTaskLensProfile = async (serial: string, cachedKey?: L
 
   if (choice === 'cancel') return false;
 
-  if (choice === 'cached') {
-    const { field, galvoParameters, source } = resolveLensProfile(store, cachedKey, info.laserType);
-
-    console.log('Applying lens profile of the cached task', cachedKey, source);
-    await deviceMaster.setField(cachedKey.workarea, field);
-
-    if (galvoParameters) await deviceMaster.setGalvoParameters(galvoParameters);
-  }
+  if (choice === 'document') task.lensProfileKey = documentKey;
 
   return true;
 };

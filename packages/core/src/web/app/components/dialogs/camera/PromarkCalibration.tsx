@@ -9,6 +9,7 @@ import { promarkPnPPoints } from '@core/app/constants/fisheyeCameraConstants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { cameraCalibrationApi } from '@core/helpers/api/camera-calibration';
 import checkDeviceStatus from '@core/helpers/check-device-status';
+import { applyLensProfile } from '@core/helpers/device/promark/apply-lens-profile';
 import { loadCameraCalibrationTask } from '@core/helpers/device/promark/calibration';
 import { getInitialCameraRotation, isCameraRotated } from '@core/helpers/device/promark/camera-rotation';
 import promarkDataStore from '@core/helpers/device/promark/promark-data-store';
@@ -189,6 +190,8 @@ const PromarkCalibration = ({
             message: tCali.drawing_calibration_image,
           });
           await loadCameraCalibrationTask(model, workareaWidth);
+          // the image must be marked with the document's lens, whatever was sent to the machine last
+          await applyLensProfile(deviceMaster, deviceMaster.currentDevice!.info);
           await deviceMaster.doPromarkCalibration();
         }
 

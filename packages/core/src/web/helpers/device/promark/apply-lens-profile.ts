@@ -2,9 +2,10 @@ import deviceConstants from '@core/app/constants/device-constants';
 import { defaultField, defaultGalvoParameters } from '@core/app/constants/promark-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
-import type { Field, GalvoParameters } from '@core/interfaces/Promark';
+import type { Field, GalvoParameters, LensProfileKey } from '@core/interfaces/Promark';
 
-import { getDocumentLensProfile } from './lens-profiles';
+import applyRedDot from './apply-red-dot';
+import { getDocumentLensProfile, getLensProfile } from './lens-profiles';
 
 const { status } = deviceConstants;
 
@@ -36,23 +37,42 @@ interface LensTarget {
   setGalvoParameters: (data: GalvoParameters) => Promise<unknown>;
 }
 
-/** Applies the lens parameters the current document asks for, picked by `getDocumentLensProfile`. */
-export const applyDocumentLensProfile = async (
+export interface ApplyLensOptions {
+  /** the lens a task was generated for; the current document's lens when left out */
+  key?: LensProfileKey;
+  /** red light: adds the red dot correction, so the light lands where the laser will mark */
+  redDot?: boolean;
+}
+
+/**
+ * Sends the lens parameters of one lens to the machine. Whatever moves the galvo calls this right
+ * before it starts (a job, a red light preview, a test mark) instead of relying on what is on the
+ * machine: the backend keeps the lens of the last sender, which can be another tab, another lens of
+ * the same document, or a red light preview that added its red dot correction.
+ */
+export const applyLensProfile = async (
   target: LensTarget,
   { model, serial }: Pick<IDeviceInfo, 'model' | 'serial'>,
+  { key, redDot = false }: ApplyLensOptions = {},
 ): Promise<void> => {
-  const {
-    field = defaultField,
-    galvoParameters = defaultGalvoParameters,
-    key,
-    source,
-  } = getDocumentLensProfile(serial);
-  const { width } = getWorkarea(model);
+  const profile = key ? getLensProfile(serial, key) : getDocumentLensProfile(serial);
+  const width = key ? key.workarea : getWorkarea(model).width;
+  let { field = defaultField, galvoParameters = defaultGalvoParameters } = profile;
+
+  if (redDot && profile.redDot) {
+    ({ field, galvoParameters } = applyRedDot(profile.redDot, field, galvoParameters));
+  }
 
   // Always sent, defaults included: the backend keeps whatever the previous machine set, and the
   // correction also carries the laser source it is for, so a machine without local calibration
   // data would otherwise run with another machine's lens and source.
   await target.setField(width, field);
-  console.log('Applying lens profile', key, source, galvoParameters);
+  console.log('Applying lens profile', profile.key, profile.source, redDot ? 'with red dot' : '', galvoParameters);
   await target.setGalvoParameters(galvoParameters);
 };
+
+/** Applies the lens parameters the current document asks for, picked by `getDocumentLensProfile`. */
+export const applyDocumentLensProfile = (
+  target: LensTarget,
+  device: Pick<IDeviceInfo, 'model' | 'serial'>,
+): Promise<void> => applyLensProfile(target, device);

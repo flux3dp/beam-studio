@@ -174,6 +174,75 @@ describe('framing.ts — getCoords frame-preview coordinate logic (via Promark F
     return mockStartFraming.mock.calls[0][0].points;
   };
 
+  describe('Promark lens before every red light run', () => {
+    const deviceMaster = jest.requireMock('@core/helpers/device-master');
+    const field = { angle: 0, offsetX: 1, offsetY: 2 };
+    const galvoParameters = {
+      x: { bulge: 1, scale: 100, skew: 1, trapezoid: 1 },
+      y: { bulge: 1, scale: 100, skew: 1, trapezoid: 1 },
+    };
+
+    beforeEach(() => {
+      mockGetAllLayers.mockReturnValue([makeLayer('a')]);
+      mockGetVisibleElementsAndBBoxes.mockReturnValue([bbox(100, 100, 50, 50)]);
+    });
+
+    test('sends the document lens with the red dot correction, every time', async () => {
+      mockPromarkGet.mockReturnValue({
+        field,
+        galvoParameters,
+        redDot: { offsetX: 0.5, offsetY: 0.5, scaleX: 1.1, scaleY: 0.9 },
+      });
+
+      const manager = new FramingTaskManager(PROMARK_DEVICE);
+
+      await manager.startFraming(FramingType.Framing, {});
+      expect(deviceMaster.setField).toHaveBeenCalledTimes(1);
+      expect(deviceMaster.setField).toHaveBeenLastCalledWith(expect.any(Number), {
+        angle: 0,
+        offsetX: 1.5,
+        offsetY: 2.5,
+      });
+      expect(deviceMaster.setGalvoParameters).toHaveBeenLastCalledWith({
+        x: { ...galvoParameters.x, scale: expect.closeTo(110) },
+        y: { ...galvoParameters.y, scale: expect.closeTo(90) },
+      });
+      expect(deviceMaster.setGalvoParameters.mock.invocationCallOrder[0]).toBeLessThan(
+        mockStartFraming.mock.invocationCallOrder[0],
+      );
+
+      // a second run sends it again rather than trusting what is on the machine
+      await manager.stopFraming();
+      await manager.startFraming(FramingType.Framing, {});
+      expect(deviceMaster.setField).toHaveBeenCalledTimes(2);
+      expect(mockStartFraming).toHaveBeenCalledTimes(2);
+    });
+
+    test('sends the lens even without red dot parameters', async () => {
+      mockPromarkGet.mockReturnValue({ field, galvoParameters });
+
+      const manager = new FramingTaskManager(PROMARK_DEVICE);
+
+      await manager.startFraming(FramingType.Framing, {});
+      expect(deviceMaster.setField).toHaveBeenLastCalledWith(expect.any(Number), field);
+      expect(deviceMaster.setGalvoParameters).toHaveBeenLastCalledWith(galvoParameters);
+    });
+
+    test('resetPromarkParams takes the red dot correction back off', async () => {
+      mockPromarkGet.mockReturnValue({
+        field,
+        galvoParameters,
+        redDot: { offsetX: 0.5, offsetY: 0.5, scaleX: 1.1, scaleY: 0.9 },
+      });
+
+      const manager = new FramingTaskManager(PROMARK_DEVICE);
+
+      await manager.resetPromarkParams();
+      expect(deviceMaster.setField).toHaveBeenLastCalledWith(expect.any(Number), field);
+      expect(deviceMaster.setGalvoParameters).toHaveBeenLastCalledWith(galvoParameters);
+    });
+  });
+
   test('hidden layer (display="none") is excluded from the frame extents', async () => {
     const visibleA = makeLayer('visA');
     const visibleB = makeLayer('visB');

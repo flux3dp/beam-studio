@@ -2,12 +2,14 @@ import { defaultField, defaultGalvoParameters } from '@core/app/constants/promar
 
 import deviceConstants from '@core/app/constants/device-constants';
 
-import { applyDocumentLensProfile, isJobInProgress } from './apply-lens-profile';
+import { applyDocumentLensProfile, applyLensProfile, isJobInProgress } from './apply-lens-profile';
 
 const mockGetDocumentLensProfile = jest.fn();
+const mockGetLensProfile = jest.fn();
 
 jest.mock('./lens-profiles', () => ({
   getDocumentLensProfile: (...args) => mockGetDocumentLensProfile(...args),
+  getLensProfile: (...args) => mockGetLensProfile(...args),
 }));
 
 const mockGetWorkarea = jest.fn();
@@ -49,6 +51,56 @@ describe('test applyDocumentLensProfile', () => {
 
     await applyDocumentLensProfile(target, { model: 'fpm1', serial: 'serial' });
     expect(target.setField).toHaveBeenCalledWith(200, defaultField);
+    expect(target.setGalvoParameters).toHaveBeenCalledWith(defaultGalvoParameters);
+  });
+});
+
+describe('test applyLensProfile', () => {
+  const redDot = { offsetX: 0.5, offsetY: -0.5, scaleX: 1.1, scaleY: 0.9 };
+  const inner70 = { innerEngraving: true, workarea: 70 };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockGetWorkarea.mockReturnValue({ width: 200 });
+    mockGetDocumentLensProfile.mockReturnValue({
+      field,
+      galvoParameters,
+      key: { innerEngraving: false, workarea: 200 },
+      redDot,
+      source: 'exact',
+    });
+  });
+
+  test('a laser task gets the lens without the red dot correction', async () => {
+    await applyLensProfile(target, { model: 'fpm1', serial: 'serial' });
+    expect(target.setField).toHaveBeenCalledWith(200, field);
+    expect(target.setGalvoParameters).toHaveBeenCalledWith(galvoParameters);
+  });
+
+  test('red light adds the red dot correction on top', async () => {
+    await applyLensProfile(target, { model: 'fpm1', serial: 'serial' }, { redDot: true });
+    expect(target.setField).toHaveBeenCalledWith(200, { angle: 1, offsetX: 2.5, offsetY: 2.5 });
+    expect(target.setGalvoParameters).toHaveBeenCalledWith({
+      x: { bulge: 1, scale: expect.closeTo(88), skew: 1, trapezoid: 1 },
+      y: { bulge: 1, scale: expect.closeTo(72), skew: 1, trapezoid: 1 },
+    });
+  });
+
+  test('red light without red dot parameters still sends the lens', async () => {
+    mockGetDocumentLensProfile.mockReturnValue({ field, galvoParameters, key: {}, source: 'exact' });
+    await applyLensProfile(target, { model: 'fpm1', serial: 'serial' }, { redDot: true });
+    expect(target.setField).toHaveBeenCalledWith(200, field);
+    expect(target.setGalvoParameters).toHaveBeenCalledWith(galvoParameters);
+  });
+
+  test('a task key picks that lens and its work area instead of the document', async () => {
+    const taskField = { angle: 0, offsetX: 9, offsetY: 9 };
+
+    mockGetLensProfile.mockReturnValue({ field: taskField, key: inner70, source: 'exact' });
+    await applyLensProfile(target, { model: 'fpm1', serial: 'serial' }, { key: inner70 });
+    expect(mockGetLensProfile).toHaveBeenCalledWith('serial', inner70);
+    expect(mockGetDocumentLensProfile).not.toHaveBeenCalled();
+    expect(target.setField).toHaveBeenCalledWith(70, taskField);
     expect(target.setGalvoParameters).toHaveBeenCalledWith(defaultGalvoParameters);
   });
 });
