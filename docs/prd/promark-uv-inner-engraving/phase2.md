@@ -45,7 +45,7 @@ P2-8～P2-10 除了已開放的每行停留，維持 Phase 1 的狀態（uvDev �
 - 照片轉點雲：`ThreeDOptions.tsx:23-53` 的「Generate Test Point Cloud」，只在 `isUvDev()` 對照片平面顯示。`generatePhotoPointCloud` 以灰階當深度（`z = (255 − gray) × 層間距`），格距是點間距；`applyPhotoPointCloud` 把物件改成 `kind: 'point-cloud'`，原圖保留，BSPC 存在 .beam block 7。
 - Replicate 範例匯入已在 `274b6b0ac` 移除。
 - `machine_z_bucket`：只有 `isUvDev()` + fpm1 UV 時從 localStorage 讀，前端下限 0.001（`svg-laser-parser.ts:47-51`、`362-394`）。Swiftray 預設 0.01、下限 0.001（`toolpath-exporter.h:42-43`，`af385ca`）。
-- 每行停留（`data-fillDwellTime`）與打散掃描順序（`data-fillInterleave`）：Phase 1 只在 `isUvDev()` 顯示（進階設定、2D 材質測試）；2026-10-22 起 Promark UV 一般使用者可用（§6.5）。
+- 每行停留（`data-fillDwellTime`）與打散掃描順序（`data-fillInterleave`）：Phase 1 只在 `isUvDev()` 顯示（進階設定、2D 材質測試）；2026-10-22 起 Promark UV 一般使用者可用（§6.5）；2026-11-20 起進階設定對 Desktop / MOPA 也開放（2D 材質測試仍只有 UV）。
 
 ### 2.2 照片轉 3D 測試頁（replicate-3d-compare）
 
@@ -147,7 +147,7 @@ P2-8～P2-10 除了已開放的每行停留，維持 Phase 1 的狀態（uvDev �
 ### P2-6 打散掃描順序測試
 
 - 同一材料、同一圖案，分別以開 / 關「打散掃描順序」（`data-fillInterleave`）雕刻，比較局部過深與總工時，結果記錄在 §11。
-- 2026-10-22 起此選項與每行停留已開放給 UV 一般使用者（進階設定 > 填充設定，只有 Promark UV 顯示）；Desktop / MOPA 不顯示。
+- 2026-10-22 起此選項與每行停留已開放給 UV 一般使用者（進階設定 > 填充設定）。2026-11-20 起 Desktop / MOPA 的進階設定也顯示這兩項（已於 #1062 實作）：Swiftray 處理這兩個參數時只看是否為 Promark（`toolpath-exporter.cpp` 的 `is_promark_`），不檢查光源，打散在三種光源實測都有效。
 
 ### P2-7 `machine_z_bucket`
 
@@ -199,7 +199,7 @@ P2-8～P2-10 除了已開放的每行停留，維持 Phase 1 的狀態（uvDev �
 | `ThreeDOptions.tsx` | uvDev 的測試點雲按鈕不變；照片轉 3D 物件改顯示 `PhotoTo3dOptions` |
 | `OptionsPanel.tsx` | 照片轉 3D 物件（有 `data-stl-depth`）顯示 `ThreeDOptions`、不顯示點陣圖選項；uvDev 測試點雲與其他點雲仍沒有選項（2026-10-30 補：原本點雲一律不顯示選項，`PhotoTo3dOptions` 從未出現過） |
 | `presets.ts` | 頻率、速度等既有值不變；只有 `fpm1_2_5` 加上 `fillDwellTime`（PLA 50000，其他 -50000 = 關閉）。其他機型的預設參數不變 |
-| `AdvancedSettingModal.tsx` | 每行停留與打散掃描順序只在 Promark UV 顯示（原本是 uvDev）；Desktop / MOPA 與其他機型的進階設定不變 |
+| `AdvancedSettingModal.tsx` | 每行停留與打散掃描順序在 Promark 三種光源都顯示（原本是 uvDev，2026-10-22 改為只有 UV，2026-11-20 起 Desktop / MOPA 也有）；預設都是關閉，Desktop / MOPA 既有檔案的輸出不變；頻率仍只有 UV 顯示 |
 | `MaterialTestGeneratorPanel/TableSetting.ts` | UV 2D 材質測試多了每行停留與打散掃描順序兩欄（原本是 uvDev）；內雕與其他雷射源的表格不變 |
 | `deviceMaster.setField`（移除 `getPromarkFieldWorksize`，2026-11-03） | 所有呼叫端（`dialogs/promark/PromarkSettings.tsx`、`pages/InitializeMachine/Promark/PromarkSettings.tsx`、`device/framing.ts`、`device/promark/cached-task-lens.ts`、`device/promark/apply-lens-profile.ts`）— 送出的 worksize 就是傳入的工作範圍；除了 UV 70mm 由 75 改為 70，其他雷射源與工作範圍的值不變 |
 
@@ -350,7 +350,7 @@ P2-8～P2-10 除了已開放的每行停留，維持 Phase 1 的狀態（uvDev �
 ### 6.5 P2-6 打散掃描順序
 
 - Swiftray 不限機型，只要圖層有 `data-fillInterleave` 就生效（`toolpath-exporter.cpp:66-103`、`1443-1452`）；只作用在 2D 填充，不作用在 STL。
-- 前端：進階設定（`AdvancedSettingModal.tsx`）的打散掃描順序與每行停留改用 `useIsPromarkUV()` 判斷，不再看 uvDev；2D 材質測試（`TableSetting.ts`）同樣改為 UV 就有。
+- 前端：進階設定（`AdvancedSettingModal.tsx`）的打散掃描順序與每行停留改用 `useIsPromarkUV()` 判斷，不再看 uvDev；2D 材質測試（`TableSetting.ts`）同樣改為 UV 就有。2026-11-20 起進階設定的這兩項不再判斷光源，Promark 都顯示。
 
 ### 6.6 P2-7 `machine_z_bucket`
 
@@ -465,7 +465,7 @@ Phase 2 branch：`promark-3d-inner-carving-phase2`（從 Phase 1 branch 切出�
 - **單元測試**：
   - P2-2：`SelectionManager.spec`（內雕多選不建 tempGroup）、`selectedElementStore.spec`（`stl_multi`）、`InnerEngraving/utils/selection.spec`（同步、Shift + 點、圖層）、`ObjectPanel.spec`（多選面板）、`DimensionPanelStlMulti.spec`。
   - P2-2 旋轉驗算（`groupTransform.spec`）：對含 flip、非等比 scale、多軸旋轉、接近萬向鎖的物件，比較變換後網格八個角的世界座標與直接套用 delta 矩陣的結果（相對容差 1e-6）；涵蓋面板的旋轉、縮放、翻轉、組合，gizmo 拖曳的位移、旋轉、縮放，六次 60° 轉回原位，以及 undo 一步還原。
-  - P2-5：`presets.spec.ts`（只有 PLA 開每行停留）、`layer-config-helper.spec.ts`（PLA 之後套其他預設參數會關閉）、`AdvancedSettingModal.spec.tsx`（只有 UV 顯示）、`TableSetting.spec.ts`（UV 材質測試有兩欄）。
+  - P2-5：`presets.spec.ts`（只有 PLA 開每行停留）、`layer-config-helper.spec.ts`（PLA 之後套其他預設參數會關閉）、`AdvancedSettingModal.spec.tsx`（Promark 三種光源都顯示）、`TableSetting.spec.ts`（UV 材質測試有兩欄）。
   - P2-3（已寫）：
     - `photoTo3d/algorithm.spec`：BSDM 讀寫、API 回應解碼、dither（亮處打點、去背處不打、比照片細的點格）、百分位、取樣器、近處抬高、透明處無效、背景點移除（且點不再落到最遠平面）、緩坡邊緣保留、沿輪廓平滑（往內漸弱）、上限。
     - `photoTo3d/index.spec`：
