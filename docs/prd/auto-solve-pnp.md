@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | In progress. Implemented on `feat/auto-solve-pnp` (beam-studio) and `feat/auto-pnp` (fluxghost) for `fbm2` (16 marks), the `fbb2` / `fhx2rf` laser-head camera and `ado1` (8 marks). Hardware: three `fbm2`, one `fbb2`, one `fhx2rf`, one `ado1`, each with its own `k` / `d` (§11, §12). Not included: Promark (mark size and detector, decision 12), the `fbb2` / `fhx2rf` wide-angle camera. Pending: an exposure sweep on `fhx2rf`, whether `ado1` exposure can be set from Beam Studio at all, the old-backend path (§12), decision 8 |
+| **Status** | Implemented in 2.7.4 with fluxghost 2.5.8 (flux3dp/fluxghost#128; the tag moved to it on 2026-11-23) for `fbm2` (16 marks), the `fbb2` / `fhx2rf` laser-head camera and `ado1` (8 marks). Hardware (2026-11-19 / 20): three `fbm2`, one `fbb2`, one `fhx2rf`, one `ado1`, each with its own `k` / `d` (§11, §12). Not included: Promark (mark size and detector, decision 12) and the `fbb2` / `fhx2rf` wide-angle camera (decision 1). Pending: the old-backend fallback on hardware (§12 T12), the 0.5 mm `fbm2` task file (decision 11), whether `ado1` exposure can be set from Beam Studio, decision 8 |
 | **Author** | Beam Studio team |
 | **Created** | 2026-11-16 |
 | **Target product** | Beam Studio (desktop + web), fluxghost 2.5.8 (the version does not change; the tag moves to the merge of fluxghost #128) |
@@ -298,10 +298,12 @@ therefore call `releaseMachine` first, and `releaseMachine` refreshes
 lags, so `checkDeviceStatus` would otherwise see our own finished raw mode as a machine in use
 and offer to kick it, after which the next step fails.
 
-The decision between this step and the manual ones is made inside `Beamo2Calibration.tsx` from
-the call's result: a backend that does not know `auto_pnp_detect` answers `UNSUPPORTED` and the
-flow continues at SOLVE_PNP_INSTRUCTION (decision 4). There is no switch to force the manual
-steps. The exposure is restored and the camera disconnected in a `finally` block.
+The decision between this step and the manual ones is made inside each dialog from the call's
+result. `UNSUPPORTED` is not something the backend sends: a backend that does not know
+`auto_pnp_detect` answers `{"status": "Error", "message": "BAD_PARAM_TYPE"}`, and the client
+(`autoPnPDetect`, `autoPnPMatch`) turns that reply into the reason `UNSUPPORTED` (§8). The
+flow then continues at SOLVE_PNP_INSTRUCTION (decision 4). There is no switch to force the
+manual steps. The exposure is restored and the camera disconnected in a `finally` block.
 
 A run that ends with marks missing after seven photos spends 8 to 9 s in the matcher, which
 was accepted; a successful match takes no measurable time.
@@ -443,7 +445,8 @@ restore, disconnect. It returns the points and stops there; each dialog solves i
 - `ado1` runs two separate passes (engrave, find, raise, engrave, find). A failure at the
   second height returns to ELEVATED_CUT, not PUT_PAPER: the first pose is already saved as a
   checkpoint.
-- The `fhx2rf` values are the `fbb2` ones, not measured on `fhx2rf`. `ado1` sets no exposure:
+- `fhx2rf` uses the `fbb2` values (decided 2026-11-23: the same laser-head camera module; one
+  `fhx2rf` passed with them, no sweep of its own). `ado1` sets no exposure:
   its manual flow never did, and whether the firmware exposes the camera exposure to Beam
   Studio is not known (v4l2 on the machine can set it). The one unit tested was on 450 and its
   tinted lid keeps room light out, so the spread between sites should be small. Adding rounds
@@ -559,17 +562,16 @@ Command names are final once fluxghost's `cmd_mapping` has them; do not rename a
    exposure, the detection rate; the bracket is the smallest
    set of exposures that covers every mark on every unit. Units available: several `fbm2`; one
    each of `fbb2`, `fhx2rf` and `ado1`.
-1. fluxghost (`feat/auto-pnp`, done except the tag): `auto_pnp_detect`, `auto_pnp_match`,
-   `rms` in `solve_pnp_calculate`, fixture tests, `docs/api/camera-calibration.md`,
-   `ws_smoke.py` entries. Tag.
-2. beam-studio (`feat/auto-solve-pnp`): API client methods, `autoSolvePnP.ts`, AUTO_SOLVE_PNP
-   step in `Beamo2Calibration.tsx`, strings in all languages, `autoSolvePnP.spec.ts` (done);
-   CD bump, `camera-calibration` skill update (pending).
+1. fluxghost #128 (merged 2026-11-23): `auto_pnp_detect`, `auto_pnp_match`, `rms` in
+   `solve_pnp_calculate`, fixture tests, `docs/api/camera-calibration.md`, `ws_smoke.py`
+   entries. No version change: tag 2.5.8 moved to the merge, so the CD workflows need no edit.
+2. beam-studio (`feat/auto-solve-pnp`): API client methods, `common/autoLocateMarks.ts`, the
+   automatic step in the three dialogs, strings in all languages, specs, the
+   `camera-calibration` skill.
 3. Hardware pass (§12), thresholds recorded in §11. Done for the happy path and missing marks
    on three `fbm2`; the old-backend path is not tested yet, the rest is listed in §12.
-4. Follow-up PRs per machine (decision 1). The matcher already takes the 8-mark layouts
-   (§11); each machine still needs its dialog wired, and Promark needs detector work first
-   (decision 12).
+4. Follow-up PRs: the `fbb2` / `fhx2rf` wide-angle camera (decision 1), then Promark, which
+   needs detector work first (decision 12).
 
 ---
 
@@ -716,8 +718,8 @@ Command names are final once fluxghost's `cmd_mapping` has them; do not rename a
     - Another machine's 8-mark pattern on a reused sheet does imitate it: the layouts differ
       only in proportions (120 × 80 against 120 × 120), which a homography absorbs. Seen on
       `ado1` (wrong preview at the lower height), closed by the proportion check.
-    - An exposure sweep on `fhx2rf`; on `ado1`, first whether exposure can be set from Beam
-      Studio (§7.3.1).
+    - On `ado1`, whether exposure can be set from Beam Studio (§7.3.1). `fhx2rf` shares the
+      `fbb2` rounds (settled 2026-11-23).
     - Promark: the marks are bright dots on a dark sheet, 2.3 to 3.2 px across, below the
       15 px minimum area of both the automatic (dark only) and the manual (any colour)
       detector (§11). Needs a larger mark first, about 2.5 mm across to reach 6 px at 2.4 px
