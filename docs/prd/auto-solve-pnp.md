@@ -2,12 +2,12 @@
 
 | | |
 |---|---|
-| **Status** | In progress. `fbm2` implemented on `feat/auto-solve-pnp` (beam-studio) and `feat/auto-pnp` (fluxghost) and passed on the three office units with each unit's own `k` / `d` (§11). The matcher also handles the 8-mark layouts, checked offline on photos of one `fbb2`, one `fhx2rf` and one `ado1`; their dialogs are not wired yet. The auto-exposure handling, the switch to advanced mode from the high-residual warning and the return to PUT_PAPER were checked on one unit (2026-11-20, §12). Pending: a component spec for the dialog branches, the old-backend path (§12), decisions 8 and 10 to 12 (Promark needs detector work) |
+| **Status** | In progress. Implemented on `feat/auto-solve-pnp` (beam-studio) and `feat/auto-pnp` (fluxghost) for `fbm2` (16 marks), the `fbb2` / `fhx2rf` laser-head camera and `ado1` (8 marks). Hardware: three `fbm2`, one `fbb2`, one `fhx2rf`, one `ado1`, each with its own `k` / `d` (§11, §12). Not included: Promark (mark size and detector, decision 12), the `fbb2` / `fhx2rf` wide-angle camera. Pending: an exposure sweep on `fhx2rf`, whether `ado1` exposure can be set from Beam Studio at all, the old-backend path (§12), decision 8 |
 | **Author** | Beam Studio team |
 | **Created** | 2026-11-16 |
 | **Target product** | Beam Studio (desktop + web), fluxghost (next tag after 2.5.8) |
 | **Owner area** | Camera calibration dialogs, fluxghost camera calibration API |
-| **Related code** | Dialog: `packages/core/src/web/app/components/dialogs/camera/beamo2Calibration/Beamo2Calibration.tsx`, `beamo2Calibration/autoSolvePnP.ts`, `camera/common/SolvePnP.tsx`, `camera/common/useCamera.ts`, `camera/common/ProcessingDialog.tsx`, `camera/common/CheckPnP.tsx`; API client: `packages/core/src/web/helpers/api/camera-calibration.ts`; constants: `packages/core/src/web/app/constants/fisheyeCameraConstants.ts` (`bm2PnPPoints`, `getRegionalPoints`); exposure: `packages/core/src/web/helpers/device/camera/cameraExposure.ts`; engraving task: `packages/core/src/web/helpers/device-master.ts` (`doBeamo2Calibration`, `fcode/bm2-calibration.fc`, source `resources/calibration-tasks/bm2-calibration.beam`) |
+| **Related code** | Dialog: `packages/core/src/web/app/components/dialogs/camera/beamo2Calibration/Beamo2Calibration.tsx`, `beamo2Calibration/autoSolvePnP.ts`, `camera/common/autoLocateMarks.ts`, `camera/common/showHighResidualAlert.ts`, `camera/LaserHeadFisheyeCalibration.tsx`, `camera/AdorCalibration/AdorCalibration.tsx`, `camera/common/SolvePnP.tsx`, `camera/common/useCamera.ts`, `camera/common/ProcessingDialog.tsx`, `camera/common/CheckPnP.tsx`; API client: `packages/core/src/web/helpers/api/camera-calibration.ts`; constants: `packages/core/src/web/app/constants/fisheyeCameraConstants.ts` (`bm2PnPPoints`, `getRegionalPoints`); exposure: `packages/core/src/web/helpers/device/camera/cameraExposure.ts`; engraving task: `packages/core/src/web/helpers/device-master.ts` (`doBeamo2Calibration`, `fcode/bm2-calibration.fc`, source `resources/calibration-tasks/bm2-calibration.beam`) |
 | **External repos** | fluxghost: `fluxghost/utils/camera/auto_pnp.py`, `tests/usage/test_auto_pnp.py`, `fluxghost/api/camera_calibration.py`, `fluxghost/utils/camera/corner_detection/find_corners.py`, `corner_detection/match_points.py`, `utils/camera/solve_pnp.py`, `docs/api/camera-calibration.md`, `tests/usage/test_camera_match_points.py`, `tools/ws_smoke.py` |
 
 ---
@@ -109,8 +109,9 @@ quality measure and it is not returned.
 
 **Goals**
 
-- G1. On `fbm2`, the user does nothing between starting the engraving and the final check
-  screen.
+- G1. On `fbm2` and on the `fbb2` / `fhx2rf` laser-head camera, the user does nothing between
+  starting the engraving and the final check screen. On `ado1`, nothing but raising the
+  material between the two heights.
 - G2. No manual point dragging anywhere in the automatic flow. Failure is a message plus retry.
   The manual steps remain only for a backend without the new commands (decision 4).
 - G3. A wrong calibration is never accepted silently: acceptance needs measured residuals under
@@ -123,7 +124,8 @@ quality measure and it is not returned.
 - Changing the intrinsic calibration (ChArUco) step.
 - Changing the engraved pattern or generating the task at run time (decision 3). The mark
   size is a separate question (decision 11).
-- Other machines in the first release (see §9 and open decision 1).
+- Promark and the `fbb2` / `fhx2rf` wide-angle camera in the first release (decisions 1 and
+  12).
 - Removing the `SolvePnP` component. Other dialogs keep using it.
 - Automatic exposure search. Two fixed rounds per model are enough (decision 7).
 
@@ -200,6 +202,23 @@ between. In advanced mode the same warning recommends capturing the calibration 
 and its second button returns to PRE_CHESSBOARD. Dismissing the warning (Esc) leaves the dialog
 on PUT_PAPER.
 
+**A12 Laser-head camera (`fbb2`, `fhx2rf`).** Calibrate Camera in basic mode, white paper,
+Start Engrave. Result: no drag screen; CHECK_PNP opens with the grid on the 8 marks. The
+console line shows `exposures: [250]` when one photo was enough and `[250, 100, 500]` after a
+second round, and `restoredTo` is the exposure the camera had before. With auto exposure on
+(`wasAutoExposure: true`) it is on again afterwards. Back from CHECK_PNP returns to PUT_PAPER.
+One mark covered: `NOT_ENOUGH_MARKS` with "7 of 8", back to PUT_PAPER.
+
+**A13 Ador.** Calibrate Camera in basic mode. Result: after the first engraving the dialog goes
+straight to the Elevate step; after the second engraving the parameters are saved. No drag
+screen at either height. Marks missing at the second height: the message, then the Elevate step
+again (the first height is kept). Then check the preview at a low and at a raised material
+height: Ador has no CHECK_PNP, the preview is the only check.
+
+**A14 Reused paper (8 marks).** Run A12 or A13 on a sheet that already carries marks of another
+machine's pattern. Result: the new marks are used, or the run fails by mark count or residual;
+it never saves a pose from the old pattern.
+
 **A11 Retry from PUT_PAPER.** Reach CHECK_PNP through the automatic step, press Back, then
 Skip (or Start Engrave). Result: no prompt about a machine in use, the automatic step runs
 again; in advanced mode the ChArUco result is still used. Same after a `NOT_ENOUGH_MARKS`
@@ -234,10 +253,14 @@ Edge cases and expected behaviour:
 | fluxghost `find_corners.py` (not touched: `auto_pnp.py` builds its own detector with the same parameters plus the dark-blob filter) | `camera_calibration.py` manual find-corners and `opencv.py` (`detect_blobs`, Print and Cut mark detection) — untouched |
 | fluxghost `camera_calibration.py` (commands added, `solve_pnp_calculate` returns `rms`) | `solve_pnp_find_corners`, `solve_pnp_calculate` — command strings, arguments, existing response keys and the silent projected-point fallback unchanged |
 | | `tools/ws_smoke.py` — still ends `ALL PASS` |
+| `LaserHeadFisheyeCalibration.tsx` (AUTO_SOLVE_PNP step added) | PRE_CHESSBOARD, CHESSBOARD, PUT_PAPER, CHECK_PNP and the saved V3 parameters unchanged. SOLVE_PNP_INSTRUCTION and SOLVE_PNP unchanged, reached only with a backend that lacks the commands |
+| `camera/index.tsx` (`key`, `onSwitchToAdvanced`) | `showLaserHeadFisheyeCalibration(device, false / true)` from the menu and the missing-parameters alert — same dialog, same resolved value |
+| `AdorCalibration/AdorCalibration.tsx` (two automatic steps; the `onNext` bodies of the two `SolvePnP` steps moved into `handleFirstPose` / `handleSecondPose`) | Manual SOLVE_PNP_1 and SOLVE_PNP_2 — same checkpoint, regression and saved V2 parameters. PREPARE_CALIBRATION, CALIBRATE (ChArUco and factory chessboard) unchanged |
+| `AdorCalibration/index.tsx` (`key`, `onSwitchToAdvanced`, `replaceOpenDialog`) | `showAdorCalibration()` from the menu, factory mode — still returns `false` when the dialog is already open |
 | `packages/core/src/web/app/lang/*.ts` (keys added) | No existing key renamed or removed. Reused as button labels, text unchanged: `topbar.menu.calibrate_camera_advanced`, `calibration.title_capture_calibration_pattern` |
 
-Not touched: `SolvePnP.tsx`, `LaserHeadFisheyeCalibration.tsx`, `WideAngleCamera/`,
-`AdorCalibration/`, `PromarkCalibration.tsx`, `device-master.ts`, `match_points.py`
+Not touched: `SolvePnP.tsx`, `WideAngleCamera/`, `PromarkCalibration.tsx`,
+`device-master.ts`, `match_points.py`
 (`match_projected_points` keeps its signature; the new matcher is a new module).
 `fcode/bm2-calibration.fc` changes only if decision 11 is taken; the mark positions stay.
 
@@ -393,6 +416,46 @@ Cost: no measurable time when all marks are there (early return); 1 to 2 s with 
 after two exposures; 8 to 9 s after seven (about 95 blobs); up to 5 s for an 8-mark photo with
 40 blobs and one mark hidden.
 
+### 7.3.1 The 8-mark machines
+
+`common/autoLocateMarks.ts` holds what the machines share: connect the camera, optionally
+select one (`cameraIndex`), handle exposure and auto exposure, shoot the rounds, detect, match,
+restore, disconnect. It returns the points and stops there; each dialog solves its own poses.
+`beamo2Calibration/autoSolvePnP.ts` is a caller like the others.
+
+| | `fbm2` | `fbb2` / `fhx2rf` laser head | `ado1` |
+|---|---|---|---|
+| Reference points | 16, `bm2PnPPoints` | 8, `bb2PnPPoints` | 8, `adorPnPPoints` |
+| Exposure rounds | `[75, 200]`, `[50, 125, 350, 500, 800]` | `[250]`, `[100, 500]` | none: one photo at the current exposure |
+| Residual limit (`rMax`) | backend default, 1.0 mm | 0.2 mm | 0.2 mm |
+| Camera | default | `cameraIndex: 0` | default |
+| Poses solved | four quadrants at dh 0 | one at dh 0 | one per height (`dh1`, `dh2`), then `extrinsicRegression` |
+| Machine during the photos | raw mode, motors held | released after `moveLaserHead()` | released after `prepareToTakePicture()` |
+| After the solve | SOLVE_OTHER_PNP, CHECK_PNP | CHECK_PNP | first height: ELEVATED_CUT; second: saved |
+
+- The matcher takes no pose: it never reads the stored `rvec` / `tvec`, only `k`, `d` and the
+  mark positions. Its one orientation assumption is that the image is not rotated by 90 or
+  180 degrees against the bed (agreed 2026-11-20 as a precondition for these machines).
+  Promark, whose camera may be mounted upside down (`rotate180`), needs that handled first.
+- 8 marks give a homography little to disagree with, hence the tighter residual limit and the
+  proportion check on finished matches (`MAX_ANISOTROPY`). Values, measurements and the cases
+  behind them: fluxghost `docs/api/camera-calibration.md`, "auto_pnp constants".
+- `ado1` runs two separate passes (engrave, find, raise, engrave, find). A failure at the
+  second height returns to ELEVATED_CUT, not PUT_PAPER: the first pose is already saved as a
+  checkpoint.
+- The `fhx2rf` values are the `fbb2` ones, not measured on `fhx2rf`. `ado1` sets no exposure:
+  its manual flow never did, and whether the firmware exposes the camera exposure to Beam
+  Studio is not known (v4l2 on the machine can set it). The one unit tested was on 450 and its
+  tinted lid keeps room light out, so the spread between sites should be small. Adding rounds
+  needs a run on hardware first: a failing exposure call would end the step with an error and
+  block the calibration.
+- On `ado1` the second pose is followed by the regression and the save inside the automatic
+  step. If either fails the step returns to ELEVATED_CUT; it used to stay on the drag screen,
+  which the automatic step no longer has.
+- The laser-head camera rides on the head and the motors are released before the photos, as
+  in the manual flow: a head moved by hand between `moveLaserHead()` and the photo gives a
+  wrong pose.
+
 ### 7.4 Failure handling
 
 No drag screen when the backend has the commands. Results map to:
@@ -411,9 +474,16 @@ The step moves to PUT_PAPER before the warning opens, not in the buttons' callba
 warning can be dismissed with Esc, and `ProcessingDialog` runs `process` again on every
 re-render of its parent, so it must not stay mounted while the user decides.
 
+The warning is `common/showHighResidualAlert.ts`, shared by the three dialogs. On `ado1`
+Continue Anyway leads to saving with no check screen in between; it is offered all the same,
+since a unit whose camera fits its parameters a little worse than the limit would otherwise
+have no way to finish in basic mode (the one `fhx2rf` measured sits at half the limit).
+
 The switch to advanced mode goes through `showBeamo2Calibration(true)` with the same dialog id.
 The element carries `key={isAdvanced ? 'advanced' : 'basic'}`; without it React keeps the
-mounted instance with its step and its stored `k` / `d`.
+mounted instance with its step and its stored `k` / `d`. `showLaserHeadFisheyeCalibration`
+does the same. `showAdorCalibration` refuses to open while its dialog id exists, and the id
+still exists in the tick the old dialog is popped, so its switch passes `replaceOpenDialog`.
 
 ### 7.5 i18n
 
@@ -442,7 +512,8 @@ Both commands live on the existing `camera-calibration` websocket and need `k` /
 → auto_pnp_match <args_json>
    args: { "ref_points": [[x, y], ...],          // mm, a full lattice or nested rectangles
            "blobs": [[[x, y, size, contrast], ...], ...],  // one list per exposure
-           "weak":  [[[x, y, size, contrast], ...], ...] } // optional, one list per exposure
+           "weak":  [[[x, y, size, contrast], ...], ...],  // optional, one list per exposure
+           "r_max": number }                               // optional, mm; default R_MAX_MM
 ← {"status": "ok",
    "points": [[x, y], ...],                      // per ref point, undistorted px
    "matched": number, "filled": number, "rms": number}
@@ -503,7 +574,8 @@ Command names are final once fluxghost's `cmd_mapping` has them; do not rename a
 1. ~~**Machine order after `fbm2`.**~~ **Settled 2026-11-16:** wide-angle camera on `fbb2` /
    `fhx2rf` next (same 4×4 quadrant layout, `bb2WideAngleCameraPnpPoints` /
    `hx2WideAngleCameraPnpPoints`, two heights), then laser-head fisheye and Ador (8 marks,
-   single region), Promark last.
+   single region), Promark last. **Changed 2026-11-20:** the laser-head camera and Ador went
+   first and ship with `fbm2`; the wide-angle camera and Promark follow.
 2. ~~**Coarse association method.**~~ **Settled 2026-11-17: prior-free** (§7.3). It assigned
    every visible mark correctly on both step 0 units without default points.
 3. ~~**Stronger re-engrave on failure.** The task file has fixed power and speed, so a retry
@@ -635,7 +707,13 @@ Command names are final once fluxghost's `cmd_mapping` has them; do not rename a
     marks are as small (4.7 to 6.5 px) and should follow.
 12. **8-mark layouts** (`fbb2` / `fhx2rf` laser head, `ado1`, Promark). The layout stays: two
     concentric rectangles carry a fixed 1 : 2 ratio that a row of old marks cannot imitate,
-    and a 4×4 grid would only add room for filling. Open before wiring them:
+    and a 4×4 grid would only add room for filling. `fbb2`, `fhx2rf` and `ado1` are wired
+    (§7.3.1); what remains open:
+    - Another machine's 8-mark pattern on a reused sheet does imitate it: the layouts differ
+      only in proportions (120 × 80 against 120 × 120), which a homography absorbs. Seen on
+      `ado1` (wrong preview at the lower height), closed by the proportion check.
+    - An exposure sweep on `fhx2rf`; on `ado1`, first whether exposure can be set from Beam
+      Studio (§7.3.1).
     - Promark: the marks are bright dots on a dark sheet, 2.3 to 3.2 px across, below the
       15 px minimum area of both the automatic (dark only) and the manual (any colour)
       detector (§11). Needs a larger mark first, about 2.5 mm across to reach 6 px at 2.4 px
@@ -878,11 +956,14 @@ number of field units R_MAX blocks.
 | T5 | A5 | Hardware: open the door during capture |
 | T6 | A6 | Hardware: photo of the marks, warped with fluxghost's preview code at the sent `h`, manual vs automatic on the same unit; plus a visual check in Beam Studio |
 | T7 | A8 | Hardware: five runs, compare poses |
-| T8 | §7.2, §7.3 | fluxghost `tests/usage/test_auto_pnp.py` (21 tests): `fbm2` exposures, covered marks, faint marks, the 8-mark photos, the websocket commands. Passing |
+| T8 | §7.2, §7.3 | fluxghost `tests/usage/test_auto_pnp.py` (22 tests): `fbm2` exposures, covered marks, faint marks, the 8-mark photos, the websocket commands. Passing |
 | T9 | §6 | `ws_smoke.py` ends `ALL PASS`; `test_camera_match_points.py` unchanged and passing; manual calibration on `fbb2` or `fhx2rf` still works |
 | T10 | §6 | Print and Cut mark detection (`detect_blobs`) unchanged on one alignment run |
-| T11 | Edge cases table | `beamo2Calibration/autoSolvePnP.spec.ts` (11 tests): rounds, failure reasons, high residual with and without points, exposure and auto exposure restored in order, a thrown error. Passing. Not covered: the dialog branches in `Beamo2Calibration.tsx` (warning buttons, `UNSUPPORTED` fallback, close during capture) |
+| T11 | Edge cases table | `common/autoLocateMarks.spec.ts`: rounds, failure reasons, high residual with and without points, exposure and auto exposure restored in order, a thrown error. Passing. The dialog branches are covered by `Beamo2Calibration.spec.tsx`, `LaserHeadFisheyeCalibration.spec.tsx` and `AdorCalibration/AdorCalibration.spec.tsx` (9 + 9 + 8 tests): fallback to the manual steps on `UNSUPPORTED`, missing marks, both sides of the high-residual warning in basic and advanced mode, a thrown error, Back from the next step, and for `fbm2` the release and status refresh before PUT_PAPER runs again. Not covered: closing the dialog during capture, the launchers (`key`, `replaceOpenDialog`) |
 | T13 | A10 | Hardware, `fbm2`, `R_MAX_MM` lowered: the warning in basic mode. The switch to advanced mode passed on one unit (2026-11-20, after the remount fix); Continue Anyway and the advanced-mode variant have no recorded result |
 | T14 | A11 | Hardware, `fbm2`: Back from CHECK_PNP then Skip, basic and advanced. The stuck spinner and the lost ChArUco result are fixed; the last change (status refresh in `releaseMachine`) not confirmed yet |
+| T16 | A12 | Hardware, laser-head camera. `fbb2`: 8 of 8 from one photo at 250, rms 0.046 mm. `fhx2rf`: 8 of 8 at 250 with auto exposure on, rms 0.105 mm; the two lower inner marks sit about 0.2 mm (3 px) off in CHECK_PNP, which matches the per-mark residual and was accepted. Covered mark and Back not recorded |
+| T17 | A13, A14 | Hardware, `ado1`, on a sheet carrying an old `fbb2` pattern: first run saved a wrong pose for the lower height (the old pattern, rms 0.05 mm); after the proportion check both heights match the new marks (0.071 and 0.055 mm offline on the same photos) and the preview is right |
+| T18 | §7.3.1 | `common/autoLocateMarks.spec.ts` (12 tests) and `beamo2Calibration/autoSolvePnP.spec.ts` (4 tests). Passing. fluxghost `test_auto_pnp.py` now 22 tests, including the `ado1` photo of T17 |
 | T15 | Edge cases table | Hardware, `fbm2`, auto exposure on: 16 marks found, auto exposure on again afterwards. Passed on one unit (2026-11-20) |
 | T12 | A9 | Beam Studio against fluxghost 2.5.8: manual steps appear; against the new tag with a forced failure: they do not. Not run yet |
