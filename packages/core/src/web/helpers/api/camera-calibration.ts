@@ -16,6 +16,13 @@ export type AutoPnPBlob = [number, number, number, number];
 
 export type AutoPnPFailReason = 'HIGH_RESIDUAL' | 'NOT_ENOUGH_MARKS' | 'UNSUPPORTED';
 
+/**
+ * fluxghost answers a command it does not know with `{ status: 'Error', message: 'BAD_PARAM_TYPE' }`. The
+ * capital E matters: the websocket wrapper only routes the lowercase `error` to onError, so this one arrives
+ * as an ordinary message and has to be recognised here, or the caller waits forever.
+ */
+const isUnknownCommand = (response: { status?: string }): boolean => response.status === 'Error';
+
 class CameraCalibrationApi {
   private ws: any; // websocket
 
@@ -335,9 +342,10 @@ class CameraCalibrationApi {
           resolve({ blobs: response.blobs, success: true, weak: response.weak ?? [] });
         } else if (response.status === 'fail') {
           resolve({ reason: response.info ?? response.reason, success: false });
+        } else if (isUnknownCommand(response)) {
+          resolve({ reason: 'UNSUPPORTED', success: false });
         }
       };
-      // an unknown command is answered with an error, not a fail
       this.events.onError = () => resolve({ reason: 'UNSUPPORTED', success: false });
       this.events.onFatal = (response) => reject(response);
 
@@ -373,6 +381,7 @@ class CameraCalibrationApi {
       this.events.onMessage = ({ status, ...rest }) => {
         if (status === 'ok') resolve({ ...rest, success: true });
         else if (status === 'fail') resolve({ ...rest, success: false });
+        else if (isUnknownCommand({ status })) resolve({ reason: 'UNSUPPORTED', success: false });
       };
       this.events.onError = () => resolve({ reason: 'UNSUPPORTED', success: false });
       this.events.onFatal = (response) => reject(response);

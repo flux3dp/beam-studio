@@ -5,7 +5,7 @@
 | **Status** | In progress. Implemented on `feat/auto-solve-pnp` (beam-studio) and `feat/auto-pnp` (fluxghost) for `fbm2` (16 marks), the `fbb2` / `fhx2rf` laser-head camera and `ado1` (8 marks). Hardware: three `fbm2`, one `fbb2`, one `fhx2rf`, one `ado1`, each with its own `k` / `d` (§11, §12). Not included: Promark (mark size and detector, decision 12), the `fbb2` / `fhx2rf` wide-angle camera. Pending: an exposure sweep on `fhx2rf`, whether `ado1` exposure can be set from Beam Studio at all, the old-backend path (§12), decision 8 |
 | **Author** | Beam Studio team |
 | **Created** | 2026-11-16 |
-| **Target product** | Beam Studio (desktop + web), fluxghost (next tag after 2.5.8) |
+| **Target product** | Beam Studio (desktop + web), fluxghost 2.5.8 (the version does not change; the tag moves to the merge of fluxghost #128) |
 | **Owner area** | Camera calibration dialogs, fluxghost camera calibration API |
 | **Related code** | Dialog: `packages/core/src/web/app/components/dialogs/camera/beamo2Calibration/Beamo2Calibration.tsx`, `beamo2Calibration/autoSolvePnP.ts`, `camera/common/autoLocateMarks.ts`, `camera/common/showHighResidualAlert.ts`, `camera/LaserHeadFisheyeCalibration.tsx`, `camera/AdorCalibration/AdorCalibration.tsx`, `camera/common/SolvePnP.tsx`, `camera/common/useCamera.ts`, `camera/common/ProcessingDialog.tsx`, `camera/common/CheckPnP.tsx`; API client: `packages/core/src/web/helpers/api/camera-calibration.ts`; constants: `packages/core/src/web/app/constants/fisheyeCameraConstants.ts` (`bm2PnPPoints`, `getRegionalPoints`); exposure: `packages/core/src/web/helpers/device/camera/cameraExposure.ts`; engraving task: `packages/core/src/web/helpers/device-master.ts` (`doBeamo2Calibration`, `fcode/bm2-calibration.fc`, source `resources/calibration-tasks/bm2-calibration.beam`) |
 | **External repos** | fluxghost: `fluxghost/utils/camera/auto_pnp.py`, `tests/usage/test_auto_pnp.py`, `fluxghost/api/camera_calibration.py`, `fluxghost/utils/camera/corner_detection/find_corners.py`, `corner_detection/match_points.py`, `utils/camera/solve_pnp.py`, `docs/api/camera-calibration.md`, `tests/usage/test_camera_match_points.py`, `tools/ws_smoke.py` |
@@ -189,7 +189,7 @@ residual, failure reason. fluxghost logs the same as `[auto_pnp] match: ...`. Wi
 **A8 Repeatability.** Run A1 five times on one unit without moving the paper. Result: the nine
 region poses agree run to run within a tolerance fixed during step 0 (§9).
 
-**A9 (S6) Old backend.** Connect to a fluxghost without `auto_pnp_detect` (2.5.8 or older) and
+**A9 (S6) Old backend.** Connect to a fluxghost without `auto_pnp_detect` (built before fluxghost #128) and
 run A1. Result: after the engraving, SOLVE_PNP_INSTRUCTION and the four manual SOLVE_PNP_xx
 screens appear and behave as on main. With a backend that has the commands, force a match
 failure (A3): the drag screen must not appear.
@@ -528,7 +528,11 @@ Both commands live on the existing `camera-calibration` websocket and need `k` /
 `filled` counts the marks taken from `weak`. The first draft also had `workarea`,
 `prior_points`, per-point `residuals`, a `rejected` count and an `AMBIGUOUS` reason; none was
 needed and none exists. The client (`autoPnPDetect`, `autoPnPMatch` in
-`helpers/api/camera-calibration.ts`) turns an unknown-command error into `UNSUPPORTED`.
+`helpers/api/camera-calibration.ts`) turns the reply to an unknown command into `UNSUPPORTED`.
+fluxghost sends `{"status": "Error", "message": "BAD_PARAM_TYPE"}` for it, with a capital E: the
+websocket wrapper routes only the lowercase `error` to `onError`, so this reply arrives through
+`onMessage` and is recognised there (`isUnknownCommand`). Before that was handled the promise
+never settled and the step hung (found in review, 2026-11-23).
 
 Both new commands are stateless apart from `k` / `d`, so they run offline against saved photos.
 Command names are final once fluxghost's `cmd_mapping` has them; do not rename afterwards.
@@ -966,4 +970,4 @@ number of field units R_MAX blocks.
 | T17 | A13, A14 | Hardware, `ado1`, on a sheet carrying an old `fbb2` pattern: first run saved a wrong pose for the lower height (the old pattern, rms 0.05 mm); after the proportion check both heights match the new marks (0.071 and 0.055 mm offline on the same photos) and the preview is right |
 | T18 | §7.3.1 | `common/autoLocateMarks.spec.ts` (12 tests) and `beamo2Calibration/autoSolvePnP.spec.ts` (4 tests). Passing. fluxghost `test_auto_pnp.py` now 22 tests, including the `ado1` photo of T17 |
 | T15 | Edge cases table | Hardware, `fbm2`, auto exposure on: 16 marks found, auto exposure on again afterwards. Passed on one unit (2026-11-20) |
-| T12 | A9 | Beam Studio against fluxghost 2.5.8: manual steps appear; against the new tag with a forced failure: they do not. Not run yet |
+| T12 | A9 | Beam Studio against a fluxghost built before #128: manual steps appear; against the new one with a forced failure: they do not. Not run on hardware. `helpers/api/camera-calibration.spec.ts` (6 tests) covers the reply an old backend really sends |
