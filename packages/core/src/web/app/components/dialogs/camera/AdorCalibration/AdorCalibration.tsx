@@ -90,7 +90,8 @@ const AdorCalibration = ({
     setStep(Step.ELEVATED_CUT);
   };
 
-  const handleSecondPose = async (rvec: number[][], tvec: number[][]) => {
+  /** resolves to whether the parameters were saved (the dialog is closed then) */
+  const handleSecondPose = async (rvec: number[][], tvec: number[][]): Promise<boolean> => {
     const { heights, rvecs, tvecs } = calibratingParam.current;
 
     rvecs!.push(rvec);
@@ -103,7 +104,7 @@ const AdorCalibration = ({
     if (!success) {
       alertCaller.popUpError({ message: 'Failed to do extrinsic regression.' });
 
-      return;
+      return false;
     }
 
     updateParam(data!);
@@ -126,11 +127,15 @@ const AdorCalibration = ({
     if (res.status === 'ok') {
       alertCaller.popUp({ message: tCali.camera_parameter_saved_successfully });
       onClose(true);
-    } else {
-      alertCaller.popUpError({
-        message: `${tCali.failed_to_save_camera_parameter}:<br />${JSON.stringify(res)}`,
-      });
+
+      return true;
     }
+
+    alertCaller.popUpError({
+      message: `${tCali.failed_to_save_camera_parameter}:<br />${JSON.stringify(res)}`,
+    });
+
+    return false;
   };
 
   /**
@@ -148,7 +153,8 @@ const AdorCalibration = ({
     engraveStep: Step;
     /** the manual step for a backend without the auto commands */
     manualStep: Step;
-    onSolved: (rvec: number[][], tvec: number[][]) => Promise<void>;
+    /** false when it could not finish: the step then returns to the engraving step instead of spinning on */
+    onSolved: (rvec: number[][], tvec: number[][]) => Promise<boolean | void>;
   }) => (
     <ProcessingDialog
       onClose={onClose}
@@ -198,13 +204,14 @@ const AdorCalibration = ({
           if (!pose?.success) throw new Error('solvePnPCalculate failed');
 
           const { rvec, tvec } = pose.data;
-          const applyResult = () => {
+          const applyResult = async () => {
             isAutoSolved.current = true;
-            onSolved(rvec, tvec);
+
+            if ((await onSolved(rvec, tvec)) === false) setStep(engraveStep);
           };
 
           if (!located.highResidual) {
-            applyResult();
+            await applyResult();
 
             return;
           }
@@ -448,7 +455,9 @@ const AdorCalibration = ({
         dh={calibratingParam.current.dh2!}
         onBack={() => setStep(Step.ELEVATED_CUT)}
         onClose={onClose}
-        onNext={handleSecondPose}
+        onNext={async (rvec, tvec) => {
+          await handleSecondPose(rvec, tvec);
+        }}
         params={calibratingParam.current}
         refPoints={adorPnPPoints}
       />

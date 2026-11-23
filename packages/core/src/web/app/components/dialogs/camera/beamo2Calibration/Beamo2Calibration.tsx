@@ -1,4 +1,4 @@
-import { type ReactNode, useCallback, useEffect, useRef, useState } from 'react';
+import React, { type ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 
 import { sprintf } from 'sprintf-js';
 import { match } from 'ts-pattern';
