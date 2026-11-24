@@ -182,8 +182,7 @@ describe('AdorCalibration automatic solve steps', () => {
 
     expect(options.refPoints).toBe(adorPnPPoints);
     expect(options.rMax).toBe(0.2);
-    // no sweep on this camera: one photo at its current exposure
-    expect(options.exposureRounds).toBeUndefined();
+    expect(options.exposureRounds).toEqual([[250], [125, 450]]);
     expect(options.cameraIndex).toBeUndefined();
     expect(mockSolvePnPCalculate).toHaveBeenLastCalledWith(7, points, adorPnPPoints);
     expect(mockSaveCheckPoint).toHaveBeenCalledTimes(1);

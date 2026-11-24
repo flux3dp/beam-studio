@@ -109,14 +109,14 @@ No dragging: after the engraving a `ProcessingDialog` step finds the marks and s
 
 - **`common/autoLocateMarks.ts`** — shared: connect camera, optional `cameraIndex`, exposure rounds
   (a later round only after `NOT_ENOUGH_MARKS`; omit `exposureRounds` to take one photo and leave the
-  exposure alone), each photo → `autoPnPDetect`, all lists so far → `autoPnPMatch(refPoints, blobs, weak,
+  exposure alone; the same happens when the exposure cannot be read, e.g. older `ado1` firmware), each photo → `autoPnPDetect`, all lists so far → `autoPnPMatch(refPoints, blobs, weak,
   rMax)`, restore, disconnect. Returns `{ points, rms, highResidual }` or a failure reason; the caller
   solves. Camera auto exposure is turned off first and back on **after** the exposure value is restored.
 - The matcher uses `k`, `d` and the mark positions only, never the stored `rvec`/`tvec`, and assumes the
   image is not rotated by 90 / 180 degrees against the bed (Promark's `rotate180` is why it is not wired).
 - Per machine: `fbm2` 16 marks, own rounds, backend residual limit, four quadrant solves
   (`beamo2Calibration/autoSolvePnP.ts`); laser head 8 marks, `EXPOSURE_ROUNDS` / `R_MAX_MM` at the top of
-  the dialog file, `cameraIndex: 0`; `ado1` 8 marks, no exposure rounds, one automatic step per height.
+  the dialog file, `cameraIndex: 0`; `ado1` 8 marks, own rounds, one automatic step per height.
 - Outcomes, same in the three dialogs: ok → next step · `UNSUPPORTED` (fluxghost without the commands) →
   the manual steps · `NOT_ENOUGH_MARKS` / a thrown error → alert, back to the engraving step ·
   `highResidual` (all marks found, residual over the limit) → `common/showHighResidualAlert.ts`: Continue

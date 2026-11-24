@@ -49,6 +49,8 @@ const PROGRESS_ID = 'fisheye-calibration-v2';
  * wrong mark: correct matches measured 0.04 to 0.05 on one unit, one mark off by 1 mm gives 0.15 to 0.31.
  */
 const R_MAX_MM = 0.2;
+/** best contrast first, then one below and one above; all 8 marks are found from 100 to 450 (see the PRD) */
+const EXPOSURE_ROUNDS = [[250], [125, 450]];
 
 interface Props {
   currentData?: FisheyeCameraParametersV2Cali | null;
@@ -139,8 +141,7 @@ const AdorCalibration = ({
   };
 
   /**
-   * One automatic solve at a height. No exposure rounds: the manual flow never sets the exposure on this
-   * machine and no sweep was made, so one photo is taken at the camera's current exposure.
+   * One automatic solve at a height.
    */
   const renderAutoSolve = ({
     dh,
@@ -168,6 +169,7 @@ const AdorCalibration = ({
 
           try {
             located = await autoLocateMarks({
+              exposureRounds: EXPOSURE_ROUNDS,
               params: calibratingParam.current,
               refPoints: adorPnPPoints,
               rMax: R_MAX_MM,

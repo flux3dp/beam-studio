@@ -116,6 +116,17 @@ describe('autoLocateMarks', () => {
     expect(cameraCalls).toEqual([]);
   });
 
+  test('takes one photo and leaves the exposure alone when the machine cannot report its exposure', async () => {
+    mockGetExposureSettings.mockRejectedValue(new SyntaxError('"undefined" is not valid JSON'));
+
+    const res = await run();
+
+    expect(res.success).toBe(true);
+    expect(mockTakeOnePicture).toHaveBeenCalledTimes(1);
+    expect(mockGetCameraExposureAuto).not.toHaveBeenCalled();
+    expect(cameraCalls).toEqual([]);
+  });
+
   test('shoots the second round only when marks are missing', async () => {
     mockAutoPnPMatch.mockResolvedValueOnce({ matched: 6, reason: 'NOT_ENOUGH_MARKS', success: false });
 

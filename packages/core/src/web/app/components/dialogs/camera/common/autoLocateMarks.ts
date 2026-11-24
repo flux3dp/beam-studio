@@ -25,7 +25,8 @@ interface Options {
   cameraIndex?: number;
   /**
    * Exposures to shoot, in rounds: a later round is only shot when marks are still missing, and every match
-   * gets all photos so far. Omit to take one photo at the camera's current exposure and leave exposure alone.
+   * gets all photos so far. Omit to take one photo at the camera's current exposure and leave exposure alone;
+   * the same happens when the machine cannot report its exposure (older firmware).
    */
   exposureRounds?: ReadonlyArray<ReadonlyArray<number>>;
   /** the detection needs `k` and `d` */
@@ -50,6 +51,7 @@ const autoLocateMarks = async ({
   const blobs: AutoPnPBlob[][] = [];
   const weak: AutoPnPBlob[][] = [];
   const shot: Array<number | undefined> = [];
+  let rounds = exposureRounds;
   let originalExposure: number | undefined;
   let wasAutoExposure = false;
 
@@ -61,9 +63,18 @@ const autoLocateMarks = async ({
       return { reason: 'NO_IMAGE', success: false };
     }
 
-    if (exposureRounds) {
-      originalExposure = (await getExposureSettings()).value;
+    if (rounds) {
+      try {
+        originalExposure = (await getExposureSettings()).value;
+      } catch (error) {
+        console.warn('[auto solve pnp] exposure is not available, using one photo as it is', error);
+      }
 
+      // without a value to restore, the exposure is not touched at all
+      if (typeof originalExposure !== 'number') rounds = undefined;
+    }
+
+    if (rounds) {
       // a fixed exposure is ignored while the camera adjusts it on its own
       const autoRes = await deviceMaster.getCameraExposureAuto()?.catch(() => null);
 
@@ -74,7 +85,7 @@ const autoLocateMarks = async ({
 
     let matchRes: Awaited<ReturnType<typeof cameraCalibrationApi.autoPnPMatch>> | undefined;
 
-    for (const round of exposureRounds ?? [[undefined]]) {
+    for (const round of rounds ?? [[undefined]]) {
       for (const exposure of round) {
         if (exposure !== undefined) await setExposure(exposure);
 

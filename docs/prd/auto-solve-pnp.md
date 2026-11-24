@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | Implemented in 2.7.4 with fluxghost 2.5.8 (flux3dp/fluxghost#128; the tag moved to it on 2026-11-23) for `fbm2` (16 marks), the `fbb2` / `fhx2rf` laser-head camera and `ado1` (8 marks). Hardware (2026-11-19 / 20): three `fbm2`, one `fbb2`, one `fhx2rf`, one `ado1`, each with its own `k` / `d` (§11, §12). Not included: Promark (mark size and detector, decision 12) and the `fbb2` / `fhx2rf` wide-angle camera (decision 1). Pending: the old-backend fallback on hardware (§12 T12), the 0.5 mm `fbm2` task file (decision 11), whether `ado1` exposure can be set from Beam Studio, decision 8 |
+| **Status** | Implemented in 2.7.4 with fluxghost 2.5.8 (flux3dp/fluxghost#128; the tag moved to it on 2026-11-23) for `fbm2` (16 marks), the `fbb2` / `fhx2rf` laser-head camera and `ado1` (8 marks). Hardware (2026-11-19 / 20): three `fbm2`, one `fbb2`, one `fhx2rf`, one `ado1`, each with its own `k` / `d` (§11, §12). Not included: Promark (mark size and detector, decision 12) and the `fbb2` / `fhx2rf` wide-angle camera (decision 1). Pending: the old-backend fallback on hardware (§12 T12), the 0.5 mm `fbm2` task file (decision 11), the `ado1` exposure rounds through Beam Studio on hardware (§7.3.1), decision 8 |
 | **Author** | Beam Studio team |
 | **Created** | 2026-11-16 |
 | **Target product** | Beam Studio (desktop + web), fluxghost 2.5.8 (the version does not change; the tag moves to the merge of fluxghost #128) |
@@ -428,7 +428,7 @@ restore, disconnect. It returns the points and stops there; each dialog solves i
 | | `fbm2` | `fbb2` / `fhx2rf` laser head | `ado1` |
 |---|---|---|---|
 | Reference points | 16, `bm2PnPPoints` | 8, `bb2PnPPoints` | 8, `adorPnPPoints` |
-| Exposure rounds | `[75, 200]`, `[50, 125, 350, 500, 800]` | `[250]`, `[100, 500]` | none: one photo at the current exposure |
+| Exposure rounds | `[75, 200]`, `[50, 125, 350, 500, 800]` | `[250]`, `[100, 500]` | `[250]`, `[125, 450]` |
 | Residual limit (`rMax`) | backend default, 1.0 mm | 0.2 mm | 0.2 mm |
 | Camera | default | `cameraIndex: 0` | default |
 | Poses solved | four quadrants at dh 0 | one at dh 0 | one per height (`dh1`, `dh2`), then `extrinsicRegression` |
@@ -446,12 +446,12 @@ restore, disconnect. It returns the points and stops there; each dialog solves i
   second height returns to ELEVATED_CUT, not PUT_PAPER: the first pose is already saved as a
   checkpoint.
 - `fhx2rf` uses the `fbb2` values (decided 2026-11-23: the same laser-head camera module; one
-  `fhx2rf` passed with them, no sweep of its own). `ado1` sets no exposure:
-  its manual flow never did, and whether the firmware exposes the camera exposure to Beam
-  Studio is not known (v4l2 on the machine can set it). The one unit tested was on 450 and its
-  tinted lid keeps room light out, so the spread between sites should be small. Adding rounds
-  needs a run on hardware first: a failing exposure call would end the step with an error and
-  block the calibration.
+  `fhx2rf` passed with them, no sweep of its own). `ado1` has rounds of its own
+  from a sweep (decision 12): the exposure with the best mark contrast first, then one below
+  and one above. Its firmware exposes the camera exposure from some version on only, so
+  `autoLocateMarks` falls back to one photo at the camera's exposure, untouched, whenever the
+  exposure cannot be read; this holds for every machine. Not yet run through Beam Studio on
+  an `ado1`.
 - On `ado1` the second pose is followed by the regression and the save inside the automatic
   step. If either fails the step returns to ELEVATED_CUT; it used to stay on the drag screen,
   which the automatic step no longer has.
@@ -718,8 +718,9 @@ Command names are final once fluxghost's `cmd_mapping` has them; do not rename a
     - Another machine's 8-mark pattern on a reused sheet does imitate it: the layouts differ
       only in proportions (120 × 80 against 120 × 120), which a homography absorbs. Seen on
       `ado1` (wrong preview at the lower height), closed by the proportion check.
-    - On `ado1`, whether exposure can be set from Beam Studio (§7.3.1). `fhx2rf` shares the
-      `fbb2` rounds (settled 2026-11-23).
+    - ~~On `ado1`, whether exposure can be set from Beam Studio.~~ Settled 2026-11-24: it
+      can, from some firmware version on; older firmware gets one photo at the camera's
+      exposure (§7.3.1). `fhx2rf` shares the `fbb2` rounds (settled 2026-11-23).
     - Promark: the marks are bright dots on a dark sheet, 2.3 to 3.2 px across, below the
       15 px minimum area of both the automatic (dark only) and the manual (any colour)
       detector (§11). Needs a larger mark first, about 2.5 mm across to reach 6 px at 2.4 px
@@ -738,7 +739,13 @@ Command names are final once fluxghost's `cmd_mapping` has them; do not rename a
       best contrast at 200 to 300); 7 of 8 at 50 and from 900 up. Over-exposure is the
       expensive side: 89 to 97 blobs at 2000 / 3000 and 22 to 38 s in the matcher, ending in
       a failure. Proposed for `fbb2`: one photo at about 250, then `[100, 500]`, never above
-      800. `fhx2rf`, `ado1` and Promark are not swept.
+      800. `fhx2rf` and Promark are not swept. `ado1`, one unit, lid closed (2026-11-24, 17
+      single photos from 50 to 1500 of a fresh engraving): 8 of 8 from 100 to 450, best mark
+      contrast at 250 to 300; 7 of 8 at 75; 5 to 6 of 8 from 500 up, where the small marks
+      (5 to 6 px) wash out. The unit was on 440, where one mark already needs the weak list.
+      A reused sheet with two patterns on it gave 8 of 8 from 100 to 500. Matching stays
+      under 1 s up to 800 even with about 2000 weak candidates (the honeycomb bed). Rounds:
+      `[250]`, then `[125, 450]`.
     - Auto exposure. `fbm2`, `fbb2` and `fhx2rf` have an auto-exposure switch
       (`supportCameraAutoExposureModels`), and a fixed exposure presumably has no effect
       while it is on. The automatic step must turn it off before the first photo and restore
