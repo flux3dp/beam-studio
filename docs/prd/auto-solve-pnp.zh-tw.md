@@ -4,7 +4,7 @@
 
 | | |
 |---|---|
-| **Status** | 已於 2.7.4 實作，搭配 fluxghost 2.5.8（flux3dp/fluxghost#128；tag 於 2026-11-23 移到該合併），涵蓋 `fbm2`（16 個標記點）、`fbb2` / `fhx2rf` 雷射頭相機與 `ado1`（8 個標記點）。實機（2026-11-19 / 20）：三台 `fbm2`、一台 `fbb2`、一台 `fhx2rf`、一台 `ado1`，各用自己的 `k` / `d`（§11、§12）。未包含：Promark（標記點大小與偵測器，決策 12）與 `fbb2` / `fhx2rf` 廣角相機（決策 1）。待辦：舊後端退回路徑的實機測試（§12 T12）、`ado1` 的曝光輪經由 Beam Studio 的實機測試（§7.3.1）、決策 8 |
+| **Status** | 已於 2.7.5 實作，搭配 fluxghost 2.5.8（flux3dp/fluxghost#128；tag 於 2026-11-23 移到該合併），涵蓋 `fbm2`（16 個標記點）、`fbb2` / `fhx2rf` 雷射頭相機與 `ado1`（8 個標記點）。實機（2026-11-19 / 20）：三台 `fbm2`、一台 `fbb2`、一台 `fhx2rf`、一台 `ado1`，各用自己的 `k` / `d`（§11、§12）。未包含：Promark（標記點大小與偵測器，決策 12）與 `fbb2` / `fhx2rf` 廣角相機（決策 1）。待辦：舊後端退回路徑的實機測試（§12 T12）、`ado1` 的曝光輪經由 Beam Studio 的實機測試（§7.3.1）、決策 8 |
 | **Author** | Beam Studio team |
 | **Created** | 2026-11-16 |
 | **Target product** | Beam Studio（桌面版 + 網頁版）、fluxghost 2.5.8（版本號不變；tag 移到 fluxghost #128 的合併） |

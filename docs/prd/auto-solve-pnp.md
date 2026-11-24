@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | Implemented in 2.7.4 with fluxghost 2.5.8 (flux3dp/fluxghost#128; the tag moved to it on 2026-11-23) for `fbm2` (16 marks), the `fbb2` / `fhx2rf` laser-head camera and `ado1` (8 marks). Hardware (2026-11-19 / 20): three `fbm2`, one `fbb2`, one `fhx2rf`, one `ado1`, each with its own `k` / `d` (§11, §12). Not included: Promark (mark size and detector, decision 12) and the `fbb2` / `fhx2rf` wide-angle camera (decision 1). Pending: the old-backend fallback on hardware (§12 T12), the `ado1` exposure rounds through Beam Studio on hardware (§7.3.1), decision 8 |
+| **Status** | Implemented in 2.7.5 with fluxghost 2.5.8 (flux3dp/fluxghost#128; the tag moved to it on 2026-11-23) for `fbm2` (16 marks), the `fbb2` / `fhx2rf` laser-head camera and `ado1` (8 marks). Hardware (2026-11-19 / 20): three `fbm2`, one `fbb2`, one `fhx2rf`, one `ado1`, each with its own `k` / `d` (§11, §12). Not included: Promark (mark size and detector, decision 12) and the `fbb2` / `fhx2rf` wide-angle camera (decision 1). Pending: the old-backend fallback on hardware (§12 T12), the `ado1` exposure rounds through Beam Studio on hardware (§7.3.1), decision 8 |
 | **Author** | Beam Studio team |
 | **Created** | 2026-11-16 |
 | **Target product** | Beam Studio (desktop + web), fluxghost 2.5.8 (the version does not change; the tag moves to the merge of fluxghost #128) |
