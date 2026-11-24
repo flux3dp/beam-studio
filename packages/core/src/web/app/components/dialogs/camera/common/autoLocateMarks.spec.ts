@@ -81,7 +81,7 @@ describe('autoLocateMarks', () => {
 
     expect(mockUpdateData).toHaveBeenCalledWith(params);
     expect(mockSetCamera).not.toHaveBeenCalled();
-    expect(mockTakeOnePicture).toHaveBeenCalledTimes(firstRound.length);
+    expect(mockTakeOnePicture).toHaveBeenCalledTimes(firstRound.length * 2);
     expect(mockAutoPnPMatch).toHaveBeenCalledTimes(1);
 
     const [sentRefPoints, blobs, weak, rMax] = mockAutoPnPMatch.mock.calls[0];
@@ -133,7 +133,7 @@ describe('autoLocateMarks', () => {
     const res = await run();
 
     expect(res.success).toBe(true);
-    expect(mockTakeOnePicture).toHaveBeenCalledTimes(allExposures.length);
+    expect(mockTakeOnePicture).toHaveBeenCalledTimes(allExposures.length * 2);
     expect(mockAutoPnPMatch).toHaveBeenCalledTimes(2);
     // the second match gets every photo so far, not just the new ones
     expect(mockAutoPnPMatch.mock.calls[1][1]).toHaveLength(allExposures.length);
@@ -154,7 +154,7 @@ describe('autoLocateMarks', () => {
     mockAutoPnPMatch.mockResolvedValue({ matched: 8, points, reason: 'HIGH_RESIDUAL', rms: 1.8, success: false });
 
     expect(await run()).toEqual({ highResidual: true, points, rms: 1.8, success: true });
-    expect(mockTakeOnePicture).toHaveBeenCalledTimes(firstRound.length);
+    expect(mockTakeOnePicture).toHaveBeenCalledTimes(firstRound.length * 2);
     expect(cameraCalls.at(-1)).toEqual(['exposure', 320]);
   });
 
@@ -166,13 +166,24 @@ describe('autoLocateMarks', () => {
     expect((await run()).success).toBe(false);
   });
 
+  test('detects on the second photo after an exposure change: the first still has the old exposure', async () => {
+    const stale = new Blob(['stale']);
+    const fresh = new Blob(['fresh']);
+
+    mockTakeOnePicture.mockResolvedValueOnce({ imgBlob: stale }).mockResolvedValueOnce({ imgBlob: fresh });
+    await run({ exposureRounds: [[250]] });
+
+    expect(mockAutoPnPDetect).toHaveBeenCalledTimes(1);
+    expect(mockAutoPnPDetect).toHaveBeenCalledWith(fresh);
+  });
+
   test('stops at the first photo when the backend does not know the command', async () => {
     mockAutoPnPDetect.mockResolvedValue({ reason: 'UNSUPPORTED', success: false });
 
     const res = await run();
 
     expect(res).toEqual({ reason: 'UNSUPPORTED', success: false });
-    expect(mockTakeOnePicture).toHaveBeenCalledTimes(1);
+    expect(mockTakeOnePicture).toHaveBeenCalledTimes(2);
     expect(mockAutoPnPMatch).not.toHaveBeenCalled();
     expect(cameraCalls).toEqual([
       ['exposure', firstRound[0]],

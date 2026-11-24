@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | Implemented in 2.7.4 with fluxghost 2.5.8 (flux3dp/fluxghost#128; the tag moved to it on 2026-11-23) for `fbm2` (16 marks), the `fbb2` / `fhx2rf` laser-head camera and `ado1` (8 marks). Hardware (2026-11-19 / 20): three `fbm2`, one `fbb2`, one `fhx2rf`, one `ado1`, each with its own `k` / `d` (§11, §12). Not included: Promark (mark size and detector, decision 12) and the `fbb2` / `fhx2rf` wide-angle camera (decision 1). Pending: the old-backend fallback on hardware (§12 T12), the 0.5 mm `fbm2` task file (decision 11), the `ado1` exposure rounds through Beam Studio on hardware (§7.3.1), decision 8 |
+| **Status** | Implemented in 2.7.4 with fluxghost 2.5.8 (flux3dp/fluxghost#128; the tag moved to it on 2026-11-23) for `fbm2` (16 marks), the `fbb2` / `fhx2rf` laser-head camera and `ado1` (8 marks). Hardware (2026-11-19 / 20): three `fbm2`, one `fbb2`, one `fhx2rf`, one `ado1`, each with its own `k` / `d` (§11, §12). Not included: Promark (mark size and detector, decision 12) and the `fbb2` / `fhx2rf` wide-angle camera (decision 1). Pending: the old-backend fallback on hardware (§12 T12), the `ado1` exposure rounds through Beam Studio on hardware (§7.3.1), decision 8 |
 | **Author** | Beam Studio team |
 | **Created** | 2026-11-16 |
 | **Target product** | Beam Studio (desktop + web), fluxghost 2.5.8 (the version does not change; the tag moves to the merge of fluxghost #128) |
@@ -709,7 +709,12 @@ Command names are final once fluxghost's `cmd_mapping` has them; do not rename a
     spread plus blur): 5 to 6 px across in the bottom two rows, an area of about 20 px against
     the detector's minimum of 15. At a 0.5 mm radius every mark of the third unit is found by
     the normal detector (no weak fill). Proposed: 0.5 mm in `bm2-calibration.beam` / `.fc`,
-    all 16 marks, since the flare position is not fixed per unit. Not in the repo yet. `ado1`
+    all 16 marks, since the flare position is not fixed per unit. In the repo since 2026-11-24,
+    engraved at 30 % and 100 mm/s instead of 20 % and 70 mm/s: about the same energy per mm and
+    the same look on paper, estimated task time 79 s instead of 102 s.
+    Larger marks do not replace the second round: on the third unit under a strong reflection
+    along the bottom rows, 0.5 mm marks still needed all seven exposures and one weak fill
+    (results below); what is missing there depends on the light, not on the mark size. `ado1`
     marks are as small (4.7 to 6.5 px) and should follow.
 12. **8-mark layouts** (`fbb2` / `fhx2rf` laser head, `ado1`, Promark). The layout stays: two
     concentric rectangles carry a fixed 1 : 2 ratio that a row of old marks cannot imitate,
@@ -911,6 +916,23 @@ unit's own `k` / `d`, clean paper, lid closed.
 | second `fbm2` | `GP_Flip_Mirror` | 2 | 16 (0) | 0.468 mm |
 | third `fbm2`, 0.3 mm marks | `USB 2.0 Camera` | 2 | 16 (2) | 0.382 mm |
 | third `fbm2`, 0.5 mm marks | `USB 2.0 Camera` | 2 | 16 (0) | not recorded |
+| third `fbm2`, 0.5 mm marks, strong reflection on the bottom rows (2026-11-24) | `USB 2.0 Camera` | 7 | 16 (1) | 0.344 mm |
+
+**The first photo after an exposure change (found 2026-11-24).** In the rows above the camera
+did not shoot the exposures it was set to. On `fbm2`, the first photo after `setExposure`
+still has the previous exposure whenever the camera sat idle before the change (the detection
+of the previous photo, 1.5 to 2 s): seen on 7 of 7 changes, with the old brightness arriving
+up to 1.0 s after the change; the second photo has the new one. Photos taken back to back
+with no pause do not show it, so a fixed wait is not a known cure. The first round therefore
+shot the camera's own exposure and 75 instead of `[75, 200]`, and 800 was never shot.
+`autoLocateMarks` now drops one photo after every change (0.4 to 0.7 s each). Same unit, same
+sheet, before and after: 13 then 14 of 16 after the first round, 2 then 1 weak fills after all
+seven. That unit under that light is bright: 50 and 75 carry the bottom rows (one mark shows
+only at 50, the camera's minimum, as a weak candidate), 200 loses half of them, 350 and up
+add nothing. The rounds are kept: they come from v4l2 sweeps, which set the real exposure, on
+three units. Not measured on the `fbb2` / `fhx2rf` / `ado1` cameras; the dropped photo is
+harmless there. The laser-head results in T16 were shot at the cameras' own exposure (252 on
+`fbb2`), not at 250.
 
 - **Covered marks (second unit, a board over two marks).** First implementation: 15 of 16
   with RMS 3.5 mm, a blob on the board 7 mm from a covered mark taken as that mark; with

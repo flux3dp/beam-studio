@@ -87,7 +87,11 @@ const autoLocateMarks = async ({
 
     for (const round of rounds ?? [[undefined]]) {
       for (const exposure of round) {
-        if (exposure !== undefined) await setExposure(exposure);
+        if (exposure !== undefined) {
+          await setExposure(exposure);
+          // the first photo after a change still has the old exposure (fbm2: every one of 7 changes); drop it
+          await deviceMaster.takeOnePicture();
+        }
 
         const imgBlob = (await deviceMaster.takeOnePicture())?.imgBlob;
 
