@@ -32,7 +32,7 @@ export type AutoSolvePnPResult =
     }
   | {
       matched?: number;
-      reason: 'NO_IMAGE' | 'SOLVE_PNP_FAILED' | AutoPnPFailReason;
+      reason: 'CANCELLED' | 'NO_IMAGE' | 'SOLVE_PNP_FAILED' | AutoPnPFailReason;
       rms?: null | number;
       success: false;
     };
@@ -41,9 +41,12 @@ export type AutoSolvePnPResult =
  * Locate the 16 engraved marks and solve the four quadrant poses without user input.
  * The camera must already be at the calibration position with the motors held.
  */
-const autoSolvePnP = async (params: FisheyeCameraParametersV4Cali): Promise<AutoSolvePnPResult> => {
+const autoSolvePnP = async (
+  params: FisheyeCameraParametersV4Cali,
+  isCancelled?: () => boolean,
+): Promise<AutoSolvePnPResult> => {
   const refPoints = REGIONS.flatMap((region) => [...bm2PnPPoints[region]]) as Array<[number, number]>;
-  const located = await autoLocateMarks({ exposureRounds: EXPOSURE_ROUNDS, params, refPoints });
+  const located = await autoLocateMarks({ exposureRounds: EXPOSURE_ROUNDS, isCancelled, params, refPoints });
 
   if (!located.success) return located;
 

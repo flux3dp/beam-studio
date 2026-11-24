@@ -207,7 +207,7 @@ describe('Beamo2Calibration automatic solve step', () => {
 
     expect(mockDoBeamo2Calibration).toHaveBeenCalledTimes(1);
     expect(mockMoveLaserHead).toHaveBeenCalledWith(undefined, { shouldKeepPosition: true });
-    expect(mockAutoSolvePnP).toHaveBeenCalledWith({ d: [[0]], k: [[1]] });
+    expect(mockAutoSolvePnP).toHaveBeenCalledWith({ d: [[0]], k: [[1]] }, expect.any(Function));
     // SOLVE_OTHER_PNP: the five regions that share marks between quadrants
     expect(mockSolvePnPCalculate).toHaveBeenCalledTimes(5);
     expect(utils.getByTestId('check-pnp')).toBeInTheDocument();

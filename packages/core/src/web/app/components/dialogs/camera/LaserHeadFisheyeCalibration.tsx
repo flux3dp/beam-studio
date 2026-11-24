@@ -9,6 +9,7 @@ import { cameraCalibrationApi } from '@core/helpers/api/camera-calibration';
 import { setFisheyeConfig } from '@core/helpers/camera-calibration-helper';
 import checkDeviceStatus from '@core/helpers/check-device-status';
 import deviceMaster from '@core/helpers/device-master';
+import useIsUnmounted from '@core/helpers/hooks/useIsUnmounted';
 import useI18n from '@core/helpers/useI18n';
 import type { FisheyeCameraParametersV3, FisheyeCameraParametersV3Cali } from '@core/interfaces/FisheyePreview';
 
@@ -102,6 +103,7 @@ const LaserHeadFisheyeCalibration = ({
   const isHexaRf = useMemo(() => model === 'fhx2rf', [model]);
   // whether the pose came from the automatic step, to know where Back leads from CHECK_PNP
   const isAutoSolved = useRef(false);
+  const isUnmounted = useIsUnmounted();
 
   if (step === Steps.PRE_CHESSBOARD) {
     return (
@@ -235,6 +237,7 @@ const LaserHeadFisheyeCalibration = ({
               located = await autoLocateMarks({
                 cameraIndex: 0,
                 exposureRounds: EXPOSURE_ROUNDS,
+                isCancelled: () => isUnmounted.current,
                 params: calibratingParam.current,
                 refPoints: bb2PnPPoints,
                 rMax: R_MAX_MM,
@@ -244,6 +247,8 @@ const LaserHeadFisheyeCalibration = ({
             } finally {
               progressCaller.popById(PROGRESS_ID);
             }
+
+            if (isUnmounted.current) return;
 
             isAutoSolved.current = false;
 
@@ -273,6 +278,8 @@ const LaserHeadFisheyeCalibration = ({
 
             const { rvec, tvec } = pose.data;
             const applyResult = () => {
+              if (isUnmounted.current) return;
+
               isAutoSolved.current = true;
               updateParam({ rvec, tvec });
               setStep(Steps.CHECK_PNP);

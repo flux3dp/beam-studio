@@ -10,6 +10,7 @@ import { cameraCalibrationApi } from '@core/helpers/api/camera-calibration';
 import { setFisheyeConfig } from '@core/helpers/camera-calibration-helper';
 import checkDeviceStatus from '@core/helpers/check-device-status';
 import deviceMaster from '@core/helpers/device-master';
+import useIsUnmounted from '@core/helpers/hooks/useIsUnmounted';
 import useI18n from '@core/helpers/useI18n';
 import type { FisheyeCameraParametersV2, FisheyeCameraParametersV2Cali } from '@core/interfaces/FisheyePreview';
 
@@ -81,6 +82,7 @@ const AdorCalibration = ({
   }, []);
   // whether the first pose came from the automatic step: decides the step after ELEVATED_CUT and its Back
   const isAutoSolved = useRef(false);
+  const isUnmounted = useIsUnmounted();
 
   const handleFirstPose = async (rvec: number[][], tvec: number[][]) => {
     progressCaller.openNonstopProgress({ id: PROGRESS_ID, message: lang.device.processing });
@@ -111,6 +113,8 @@ const AdorCalibration = ({
 
     updateParam(data!);
     console.log('calibratingParam.current', calibratingParam.current);
+
+    if (isUnmounted.current) return false;
 
     const param: FisheyeCameraParametersV2 = {
       d: calibratingParam.current.d!,
@@ -170,6 +174,7 @@ const AdorCalibration = ({
           try {
             located = await autoLocateMarks({
               exposureRounds: EXPOSURE_ROUNDS,
+              isCancelled: () => isUnmounted.current,
               params: calibratingParam.current,
               refPoints: adorPnPPoints,
               rMax: R_MAX_MM,
@@ -179,6 +184,8 @@ const AdorCalibration = ({
           } finally {
             progressCaller.popById(PROGRESS_ID);
           }
+
+          if (isUnmounted.current) return;
 
           if (!located.success) {
             // backend without the commands: the manual steps still work
@@ -207,6 +214,8 @@ const AdorCalibration = ({
 
           const { rvec, tvec } = pose.data;
           const applyResult = async () => {
+            if (isUnmounted.current) return;
+
             isAutoSolved.current = true;
 
             if ((await onSolved(rvec, tvec)) === false) setStep(engraveStep);

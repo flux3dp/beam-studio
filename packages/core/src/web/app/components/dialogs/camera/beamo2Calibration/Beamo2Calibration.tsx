@@ -15,6 +15,7 @@ import { cameraCalibrationApi } from '@core/helpers/api/camera-calibration';
 import { setFisheyeConfig } from '@core/helpers/camera-calibration-helper';
 import checkDeviceStatus from '@core/helpers/check-device-status';
 import deviceMaster from '@core/helpers/device-master';
+import useIsUnmounted from '@core/helpers/hooks/useIsUnmounted';
 import i18n from '@core/helpers/i18n';
 import useI18n from '@core/helpers/useI18n';
 import type {
@@ -100,6 +101,7 @@ const Beamo2Calibration = ({ currentData, isAdvanced, onClose, onSwitchToAdvance
   const [step, setStep] = useState<StepsType>(isAdvanced ? Steps.PRE_CHESSBOARD : Steps.PUT_PAPER);
   const next = useCallback(() => setStep((step) => (step + 1) as StepsType), []);
   const prev = useCallback(() => setStep((step) => (step - 1) as StepsType), []);
+  const isUnmounted = useIsUnmounted();
   const doorChecker = useRef<DoorChecker | null>(null);
   // whether the quadrant poses came from the automatic step, to know where Back leads from CHECK_PNP
   const isAutoSolved = useRef(false);
@@ -258,14 +260,18 @@ const Beamo2Calibration = ({ currentData, isAdvanced, onClose, onSwitchToAdvance
               let res: Awaited<ReturnType<typeof autoSolvePnP>>;
 
               try {
-                res = await autoSolvePnP(calibratingParam.current);
+                res = await autoSolvePnP(calibratingParam.current, () => isUnmounted.current);
               } finally {
                 progressCaller.popById(PROGRESS_ID);
               }
 
+              if (isUnmounted.current) return;
+
               if (res.success) {
                 const { imgPoints, rvecs, tvecs } = res;
                 const applyResult = () => {
+                  if (isUnmounted.current) return;
+
                   isAutoSolved.current = true;
                   updateParam({
                     imgPoints1: imgPoints,

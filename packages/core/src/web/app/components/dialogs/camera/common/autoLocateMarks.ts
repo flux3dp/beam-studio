@@ -15,7 +15,7 @@ export type AutoLocateMarksResult =
     }
   | {
       matched?: number;
-      reason: 'NO_IMAGE' | AutoPnPFailReason;
+      reason: 'CANCELLED' | 'NO_IMAGE' | AutoPnPFailReason;
       rms?: null | number;
       success: false;
     };
@@ -29,6 +29,8 @@ interface Options {
    * the same happens when the machine cannot report its exposure (older firmware).
    */
   exposureRounds?: ReadonlyArray<ReadonlyArray<number>>;
+  /** checked before each photo: true stops the capture with `CANCELLED` (dialog closed, door opened) */
+  isCancelled?: () => boolean;
   /** the detection needs `k` and `d` */
   params: FisheyeCaliParameters;
   /** mark positions on the bed, mm */
@@ -44,6 +46,7 @@ interface Options {
 const autoLocateMarks = async ({
   cameraIndex,
   exposureRounds,
+  isCancelled,
   params,
   refPoints,
   rMax,
@@ -87,6 +90,8 @@ const autoLocateMarks = async ({
 
     for (const round of rounds ?? [[undefined]]) {
       for (const exposure of round) {
+        if (isCancelled?.()) return { reason: 'CANCELLED', success: false };
+
         if (exposure !== undefined) {
           await setExposure(exposure);
           // the first photo after a change still has the old exposure (fbm2: every one of 7 changes); drop it

@@ -203,6 +203,53 @@ describe('AdorCalibration automatic solve steps', () => {
     expect(mockPopUpError).not.toHaveBeenCalled();
   });
 
+  test('closing the dialog during the second capture stops it and saves nothing', async () => {
+    let finish: (value: unknown) => void = () => {};
+
+    mockAutoLocateMarks.mockResolvedValueOnce(located).mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          finish = resolve;
+        }),
+    );
+
+    const utils = renderDialog();
+
+    await runAutoStep(utils, t.start_engrave, 1);
+    await act(async () => {
+      fireEvent.click(utils.getByText('elevate-next'));
+    });
+    await waitFor(() => expect(mockAutoLocateMarks).toHaveBeenCalledTimes(2));
+
+    const [{ isCancelled }] = mockAutoLocateMarks.mock.calls[1];
+
+    expect(isCancelled()).toBe(false);
+    utils.unmount();
+    expect(isCancelled()).toBe(true);
+
+    await act(async () => finish(located));
+
+    expect(mockExtrinsicRegression).not.toHaveBeenCalled();
+    expect(mockSetFisheyeConfig).not.toHaveBeenCalled();
+    expect(mockPopUpError).not.toHaveBeenCalled();
+  });
+
+  test('Continue Anyway after the dialog was closed saves nothing', async () => {
+    mockAutoLocateMarks.mockResolvedValue({ ...located, highResidual: true, rms: 0.4 });
+
+    const utils = renderDialog();
+
+    await runAutoStep(utils, t.start_engrave, 1);
+
+    const options = mockShowHighResidualAlert.mock.calls[0][0];
+
+    utils.unmount();
+    await act(async () => options.onContinue());
+
+    expect(mockSaveCheckPoint).not.toHaveBeenCalled();
+    expect(mockUpdateData).not.toHaveBeenCalled();
+  });
+
   test('a failure at the second height returns to the elevate step and keeps the first pose', async () => {
     mockAutoLocateMarks
       .mockResolvedValueOnce(located)
