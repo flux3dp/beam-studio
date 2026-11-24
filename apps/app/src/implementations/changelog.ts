@@ -7,11 +7,11 @@ const CHANGES_TW = {
     '新增 Promark Desktop / MOPA 圖層進階設定「打散掃描順序」與「每行停留」。',
   ],
   changed: [
-    '變更 相機校正任務遇到可恢復的暫停（如空氣輔助警告、濾網過期）時不再中斷，可選擇繼續完成校正。',
     '變更 beamo II、Beambox II 與 HEXA RF 廣角相機校正標記改為單線雕刻。',
     '變更 Promark 設定視窗內容過長時可捲動。',
   ],
   fixed: [
+    '修正 相機校正任務遇到可恢復的暫停（如空氣輔助警告、濾網過期）時流程中斷的問題。',
     '修正 Promark 機器資訊未顯示實際序號的問題。',
     '修正 Windows 11 智慧型應用程式控制封鎖部分元件，導致 Beam Studio 無法正常啟動的問題。',
     '修正 算圖時進度視窗的提示文字逐字換行的問題。',
@@ -24,11 +24,11 @@ const CHANGES_EN = {
     'Added the Interleave Scan Lines and Line Dwell advanced layer settings for Promark Desktop / MOPA.',
   ],
   changed: [
-    'Camera calibration tasks no longer abort on resumable pauses (e.g. air assist warning, expired filter); you can choose to continue.',
     'beamo II calibration marks and the Beambox II / HEXA RF wide-angle calibration marks are now engraved as single lines.',
     'The Promark Settings dialog now scrolls when its content is too long.',
   ],
   fixed: [
+    'Fixed camera calibration tasks aborting on resumable pauses (such as air assist warnings or an expired filter).',
     'Fixed Promark Machine Info not showing the actual serial number.',
     'Fixed Windows 11 Smart App Control blocking some components so Beam Studio could not start properly.',
     'Fixed progress dialog tips wrapping one character per line while rendering.',
