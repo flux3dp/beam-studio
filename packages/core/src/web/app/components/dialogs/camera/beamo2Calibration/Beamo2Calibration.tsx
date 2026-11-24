@@ -245,27 +245,36 @@ const Beamo2Calibration = ({ currentData, isAdvanced, onClose, onSwitchToAdvance
           onNext={() => {}}
           process={async () => {
             try {
-              const moved = await doorChecker.current?.doorClosedWrapper(() =>
-                moveLaserHead(undefined, { shouldKeepPosition: true }),
-              );
-
-              if (!moved) {
-                setStep(Steps.PUT_PAPER);
-
-                return;
-              }
-
-              progressCaller.openNonstopProgress({ id: PROGRESS_ID, message: tCalibration.auto_solve_pnp_locating });
-
+              const isDoorOpened = () => doorChecker.current?.keepClosed === false;
               let res: Awaited<ReturnType<typeof autoSolvePnP>>;
 
-              try {
-                res = await autoSolvePnP(calibratingParam.current, () => isUnmounted.current);
-              } finally {
-                progressCaller.popById(PROGRESS_ID);
-              }
+              // a door opened during capture voids the whole capture: close it, relocate, shoot from the first exposure
+              do {
+                const moved = await doorChecker.current?.doorClosedWrapper(() =>
+                  moveLaserHead(undefined, { shouldKeepPosition: true }),
+                );
 
-              if (isUnmounted.current) return;
+                if (isUnmounted.current) return;
+
+                if (!moved) {
+                  setStep(Steps.PUT_PAPER);
+
+                  return;
+                }
+
+                progressCaller.openNonstopProgress({
+                  id: PROGRESS_ID,
+                  message: tCalibration.auto_solve_pnp_locating,
+                });
+
+                try {
+                  res = await autoSolvePnP(calibratingParam.current, () => isUnmounted.current || isDoorOpened());
+                } finally {
+                  progressCaller.popById(PROGRESS_ID);
+                }
+
+                if (isUnmounted.current) return;
+              } while (isDoorOpened());
 
               if (res.success) {
                 const { imgPoints, rvecs, tvecs } = res;

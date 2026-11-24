@@ -19,6 +19,7 @@ jest.mock('@core/app/actions/progress-caller', () => ({
 }));
 
 const mockDoorClosedWrapper = jest.fn();
+const mockDoor = { keepClosed: true };
 
 jest.mock(
   '@core/app/actions/camera/preview-helper/DoorChecker',
@@ -26,6 +27,9 @@ jest.mock(
     class {
       destroy = jest.fn();
       doorClosedWrapper = (...args: any[]) => mockDoorClosedWrapper(...args);
+      get keepClosed() {
+        return mockDoor.keepClosed;
+      }
     },
 );
 
@@ -185,7 +189,15 @@ describe('Beamo2Calibration automatic solve step', () => {
 
       return true;
     });
-    mockDoorClosedWrapper.mockImplementation((callback) => callback());
+    mockDoor.keepClosed = true;
+    // like the real one: the poll starts once the head is in place
+    mockDoorClosedWrapper.mockImplementation(async (callback) => {
+      const res = await callback();
+
+      mockDoor.keepClosed = true;
+
+      return res;
+    });
     // the head is moved in raw mode and, with shouldKeepPosition, stays there
     mockMoveLaserHead.mockImplementation(async (_position, options) => {
       if (options?.shouldKeepPosition) mockMachine.controlMode = 'raw';
@@ -325,6 +337,28 @@ describe('Beamo2Calibration automatic solve step', () => {
 
     expect(mockPopUpError).toHaveBeenCalledWith({ message: t.failed_to_calibrate_with_pictures });
     expect(utils.getByTestId('title')).toHaveTextContent(t.put_paper);
+  });
+
+  test('drops the capture and shoots again from the first exposure when the door was opened during it', async () => {
+    const seen: boolean[] = [];
+
+    mockAutoSolvePnP.mockImplementationOnce(async (_params, isCancelled) => {
+      seen.push(isCancelled());
+      mockDoor.keepClosed = false;
+      seen.push(isCancelled());
+
+      return { reason: 'CANCELLED', success: false };
+    });
+
+    const utils = renderDialog();
+
+    await runAutoStep(utils, t.start_engrave, 2);
+
+    expect(seen).toEqual([false, true]);
+    expect(mockDoorClosedWrapper).toHaveBeenCalledTimes(2);
+    expect(mockMoveLaserHead).toHaveBeenCalledTimes(2);
+    expect(utils.getByTestId('check-pnp')).toBeInTheDocument();
+    expect(mockPopUpError).not.toHaveBeenCalled();
   });
 
   test('returns to the paper step when the door stays open', async () => {

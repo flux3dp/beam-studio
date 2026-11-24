@@ -112,6 +112,9 @@ No dragging: after the engraving a `ProcessingDialog` step finds the marks and s
   exposure alone; the same happens when the exposure cannot be read, e.g. older `ado1` firmware), each photo → `autoPnPDetect`, all lists so far → `autoPnPMatch(refPoints, blobs, weak,
   rMax)`, restore, disconnect. Returns `{ points, rms, highResidual }` or a failure reason; the caller
   solves. One photo is dropped after every exposure change (it still has the old exposure). Camera auto exposure is turned off first and back on **after** the exposure value is restored.
+  `isCancelled` is checked before each photo: every dialog passes its unmounted flag (`helpers/hooks/useIsUnmounted`)
+  and checks it again before applying or saving; `fbm2` also stops when the door poll (`DoorChecker.keepClosed`)
+  sees the door open, then checks the door, relocates and captures again from the first exposure.
 - The matcher uses `k`, `d` and the mark positions only, never the stored `rvec`/`tvec`, and assumes the
   image is not rotated by 90 / 180 degrees against the bed (Promark's `rotate180` is why it is not wired).
 - Per machine: `fbm2` 16 marks, own rounds, backend residual limit, four quadrant solves
