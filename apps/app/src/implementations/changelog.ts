@@ -1,40 +1,37 @@
 import type { IChangeLog } from '@core/interfaces/IChangeLog';
 
-// 2.7.3 beta
+// 2.7.4 beta
 const CHANGES_TW = {
   added: [
-    '新增 Promark UV 雷射源與內雕（3D）模式。',
-    '新增 校正 > 手動輸入：直接編輯相機預覽偏移（魚眼機種含廣角分區偏移與區域漸變）、模組偏移與精準對位偏移。',
-    '新增 beamo II / Beambox II / HEXA RF 圖層進階設定「雷射頻率」（20–500 kHz，需韌體 6.5.3 以上）。',
-    '新增 Promark 多組場鏡參數：每個工作範圍各自保存場鏡、振鏡與紅點參數，選機時自動套用並檢查參數範圍。',
-    '新增 精準對位偏移距離支援負值（最小 −3 mm），切割線可內縮作出血。',
-    '新增 錯誤回報自動上傳：錯誤視窗可選擇附上診斷資訊，並可於 設定 > 隱私權 選擇每次詢問、自動傳送或不傳送。',
+    '新增 beamo II / Beambox II / HEXA RF 自動全範圍預覽：關上門蓋後自動拍攝全範圍照片作為畫布背景（可於 設定 > 相機 開啟，預設關閉）。',
+    '新增 Promark Desktop / MOPA 圖層進階設定「打散掃描順序」與「每行停留」。',
   ],
   changed: [
-    '變更 全新安裝時 beamo II 4C 墨水匣版本預設為 V2。',
-    '變更 Windows 防火牆規則改由安裝程式加入，啟動時不再要求系統管理員權限。',
+    '變更 相機校正任務遇到可恢復的暫停（如空氣輔助警告、濾網過期）時不再中斷，可選擇繼續完成校正。',
+    '變更 beamo II、Beambox II 與 HEXA RF 廣角相機校正標記改為單線雕刻。',
+    '變更 Promark 設定視窗內容過長時可捲動。',
   ],
   fixed: [
-    '修正 beamo II 相機校正時門蓋檢查堆積導致流程卡住的問題。',
-    '修正 西班牙文翻譯錯誤，並改善各語言剩餘時間的顯示方式。',
+    '修正 Promark 機器資訊未顯示實際序號的問題。',
+    '修正 Windows 11 智慧型應用程式控制封鎖部分元件，導致 Beam Studio 無法正常啟動的問題。',
+    '修正 算圖時進度視窗的提示文字逐字換行的問題。',
   ],
 };
 
 const CHANGES_EN = {
   added: [
-    'Added Calibration > Manual Configuration to edit camera preview offsets (incl. per-region wide-angle offsets with blending on fisheye models), module offsets and the Print and Cut offset directly.',
-    'Added a per-layer Laser Frequency advanced setting (20–500 kHz) for beamo II / Beambox II / HEXA RF (firmware 6.5.3 or later).',
-    'Added Promark lens profiles: field, galvo and red-dot parameters are stored per work area, applied automatically on machine selection and range-checked.',
-    'Added negative Print and Cut offsets (down to −3 mm) to inset the cut line for bleed.',
-    'Added error report upload: error dialogs can attach diagnostics, with Ask / Always / Never in Settings > Privacy.',
+    'Added auto full-area preview for beamo II / Beambox II / HEXA RF: a full-area photo is taken as the canvas background after the lid is closed (enable in Settings > Camera, off by default).',
+    'Added the Interleave Scan Lines and Line Dwell advanced layer settings for Promark Desktop / MOPA.',
   ],
   changed: [
-    'Fresh installs default the beamo II 4C ink cartridge version to V2.',
-    'The Windows firewall rule is now added by the installer, so launching no longer requires administrator rights.',
+    'Camera calibration tasks no longer abort on resumable pauses (e.g. air assist warning, expired filter); you can choose to continue.',
+    'beamo II calibration marks and the Beambox II / HEXA RF wide-angle calibration marks are now engraved as single lines.',
+    'The Promark Settings dialog now scrolls when its content is too long.',
   ],
   fixed: [
-    'Fixed beamo II camera calibration stalling when door checks piled up.',
-    'Fixed Spanish translations and improved the remaining-time display in all languages.',
+    'Fixed Promark Machine Info not showing the actual serial number.',
+    'Fixed Windows 11 Smart App Control blocking some components so Beam Studio could not start properly.',
+    'Fixed progress dialog tips wrapping one character per line while rendering.',
   ],
 };
 
