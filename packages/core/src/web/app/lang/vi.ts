@@ -414,6 +414,8 @@ const lang: ILang = {
       current_position: 'Vị trí hiện tại',
       cut_distance: 'Khoảng cách cắt',
       cut_time: 'Thời gian cắt',
+      dot_size: 'Kích thước điểm (px)',
+      dot_square: 'Điểm hình vuông',
       end_preview: 'Kết thúc xem trước',
       estimated_time: 'Tổng thời gian ước tính',
       invert: 'Đảo ngược',

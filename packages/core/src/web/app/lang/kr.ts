@@ -414,6 +414,8 @@ const lang: ILang = {
       current_position: '현재 위치',
       cut_distance: '잘라내기 거리',
       cut_time: '잘라내기 시간',
+      dot_size: '점 크기 (px)',
+      dot_square: '점을 사각형으로 표시',
       end_preview: '미리 보기 종료',
       estimated_time: '전체 예상 시간',
       invert: '반전',

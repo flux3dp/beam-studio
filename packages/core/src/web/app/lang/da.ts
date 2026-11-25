@@ -414,6 +414,8 @@ const lang: ILang = {
       current_position: 'Nuværende position',
       cut_distance: 'Skæreafstand',
       cut_time: 'Skæretid',
+      dot_size: 'Punktstørrelse (px)',
+      dot_square: 'Firkantede punkter',
       end_preview: 'Slut forhåndsvisning',
       estimated_time: 'Samlet estimeret tid',
       invert: 'Inverter',

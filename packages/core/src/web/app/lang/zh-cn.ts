@@ -414,6 +414,8 @@ const lang: ILang = {
       current_position: '当下位置',
       cut_distance: '切割距离',
       cut_time: '切割时间',
+      dot_size: '打点大小（px）',
+      dot_square: '打点显示为方块',
       end_preview: '结束预览',
       estimated_time: '预估总时间',
       invert: '色彩反转',

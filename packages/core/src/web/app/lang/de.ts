@@ -414,6 +414,8 @@ const lang: ILang = {
       current_position: 'Aktuelle Position',
       cut_distance: 'Schnittlänge',
       cut_time: 'Schneiddauer',
+      dot_size: 'Punktgröße (px)',
+      dot_square: 'Punkte als Quadrate',
       end_preview: 'Vorschau beenden',
       estimated_time: 'Voraussichtliche Laufzeitlänge',
       invert: 'Farben umkehren',

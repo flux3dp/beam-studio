@@ -414,6 +414,8 @@ const lang: ILang = {
       current_position: 'Současná pozice',
       cut_distance: 'Vzdálenost řezu',
       cut_time: 'Snížit délku',
+      dot_size: 'Velikost bodu (px)',
+      dot_square: 'Čtvercové body',
       end_preview: 'Ukončit náhled',
       estimated_time: 'Odhadovaná celková délka',
       invert: 'Převrátit',

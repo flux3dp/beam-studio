@@ -414,6 +414,8 @@ const lang: ILang = {
       current_position: '現在位置',
       cut_distance: '切断距離',
       cut_time: '切断時間',
+      dot_size: 'ドットサイズ（px）',
+      dot_square: 'ドットを四角で表示',
       end_preview: 'プレビュー終了',
       estimated_time: '推定合計時間',
       invert: '色反転',

@@ -65,14 +65,15 @@ const GALVO_OP = {
 } as const;
 
 /**
- * Drawn size of one dot (LASER_ON) when the spacing to its neighbour gives no
- * better answer, and the range an inferred spacing is trusted within. A dot has
- * no size in the file: like a printer pixel it is a point of deposited energy,
- * so it is drawn at the pitch of the grid it belongs to.
+ * `t` of a lone galvo dot (LASER_ON, or a one-site run of PACKED_DOTS): a zero-length
+ * record at the dot's centre, `s` the 0-255 power like RASTER_T. A dot has no size in
+ * the file, so GcodePreview draws it at a fixed screen size (a short line or a square)
+ * instead of guessing a pitch from its neighbours. The line follows the scan: DOT_T lies
+ * along x, DOT_Y_T along y (a packed run's step, or the jump that placed a LASER_ON), so
+ * a lone dot in a column reads as part of the column, not as a cross-stroke.
  */
-const GALVO_DOT_MM = 0.1;
-const GALVO_DOT_MIN_MM = 0.02;
-const GALVO_DOT_MAX_MM = 0.5;
+export const DOT_T = 12;
+export const DOT_Y_T = 13;
 
 /** Sim time is kept in minutes, and a dot's dwell arrives in microseconds. */
 const US_TO_MIN = 1 / 60000000;
@@ -241,8 +242,8 @@ interface GalvoState {
   blockFirstRecord: number;
   /** byte offset of the block's first list's first command */
   blockStart: number;
-  /** mm, field-local, machine frame (y down) */
-  dotPitch: number;
+  /** the last move ran more along y than x: a LASER_ON there belongs to a column */
+  dotAlongY: boolean;
   /**
    * ENABLE_LASER is sent once per block (swiftray galvo-list.cpp, 2026-11-10) and the
    * state carries across its lists: bsl frames nothing of its own around a list.
@@ -255,7 +256,6 @@ interface GalvoState {
   /** byte offset of the current list's first move, dot or IO command */
   geomStart: null | number;
   jumpF: number;
-  lastDot: [number, number] | null;
   /** record index the current list started at */
   listFirstRecord: number;
   /** the current list carries an ENABLE_LASER of its own (every list did before 2026-11-10) */
@@ -450,6 +450,12 @@ export interface ParsedFcode {
    * itself -- see `galvoListInfo`.
    */
   galvoLists: Array<[number, number]>;
+  /**
+   * [recordIndex, dotCount] per multi-dot packed run, in record order: the arrival record
+   * of a RASTER_T mark that stands for that many adjacent dots, so the preview can draw
+   * them one by one (square dots) without a record per dot
+   */
+  galvoRuns: Array<[number, number]>;
   /** [recordIndex, resolutionChar | null]: gradient print mode changes, sparse */
   gradientEvents: Array<[number, null | number]>;
   metadata: Record<string, number | string>;
@@ -486,6 +492,7 @@ export const parseFcode = (buffer: ArrayBuffer): ParsedFcode => {
   const pauseEvents: Array<[number, number]> = [];
   const galvoLists: Array<[number, number]> = [];
   const galvoListInfo: GalvoListInfo[] = [];
+  const galvoRuns: Array<[number, number]> = [];
   let pendingBlock: null | { bodyStart: number; recordCount: number } = null;
   const reader = new Reader(buffer);
 
@@ -693,13 +700,12 @@ export const parseFcode = (buffer: ArrayBuffer): ParsedFcode => {
     galvo = {
       blockFirstRecord: recordOffsets.length,
       blockStart: cmdStart,
-      dotPitch: GALVO_DOT_MM,
+      dotAlongY: false,
       enabled: false,
       enableSpan: null,
       enableTail: false,
       geomStart: null,
       jumpF: 4000 * 60,
-      lastDot: null,
       listFirstRecord: recordOffsets.length,
       listHasEnable: false,
       listStart: cmdStart,
@@ -737,7 +743,6 @@ export const parseFcode = (buffer: ArrayBuffer): ParsedFcode => {
     galvo.listHasEnable = false;
     galvo.enableTail = false;
     // `enabled` stays: the block's one ENABLE_LASER covers every list in it
-    galvo.lastDot = null;
   };
 
   const endGalvoRun = () => {
@@ -759,6 +764,7 @@ export const parseFcode = (buffer: ArrayBuffer): ParsedFcode => {
   const emitGalvoMove = (marking: boolean) => {
     const [x, y] = galvoPoint();
 
+    galvo!.dotAlongY = Math.abs(y - state.y) > Math.abs(x - state.x);
     state.x = x;
     state.y = y;
     state.f = marking ? galvo!.markF : galvo!.jumpF;
@@ -768,9 +774,11 @@ export const parseFcode = (buffer: ArrayBuffer): ParsedFcode => {
 
   /**
    * Draws deposited dots from `from` to `to` (preview space) as one feedrate-less mark,
-   * bracketed by breaks, then leaves the beam on the last dot's centre.
+   * bracketed by breaks, then leaves the beam on the last dot's centre. A lone dot is a
+   * zero-length DOT_T mark at its centre (`from` = `to`).
+   * @returns the record index of the mark's arrival record
    */
-  const drawGalvoMark = (from: [number, number], to: [number, number], dwellMin: number) => {
+  const drawGalvoMark = (from: [number, number], to: [number, number], dwellMin: number, t = RASTER_T): number => {
     const [cx, cy] = galvoPoint();
     const savedF = state.f;
 
@@ -779,58 +787,54 @@ export const parseFcode = (buffer: ArrayBuffer): ParsedFcode => {
     pushBreak();
     state.f = Number.NaN;
     [state.x, state.y] = from;
-    push(0, 0, RASTER_T);
+    push(0, 0, t);
     [state.x, state.y] = to;
-    push(1, (galvo!.power * 255) / 100, RASTER_T, dwellMin);
+    push(1, (galvo!.power * 255) / 100, t, dwellMin);
+
+    const arrival = recordOffsets.length - 1;
+
     state.f = savedF;
     state.x = cx;
     state.y = cy;
     pushBreak();
+
+    return arrival;
   };
 
   /**
    * A dot has position but no path, so it is drawn the way printer swaths draw
    * deposited pixels: the jump that placed the beam already carried the motion
-   * time, and the mark itself is one pitch wide with no feedrate, bracketed by
-   * break records so the synthetic jumps stay out of the traversal display.
-   * Spacing to the previous dot gives the pitch, since dots come from a grid; the
-   * default only covers the first dot of a list.
+   * time, and the mark itself is a zero-length DOT_T record at the dot's centre
+   * with no feedrate, bracketed by break records so the synthetic jumps stay out
+   * of the traversal display. Its drawn size is the renderer's, in screen pixels:
+   * a pitch inferred from the previous dot made the first dot of every row as
+   * long as the row spacing.
    *
    * The beam does spend time there, though: `dwellUs` is the LASER_ON period, and
    * on a dense block it is most of what the job costs. Carried as a dwell so the
    * timeline advances across the dot instead of the whole block appearing at once.
    */
   const emitGalvoDot = (dwellUs: number) => {
-    const [cx, cy] = galvoPoint();
+    const point = galvoPoint();
 
-    if (galvo!.lastDot) {
-      const gap = Math.hypot(cx - galvo!.lastDot[0], cy - galvo!.lastDot[1]);
-
-      if (gap >= GALVO_DOT_MIN_MM && gap <= GALVO_DOT_MAX_MM) galvo!.dotPitch = gap;
-    }
-
-    galvo!.lastDot = [cx, cy];
-
-    const half = galvo!.dotPitch / 2;
-
-    drawGalvoMark([cx - half, cy], [cx + half, cy], dwellUs * US_TO_MIN);
+    drawGalvoMark(point, point, dwellUs * US_TO_MIN, galvo!.dotAlongY ? DOT_Y_T : DOT_T);
   };
 
   /**
    * Expands a PACKED_DOTS record. The machine turns each set bit into JUMP_ABS +
    * LASER_ON, skipping a zero-length jump and measuring the first jump from wherever
    * the previous record left the beam; the preview does the same, except that a run
-   * of adjacent dots becomes one mark one pitch wider than its span. That draws the
-   * same pixels and costs the same time: the jumps between dots follow a break and
-   * add none, so only the summed dwell counts.
+   * of adjacent dots becomes one mark one pitch wider than its span (a one-site run
+   * is a lone DOT_T dot, as the expanded LASER_ON would be). That draws the same
+   * pixels and costs the same time: the jumps between dots follow a break and add
+   * none, so only the summed dwell counts.
    */
   const emitPackedDots = (header: PackedDotsHeader, mask: Uint8Array) => {
     const { dwellUs, originX, originY, siteCount, stepX, stepY } = header;
     // preview y is negated, so the half-step along the sweep flips its y too
     const halfX = stepX / 2;
     const halfY = -stepY / 2;
-
-    galvo!.dotPitch = Math.hypot(stepX, stepY);
+    const loneT = Math.abs(stepY) > Math.abs(stepX) ? DOT_Y_T : DOT_T;
 
     for (const [first, last] of packedDotRuns(mask, siteCount)) {
       const x = originX + first * stepX;
@@ -848,9 +852,13 @@ export const parseFcode = (buffer: ArrayBuffer): ParsedFcode => {
       galvo!.y = originY + last * stepY;
 
       const [ex, ey] = galvoPoint();
+      const dwellMin = (last - first + 1) * dwellUs * US_TO_MIN;
 
-      drawGalvoMark([sx - halfX, sy - halfY], [ex + halfX, ey + halfY], (last - first + 1) * dwellUs * US_TO_MIN);
-      galvo!.lastDot = [ex, ey];
+      if (first === last) {
+        drawGalvoMark([sx, sy], [sx, sy], dwellMin, loneT);
+      } else {
+        galvoRuns.push([drawGalvoMark([sx - halfX, sy - halfY], [ex + halfX, ey + halfY], dwellMin), last - first + 1]);
+      }
     }
   };
 
@@ -1288,6 +1296,7 @@ export const parseFcode = (buffer: ArrayBuffer): ParsedFcode => {
     blockPrologues,
     galvoListInfo,
     galvoLists,
+    galvoRuns,
     gradientEvents,
     metadata,
     moduleEvents,

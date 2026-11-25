@@ -416,6 +416,8 @@ export interface ILang {
       current_position: string;
       cut_distance: string;
       cut_time: string;
+      dot_size: string;
+      dot_square: string;
       end_preview: string;
       estimated_time: string;
       invert: string;

@@ -14,7 +14,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import { basic, basic2d, square } from './basic';
-import { gcode } from './GcodePreview';
+import { galvoDots, gcode } from './GcodePreview';
 import { image } from './image';
 import { imageMesh } from './imageMesh';
 import { thickLines } from './thick-lines';
@@ -40,6 +40,7 @@ export class DrawCommands {
         this.imageMesh = imageMesh(this);
         this.thickLines = thickLines(this);
         this.gcode = gcode(this);
+        this.galvoDots = galvoDots(this);
 
         this.barrelDistort = barrelDistort(this)
 

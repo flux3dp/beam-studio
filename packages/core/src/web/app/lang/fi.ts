@@ -414,6 +414,8 @@ const lang: ILang = {
       current_position: 'Nykyinen sijainti',
       cut_distance: 'Leikkausmatka',
       cut_time: 'Leikkausaika',
+      dot_size: 'Pisteen koko (px)',
+      dot_square: 'Neliömäiset pisteet',
       end_preview: 'Lopeta esikatselu',
       estimated_time: 'Arvioitu kokonaisaika',
       invert: 'Käännä',

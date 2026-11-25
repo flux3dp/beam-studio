@@ -414,6 +414,8 @@ const lang: ILang = {
       current_position: 'Posisi Saat Ini',
       cut_distance: 'Jarak Pemotongan',
       cut_time: 'Waktu Pemotongan',
+      dot_size: 'Ukuran titik (px)',
+      dot_square: 'Titik persegi',
       end_preview: 'Selesai Pratinjau',
       estimated_time: 'Total Waktu Perkiraan',
       invert: 'Balik',

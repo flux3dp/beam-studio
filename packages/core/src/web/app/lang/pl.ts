@@ -414,6 +414,8 @@ const lang: ILang = {
       current_position: 'Aktualna pozycja',
       cut_distance: 'Odległość cięcia',
       cut_time: 'Skróć czas',
+      dot_size: 'Rozmiar punktu (px)',
+      dot_square: 'Kwadratowe punkty',
       end_preview: 'Zakończ podgląd',
       estimated_time: 'Szacowany całkowity czas',
       invert: 'Odwróć',

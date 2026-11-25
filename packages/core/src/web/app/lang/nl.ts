@@ -414,6 +414,8 @@ const lang: ILang = {
       current_position: 'Huidige positie',
       cut_distance: 'Snijafstand',
       cut_time: 'Snijtijd',
+      dot_size: 'Puntgrootte (px)',
+      dot_square: 'Vierkante punten',
       end_preview: 'Voorbeeld beëindigen',
       estimated_time: 'Geschatte totale tijd',
       invert: 'Omkeren',

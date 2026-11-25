@@ -414,6 +414,8 @@ const lang: ILang = {
       current_position: 'Aktuell position',
       cut_distance: 'Skärdistans',
       cut_time: 'Skärtid',
+      dot_size: 'Punktstorlek (px)',
+      dot_square: 'Fyrkantiga punkter',
       end_preview: 'Sluta förhandsgranska',
       estimated_time: 'Total uppskattad tid',
       invert: 'Invertera',

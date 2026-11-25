@@ -86,6 +86,17 @@
     }
   }
 
+  .dot-size {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: 2px;
+
+    :global(.ant-input-number) {
+      width: 56px;
+    }
+  }
+
   .zoom-block {
     bottom: 65px;
   }

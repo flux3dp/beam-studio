@@ -15,6 +15,8 @@ jest.mock('./tmpParseGcode', () => ({
 import parseFcode, {
   decodePixelRuns,
   decodePrinterSwath,
+  DOT_T,
+  DOT_Y_T,
   packedDotRuns,
   packedDotsIssue,
   RASTER_T,
@@ -209,26 +211,47 @@ describe('parseFcode galvo lists', () => {
     expect(rows[3]).toMatchObject({ x: 200, y: -50 });
   });
 
-  test('draws dots as pixel-wide marks at the spacing of their grid', () => {
+  test('draws a dot as a zero-length DOT_T mark at its centre', () => {
     const dot = (x: number) => [...galvo(1, x, 0), ...galvo(5, 300)];
     const { rows } = records(buildTask([...park, ...prologue(800), ...dot(0), ...dot(0.2), ...galvo(19, 1)]));
 
     // per dot: the jump that carries the motion, break, mark start, mark end, break
-    const marks = rows.filter((r) => r.t === RASTER_T && r.g === 1);
+    const marks = rows.filter((r) => r.t === DOT_T && r.g === 1);
 
     expect(marks).toHaveLength(2);
+    expect(rows.some((r) => r.t === RASTER_T)).toBe(false);
     // s is 0-255 pixel power, so 40% reads as 102
     expect(marks[0].s).toBeCloseTo(102);
-    // the first dot has no neighbour yet and falls back to the default 0.1mm
-    expect(rows[3].x).toBeCloseTo(114.95);
-    expect(marks[0].x).toBeCloseTo(115.05);
-    // the second dot takes its width from the 0.2mm spacing
-    expect(marks[1].x).toBeCloseTo(115.3);
+    // both ends sit on the dot: its drawn size is the renderer's, in screen pixels, not a
+    // pitch guessed from the neighbour (which made the first dot of a row row-pitch long)
+    expect(rows[3]).toMatchObject({ t: DOT_T, x: 115, y: -115 });
+    expect(marks[0]).toMatchObject({ x: 115, y: -115 });
+    expect(rows[rows.indexOf(marks[1]) - 1]).toMatchObject({ t: DOT_T, x: 115.2, y: -115 });
+    expect(marks[1]).toMatchObject({ x: 115.2, y: -115 });
     // no feedrate, so the kinematic estimate leaves them alone...
     expect(marks.every((r) => Number.isNaN(r.f))).toBe(true);
     // ...but the beam still burns in place: LASER_ON's 300us, in minutes. Without this a
     // dense dotted block costs nothing and appears in a single frame of the time preview.
     expect(marks.every((r) => r.dwell === 300 / 60000000)).toBe(true);
+  });
+
+  test('orients a lone dot along the jump that placed it', () => {
+    // a column: the second dot is reached by a jump along y
+    const { rows } = records(
+      buildTask([
+        ...park,
+        ...prologue(800),
+        ...galvo(1, 0, 0),
+        ...galvo(5, 300),
+        ...galvo(1, 0, 0.05),
+        ...galvo(5, 300),
+        ...galvo(19, 1),
+      ]),
+    );
+    const marks = rows.filter((r) => (r.t === DOT_T || r.t === DOT_Y_T) && r.g === 1);
+
+    expect(marks.map((r) => r.t)).toEqual([DOT_T, DOT_Y_T]);
+    expect(marks[1]).toMatchObject({ x: 115, y: -115.05 });
   });
 
   test('leaves every record but a dot free of dwell', () => {
@@ -305,7 +328,11 @@ const toPreview = (x: number, y: number) => ({ x: 115 + x, y: -115 - y });
 const packedRows = (body: number[]) => records(buildTask([...park, ...prologue(800), ...body, ...galvo(19, 1)])).rows;
 
 const marksOf = (rows: ReturnType<typeof packedRows>) =>
-  rows.flatMap((row, i) => (row.t === RASTER_T && row.g === 1 ? [{ end: row, start: rows[i - 1] }] : []));
+  rows.flatMap((row, i) =>
+    (row.t === RASTER_T || row.t === DOT_T || row.t === DOT_Y_T) && row.g === 1
+      ? [{ end: row, start: rows[i - 1] }]
+      : [],
+  );
 
 const jumpsOf = (rows: ReturnType<typeof packedRows>) => rows.filter((row) => row.g === 0 && row.f === 4000 * 60);
 
@@ -367,6 +394,12 @@ describe('parseFcode packed dots', () => {
     const half = 0.0127 / 2;
 
     expect(marks).toHaveLength(2);
+
+    // each mark stands for three dots, listed by its arrival record so the square-dot
+    // view can spread them out again
+    const { galvoRuns } = parseFcode(buildTask([...park, ...prologue(800), ...Y_RUN_BYTES, ...galvo(19, 1)]));
+
+    expect(galvoRuns).toEqual(marks.map((m) => [rows.indexOf(m.end), 3]));
     // a Y sweep: the mark runs along y, half a pitch past the first and last dot centres
     // (vector expect: sites 0, 2, 67, 69 at local y -5, -4.9746, -4.1491, -4.1237)
     expect(marks[0].start.x).toBeCloseTo(125, 6);
@@ -404,13 +437,26 @@ describe('parseFcode packed dots', () => {
     const rows = packedRows(packedRecord([20, 3, -0.1, 0, 8, 3, 200], Uint8Array.of(0x91, 0, 0, 0, 0, 0, 0, 0)));
     const marks = marksOf(rows);
 
-    // sites 0, 3, 7 at local x 20, 19.7, 19.3: three lone dots, each one pitch wide
+    // sites 0, 3, 7 at local x 20, 19.7, 19.3: three lone dots, each a zero-length DOT_T
+    // record on its centre, as the expanded LASER_ONs would be
     expect(marks.map((m) => [m.start.x, m.end.x])).toEqual([
-      [expect.closeTo(135.05, 6), expect.closeTo(134.95, 6)],
-      [expect.closeTo(134.75, 6), expect.closeTo(134.65, 6)],
-      [expect.closeTo(134.35, 6), expect.closeTo(134.25, 6)],
+      [expect.closeTo(135, 6), expect.closeTo(135, 6)],
+      [expect.closeTo(134.7, 6), expect.closeTo(134.7, 6)],
+      [expect.closeTo(134.3, 6), expect.closeTo(134.3, 6)],
     ]);
-    expect(marks.every((m) => m.end.y === -118)).toBe(true);
+    expect(marks.every((m) => m.end.t === DOT_T && m.end.y === -118)).toBe(true);
+  });
+
+  test('orients a one-site run along its step', () => {
+    // sites 0 and 3 of a y sweep: two lone dots, each oriented along y
+    const rows = packedRows(packedRecord([20, 3, 0, 0.1, 4, 2, 200], Uint8Array.of(0x90, 0, 0, 0, 0, 0, 0, 0)));
+
+    expect(marksOf(rows).map((m) => [m.end.t, m.end.x, m.end.y])).toEqual([
+      [DOT_Y_T, 135, -118],
+      [DOT_Y_T, 135, expect.closeTo(-118.3, 6)],
+    ]);
+    // lone dots are not runs
+    expect(parseFcode(buildTask([...park, ...prologue(800), ...galvo(19, 1)])).galvoRuns).toEqual([]);
   });
 
   test('reads a record at the uint8 param ceiling', () => {
@@ -444,14 +490,18 @@ describe('parseFcode packed dots', () => {
 
     expect(total(pack(gapped))).toBeCloseTo(total(expand(gapped)), 12);
 
-    // adjacent dots draw the same span; with gaps the expanded stream infers a wider
-    // pitch from the gap, while the packed record knows its step exactly
+    // adjacent dots become one RASTER_T run half a step past the first and last dot
+    // centres, where the expanded stream is one DOT_T dot per centre
     const solid = [0, 1, 2, 3];
     const packed = pack(solid);
     const expanded = expand(solid);
 
     expect(packed).toHaveLength(1);
-    expect(packed[0].start.x).toBeCloseTo(expanded[0].start.x, 9);
-    expect(packed[0].end.x).toBeCloseTo(expanded.at(-1)!.end.x, 9);
+    expect(packed[0].end.t).toBe(RASTER_T);
+    // (the first dot is reached from the park by a jump more along y than x, so it alone reads
+    // as a column dot; the rest follow the row)
+    expect(expanded.slice(1).every((m) => m.end.t === DOT_T)).toBe(true);
+    expect(packed[0].start.x).toBeCloseTo(expanded[0].start.x - 0.05, 9);
+    expect(packed[0].end.x).toBeCloseTo(expanded.at(-1)!.end.x + 0.05, 9);
   });
 });

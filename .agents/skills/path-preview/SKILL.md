@@ -82,14 +82,27 @@ A galvo block moves no gantry: the head parks and the beam is deflected around i
 park when the run ends. Marks become cut records, jumps travels, at the list's own
 mark/jump speeds converted to mm/min.
 
-**Dots** (`LASER_ON`) are the one shape with no path. They are drawn the way printer
-swaths draw deposited pixels: the jump that placed the beam carries the motion time, and
-the dot itself is a run with no feedrate (`f = NaN`) one pitch wide with `t = RASTER_T`,
-bracketed by break records. A dot has no size in the file, so the width comes from the
-spacing to the previous dot in the same list — they come off a grid — falling back to
-0.1mm for the first one. `LASER_ON`'s one parameter is the dwell in microseconds, which
-rides the arrival record's `e` slot: on a dense block it is most of what the job costs,
-and without it the whole block appears in one frame of the time preview.
+**Dots** (`LASER_ON`, or a one-site run of `PACKED_DOTS`) are the one shape with no
+path. They are drawn the way printer swaths draw deposited pixels: the jump that placed
+the beam carries the motion time, and the dot itself is a zero-length record on the dot's
+centre with no feedrate (`f = NaN`) and `t = DOT_T` (12, scan along x) or `DOT_Y_T` (13,
+along y: a packed run's step, or the jump that placed a LASER_ON), bracketed by break records. A
+dot has no size in the file, and a pitch inferred from the previous dot made the first
+dot of every row row-pitch long, so the size is the renderer's instead: `GcodePreview`
+writes a 10th draw-array float `end` (−1/+1 on the dot's two vertices) and the shader
+spreads them `dotSize` device pixels apart along the dot's axis, or, with `dotSquare`, draws one
+`gl.POINTS` pass of `dotSize`-pixel squares on the arrival vertex. `PathPreview` holds
+`dotSize` (css px, × devicePixelRatio) and `dotSquare` in state behind the tools-bar
+"Square Dots" switch and "Dot Size" input, which only dev mode shows (everyone else gets
+the defaults: 3 px lines); both are in the frame-buffer cache key. A
+multi-dot packed run stays a `RASTER_T` mark half a step past its end centres, and the
+parser lists it in `galvoRuns` (`[arrivalRecordIndex, dotCount]`, passed to
+`setParsedGcode`): in the square view `GcodePreview.buildDotArray` lazily spreads each run
+into that many point vertices (x, y, z, a, s, time) and draws them with the `galvoDots`
+program, so the squares are one per dot without a record per dot.
+`LASER_ON`'s one parameter is the dwell in microseconds, which rides the arrival
+record's `e` slot: on a dense block it is most of what the job costs, and without it the
+whole block appears in one frame of the time preview.
 
 Slicing gets `galvoLists` (record-index spans) from the parser, because a galvo list
 cannot be cut into: see the `fcode` skill. `sliceFcode` rewinds a cut that lands

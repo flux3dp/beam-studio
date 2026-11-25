@@ -414,6 +414,8 @@ const lang: ILang = {
       current_position: 'Τρέχουσα θέση',
       cut_distance: 'Απόσταση κοπής',
       cut_time: 'Χρόνος κοπής',
+      dot_size: 'Μέγεθος κουκκίδας (px)',
+      dot_square: 'Τετράγωνες κουκκίδες',
       end_preview: 'Τέλος προεπισκόπησης',
       estimated_time: 'Συνολικός εκτιμώμενος χρόνος',
       invert: 'Αντιστροφή',

@@ -2,7 +2,7 @@
 /* eslint-disable ts/no-unused-vars */
 import React from 'react';
 
-import { Switch } from 'antd';
+import { InputNumber, Switch } from 'antd';
 import { mat4, vec3 } from 'gl-matrix';
 import { funnel } from 'remeda';
 
@@ -280,6 +280,17 @@ const settings = {
   toolGridMinorSpacing: 10,
 };
 
+/**
+ * Narrowest field of view, i.e. the zoom ceiling: about 330% on a laptop. Dev mode lifts
+ * it a hundredfold so a 0.05 mm dot grid can be inspected (the camera sits 300 mm up with a
+ * 0.1 near plane, so nothing else limits it).
+ */
+const minFovy = () => (isDev() ? 0.001 : 0.1);
+
+/** css px a lone galvo dot is drawn at; see GcodePreview.draw */
+const DEFAULT_DOT_SIZE = 3;
+const MAX_DOT_SIZE = 20;
+
 const defaultWorkspace = {
   cursorPos: [0, 0, 0],
   g0Rate: 7500,
@@ -451,9 +462,22 @@ const drawTaskPreview = (
     simTime: any;
   },
   camera: { fovy?: any; perspective: any; scale?: number; view: any; viewInv?: mat4 },
-  drawingArgs: { isInverting?: boolean; showRemaining?: boolean; showTraversal?: boolean },
+  drawingArgs: {
+    /** css px; lone galvo dots are drawn this long (or this wide when square) */
+    dotSize?: number;
+    dotSquare?: boolean;
+    isInverting?: boolean;
+    showRemaining?: boolean;
+    showTraversal?: boolean;
+  },
 ) => {
-  const { isInverting = false, showRemaining = false, showTraversal = false } = drawingArgs;
+  const {
+    dotSize = DEFAULT_DOT_SIZE,
+    dotSquare = false,
+    isInverting = false,
+    showRemaining = false,
+    showTraversal = false,
+  } = drawingArgs;
   const draw = () => {
     taskPreview.draw(
       drawCommands,
@@ -465,11 +489,16 @@ const drawTaskPreview = (
       isInverting,
       showTraversal,
       showRemaining,
+      // the canvas is devicePixelRatio times its css size, and the shader works in device pixels
+      { size: dotSize * window.devicePixelRatio, square: dotSquare },
+      [canvas.width, canvas.height],
     );
   };
 
   cacheDrawing(draw, cachedDrawState, {
     arrayVersion: taskPreview.arrayVersion,
+    dotSize,
+    dotSquare,
     drawCommands,
     g0Rate: workspace.g0Rate,
     height: canvas.height,
@@ -575,6 +604,9 @@ interface State {
     showPerspective: boolean;
     up: number[];
   };
+  /** css px a lone galvo dot is drawn at: a line this long, or a square this wide */
+  dotSize: number;
+  dotSquare: boolean;
   height: number; // height of canvas
   isInverting: boolean;
   playState: PlayState;
@@ -662,6 +694,8 @@ class PathPreview extends React.Component<Props, State> {
 
     this.state = {
       camera: defaultCamera,
+      dotSize: DEFAULT_DOT_SIZE,
+      dotSquare: false,
       height: Math.max(dimensions.height, window.innerHeight - layoutConstants.topBarHeight - TOOLS_PANEL_HEIGHT),
       isInverting: false,
       playState: PlayState.STOP,
@@ -692,10 +726,12 @@ class PathPreview extends React.Component<Props, State> {
   }
 
   shouldComponentUpdate(nextProps: Props, nextState: State): boolean {
-    const { camera, height, isInverting, playState, speedLevel, width, workspace } = this.state;
+    const { camera, dotSize, dotSquare, height, isInverting, playState, speedLevel, width, workspace } = this.state;
 
     return (
       nextState.width !== width ||
+      nextState.dotSize !== dotSize ||
+      nextState.dotSquare !== dotSquare ||
       nextState.height !== height ||
       nextState.workspace.cursorPos !== workspace.cursorPos ||
       nextState.workspace.simTime !== workspace.simTime ||
@@ -944,6 +980,7 @@ class PathPreview extends React.Component<Props, State> {
         (dpiTextMap[globalPreference.engrave_dpi] || 254) / 25.4,
         1,
         rotary,
+        sliceExtras.galvoRuns,
       );
       this.simTimeMax =
         Math.ceil((this.gcodePreview.g1Time + this.gcodePreview.g0Time) / SIM_TIME_MINUTE) * SIM_TIME_MINUTE +
@@ -969,7 +1006,7 @@ class PathPreview extends React.Component<Props, State> {
   };
 
   private drawFlat = (canvas: HTMLCanvasElement, gl: null | WebGLRenderingContext) => {
-    const { isInverting, workspace } = this.state;
+    const { dotSize, dotSquare, isInverting, workspace } = this.state;
     const programInfo = generateProgramInfo(gl);
     const showRemaining = false;
     const buffer = initBuffers(gl, settings.machineWidth, settings.machineHeight, this.jobOrigin);
@@ -986,6 +1023,8 @@ class PathPreview extends React.Component<Props, State> {
       width: settings.machineWidth,
     });
     drawTaskPreview(this.gcodePreview, this.drawGcodeState, canvas, this.drawCommands, workspace, this.camera, {
+      dotSize,
+      dotSquare,
       isInverting,
       showTraversal: workspace.showTraversal,
     });
@@ -1043,7 +1082,7 @@ class PathPreview extends React.Component<Props, State> {
     const cameraHeight = 300;
     let newFovy = 2 * Math.atan(height / (2 * cameraHeight * scale));
 
-    newFovy = Math.max(0.1, Math.min(Math.PI - 0.1, newFovy));
+    newFovy = Math.max(minFovy(), Math.min(Math.PI - 0.1, newFovy));
     this.setCameraAttrs({
       center: [machineWidth / 2 - jobOriginX, -machineHeight / 2 + jobOriginY, 0],
       eye: [machineWidth / 2 - jobOriginX, -machineHeight / 2 + jobOriginY, cameraHeight],
@@ -1346,7 +1385,7 @@ class PathPreview extends React.Component<Props, State> {
     const cameraHeight = vec3.distance(camera.eye, camera.center);
     let newFovy = 2 * Math.atan(r.height / (2 * cameraHeight * scale));
 
-    newFovy = Math.max(0.1, Math.min(Math.PI - 0.1, newFovy));
+    newFovy = Math.max(minFovy(), Math.min(Math.PI - 0.1, newFovy));
 
     this.setCameraAttrs({
       center: camera.center,
@@ -1992,6 +2031,18 @@ class PathPreview extends React.Component<Props, State> {
     this.setState({ isInverting: !isInverting });
   };
 
+  private toggleDotSquare = () => {
+    const { dotSquare } = this.state;
+
+    this.setState({ dotSquare: !dotSquare });
+  };
+
+  private setDotSize = (value: null | number) => {
+    if (value === null || !Number.isFinite(value)) return;
+
+    this.setState({ dotSize: Math.min(MAX_DOT_SIZE, Math.max(1, Math.round(value))) });
+  };
+
   private toggleTraversalMoves = () => {
     const { workspace } = this.state;
 
@@ -2005,7 +2056,7 @@ class PathPreview extends React.Component<Props, State> {
 
     const r = this.canvas.getBoundingClientRect();
     const { camera } = this.state;
-    const newFovy = Math.max(0.1, Math.min(Math.PI - 0.1, camera.fovy * amount));
+    const newFovy = Math.max(minFovy(), Math.min(Math.PI - 0.1, camera.fovy * amount));
     // @ts-ignore
     const oldScale = (vec3.distance(camera.eye, camera.center) * Math.tan(camera.fovy / 2)) / (r.height / 2);
     // @ts-ignore
@@ -2086,7 +2137,7 @@ class PathPreview extends React.Component<Props, State> {
   }
 
   render(): React.JSX.Element {
-    const { height, isInverting, playState, speedLevel, width, workspace } = this.state;
+    const { dotSize, dotSquare, height, isInverting, playState, speedLevel, width, workspace } = this.state;
     const LANG = i18n.lang.beambox.path_preview;
 
     return (
@@ -2157,6 +2208,39 @@ class PathPreview extends React.Component<Props, State> {
                   {LANG.invert}
                 </label>
               </div>
+              {/* dev only: everyone else gets lone galvo dots at the default size, as lines */}
+              {isDev() && (
+                <>
+                  <div className={styles['switch-control']}>
+                    <div className={styles.control}>
+                      <Switch
+                        checked={dotSquare}
+                        className={styles.switch}
+                        id="dot_square"
+                        onChange={this.toggleDotSquare}
+                        size="small"
+                      />
+                    </div>
+                    <label className={styles.label} htmlFor="dot_square">
+                      {LANG.dot_square}
+                    </label>
+                  </div>
+                  <div className={styles['dot-size']}>
+                    <label className={styles.label} htmlFor="dot_size">
+                      {LANG.dot_size}
+                    </label>
+                    <InputNumber
+                      id="dot_size"
+                      max={MAX_DOT_SIZE}
+                      min={1}
+                      onChange={this.setDotSize}
+                      precision={0}
+                      size="small"
+                      value={dotSize}
+                    />
+                  </div>
+                </>
+              )}
               <div className={styles['current-time']}>{this.transferTime(workspace.simTime, ':')}</div>
               <div />
             </div>
