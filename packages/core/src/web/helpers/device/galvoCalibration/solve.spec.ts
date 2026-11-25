@@ -56,6 +56,18 @@ describe('galvoCalibration solve', () => {
       expect(params.validation).toHaveLength(8);
     });
 
+    it('describes the smaller coupon of a smaller lens', () => {
+      const params = buildSolveParams(
+        captured,
+        { ...configWith(true, true), workarea: 70 },
+        { center: { x: 100, y: 100 } },
+      );
+
+      expect(params).toMatchObject({ grid: 5, grid_field: 70, identity: [-22, -32], pitch: 11 });
+      expect(params.discovery[0]).toEqual([27.5, 27.5]);
+      expect(params.validation[4]).toEqual([16.5, 16.5]);
+    });
+
     it("passes the MOPA head's own axis flags", () => {
       const params = buildSolveParams(captured, configWith(false, false), {
         annotate: false,

@@ -160,7 +160,7 @@ coupon 含 roll 後跨 ±53.39 mm，超過 `galvo_block` 預設 100×100，會�
 放在 `GalvoManualBlock` 之後，同樣的 `blockStyles.block` + `full-row`，標題「Calibration (dev)」。由上到下：
 
 - 場心落點 X / Y（`UnitInput`，mm，預設 100 / 100）；唯讀一行 `Gantry station: (x, y)`，超出行程時紅字並停用 A、E 的按鈕。
-- 第一列按鈕：**Mark coupon**（功率、速度沿用上方「標記參數」，說明註明建議 25% / 500 mm/s）、**Mark 100 mm square**（同一站位、同一組標記參數，打 stitch test 的第一個方框，讓 ±50 的邊和 coupon 在同一張紙上直接量到；決策 31）、**Mark L frame**（旁邊 Power % 預設 3、Passes 預設 2）。
+- 第一列按鈕：**Mark coupon**（功率、速度沿用上方「標記參數」，說明註明建議 25% / 500 mm/s）、**Mark 100 mm square**（邊長隨場鏡：110 → 100、90 → 80、70 → 60，§7.2.1；同一站位、同一組標記參數，打 stitch test 的第一個方框，讓 ±50 的邊和 coupon 在同一張紙上直接量到；決策 31）、**Mark L frame**（旁邊 Power % 預設 3、Passes 預設 2）。
 - 第二列：**Capture**、**Solve**、**Apply suggestion**。Solve 要有拍完的影像才啟用，Apply 要有解算結果才啟用。
 - 第三列：**Stitch test**（用標記參數的功率、速度）。
 - 「Fix backlash」勾選框，預設開。
@@ -183,9 +183,31 @@ coupon 含 roll 後跨 ±53.39 mm，超過 `galvo_block` 預設 100×100，會�
 
 **順序**：node 從 y = −44 那列開始一列一列蛇行，偶數列 −X→+X、奇數列反向 → discovery → validation → identity → 最後 jump 回 (0, 0)。
 
-**極值**：49.5 + 3.5/√2 + 2/√2 = 53.39 mm，在 ±55 內；產生器的 spec 要斷言。
+**極值**（110 場鏡）：49.5 + 3.5/√2 + 2/√2 = 53.39 mm，在 ±55 內；其他場鏡見 §7.2.1，產生器的 spec 對每個場鏡斷言。
 
-產生器 `helpers/device/galvoCoupon.ts` 匯出 `buildCouponPaths(): GalvoPoint[][]`（純函式，折線不含 roll，roll 由機器端 `lead_mm` 加）、`couponFeatures`（每個特徵的種類與中心，給 C 階段當期望座標）、`buildLFrameMarks(center)`（8 個 L 的 X 臂端 → 頂點 → Y 臂端），以及各尺寸常數。
+產生器 `helpers/device/galvoCoupon.ts` 匯出 `buildCouponPaths(field): GalvoPoint[][]`（純函式，折線不含 roll，roll 由機器端 `lead_mm` 加）、`couponLayout(field)`（格點數、每個特徵的種類與中心、identity 位置，給 C 階段當期望座標）、`galvoBlockMm(field)`（方框與拼接測試的邊長）、`buildLFrameMarks(center)`（8 個 L 的 X 臂端 → 頂點 → Y 臂端），以及各尺寸常數。`field` 是振鏡設定畫面上的場鏡大小（`config.workarea`）。
+
+#### 7.2.1 70／90 場鏡的版面（2026-11-25，已實作未上機）
+
+上表是 110 場鏡的工廠版面，最遠到 53.39 mm，70（±35）與 90（±45）場鏡放不下。較小的場鏡**不縮小圖樣，只減少格點**：pitch 11、圓與臂的大小都不變，因為解算器與相機（5–7 px/mm，§2.3）認的是這個大小的圓與臂。
+
+| 場鏡 | 格點 | node 範圍 | discovery | validation | identity | 極值（含 roll） | 方框／拼接步距 |
+|---|---|---|---|---|---|---|---|
+| 110 | 9×9 | ±44 | ±49.5、±5.5 | ±5.5、±27.5 | (−44, −51) | 53.39 | 100 |
+| 90 | 7×7 | ±33 | ±38.5、±5.5 | ±5.5、±16.5 | (−33, −42) | 42.5 | 80 |
+| 70 | 5×5 | ±22 | ±27.5、±5.5 | ±5.5、±16.5 | (−22, −32) | 32.5 | 60 |
+
+- 格點數是「整張 coupon 含 roll 仍在場內」的最大奇數（`COUPON_GRID_BY_FIELD`）。discovery 在最外圈 node 外半個 pitch；第二組 validation 在 5.5 + 11 × ⌊(n − 1) / 4⌋。
+- 方框與拼接測試的邊長是 swiftray 對該場鏡的分塊大小（`get_galvo_block_size`）：場鏡 − 10。
+- identity 在第一個 node 正上方、方框外側。110 維持工廠的 (−44, −51)，離方框邊 1 mm，環與方框只隔 0.5 mm，合成圖上兩者會連在一起，解算器退回用 invert 旗標判方向（110 既有行為，沒有改）。70／90 沒有工廠版面要遵守，改放在方框外 2 mm，合成圖上打了方框仍認得出 identity。
+- L 框不變（half 70、臂 8），所以紙張大小、拍照範圍、解算器找 L 的方式都與 110 相同。
+- 解算器本來就吃 `pitch`／`grid`／`identity`／`validation` 參數；fluxghost 只改了 `locate_coupon`（載入照片時用）的 coupon 範圍，從寫死的 49.5 + 2.2 改成 `grid × pitch / 2 + 2.2`。
+- 結果列的「Nodes found」分母與紅字門檻（86 %）跟著格點數。
+
+沒有改、要留意的地方：
+
+- 修正表（`grid_field`）仍涵蓋整個場，但 node 只到 ±22（70）或 ±33（90），外插比例比 110 大：70 場鏡有 37 % 的半徑靠三次式外插（110 是 20 %）。邊緣的修正值要用方框與拼接測試實際量過才能信。
+- `SCALE_X_SLOPE`（0.007753）是在 CO2 頭 110 場鏡上量的，其他場鏡的斜率未知；「Apply suggestion」的第一輪建議值在 70／90 上可能偏，第二輪起 Y 會改用自己的割線，X 不會。
 
 ### 7.3 A-1「打 coupon」序列
 
@@ -588,7 +610,7 @@ Beam Studio 端：`camera.ts` 的 `oneShot(useLowResolution, dpmm)` 送 `require
 
 **單元測試（jest，`--runInBand`，只跑受影響路徑）**
 
-- `galvoCoupon.spec.ts`：折線數 81×5 + 12×4 + 8 + 1 = 462；順序（第一條是 (−44, −44) 的圓、蛇行方向、最後一條是 identity）；圓第一段朝 +X、起點在 −Y 端；臂方向規則；含 roll 後 |x|、|y| ≤ 53.4；`couponFeatures` 數量 102。
+- `galvoCoupon.spec.ts`：折線數 81×5 + 12×4 + 8 + 1 = 462；順序（第一條是 (−44, −44) 的圓、蛇行方向、最後一條是 identity）；圓第一段朝 +X、起點在 −Y 端；臂方向規則；含 roll 後 |x|、|y| ≤ 53.4；`couponFeatures` 數量 102。70／90 場鏡（§7.2.1）：格點數 5／7、各特徵位置、validation 不與 node 或 discovery 重疊、identity 在方框外 2 mm、含 roll 後在場內。`solve.spec.ts`：70 場鏡送出 `grid: 5`、`identity: [-22, -32]`。fluxghost `test_galvo_coupon.py`：合成的 70／90 coupon 加方框，node 全找到、方向來自 identity、scale／skew／rotation 回到真值；`locate` 找得到 70 的 coupon。
 - `galvoExec.spec.ts`：`galvoPaths` payload；既有 `galvoFrame` / `galvoGoto` / `galvoDot` snapshot 不變。
 - `control.spec.ts`：`rawMove` 不傳 `s` 字串不變、傳 `s` 時行尾 `S<s>`；`controlTaskMainboard` 非 control_task 模式丟 `CONTROL_SOCKET_MODE_ERROR`。
 - `camera.spec.ts`：`getPhotoFromMachine()` 送 `require_frame`，`{ dpmm: 20 }` 送 `require_frame d20`。

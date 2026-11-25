@@ -17,7 +17,6 @@ import {
   markSquare,
   stationFor,
   stationProblem,
-  STITCH_SQUARE_MM,
   stitchStations,
   stitchTest,
 } from '@core/helpers/device/galvoCalibration/mark';
@@ -29,6 +28,7 @@ import {
   suggestScales,
 } from '@core/helpers/device/galvoCalibration/solve';
 import type { GalvoConfig, GalvoFieldCorrection, GalvoModule } from '@core/helpers/device/galvoConfig';
+import { COUPON_GRID_BY_FIELD, galvoBlockMm } from '@core/helpers/device/galvoCoupon';
 import type { GalvoPoint } from '@core/helpers/device/galvoExec';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
@@ -105,12 +105,15 @@ const GalvoCalibrationBlock = ({
   const busy = pending !== null;
   const station = stationFor(center, offsets);
   const problem = stationProblem(model, station);
+  // the lens in the settings decides the coupon's node count and the square's side
+  const squareMm = galvoBlockMm(config.workarea);
+  const nodeCount = COUPON_GRID_BY_FIELD[config.workarea] ** 2;
   const stitchProblem = useMemo(
     () =>
-      stitchStations(center, offsets)
+      stitchStations(center, offsets, squareMm)
         .map((s) => stationProblem(model, s))
         .find(Boolean) ?? null,
-    [center, model, offsets],
+    [center, model, offsets, squareMm],
   );
 
   // Object URLs are only released here; the results they show outlive the actions that made them.
@@ -358,7 +361,7 @@ const GalvoCalibrationBlock = ({
           onClick={handleSquare}
           size="small"
         >
-          Mark {STITCH_SQUARE_MM} mm square
+          Mark {squareMm} mm square
         </Button>
         <span>(mark parameters above; factory used 25% / 500 mm/s)</span>
         <Button
@@ -553,7 +556,9 @@ const GalvoCalibrationBlock = ({
             </tr>
             <tr>
               <td>Nodes found</td>
-              <td style={result.nodes_found < 70 ? { color: '#d4380d' } : undefined}>{result.nodes_found} / 81</td>
+              <td style={result.nodes_found < nodeCount * 0.86 ? { color: '#d4380d' } : undefined}>
+                {result.nodes_found} / {nodeCount}
+              </td>
             </tr>
             <tr>
               <td>scale_x / scale_y</td>

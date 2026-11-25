@@ -1,10 +1,8 @@
 import type { GalvoConfig, GalvoFieldCorrection } from '../galvoConfig';
 import {
-  COUPON_GRID,
   COUPON_PITCH,
-  couponFeatures,
+  couponLayout,
   DISCOVERY_ARM,
-  IDENTITY_CENTER,
   IDENTITY_RADIUS,
   L_FRAME,
   NODE_ARM,
@@ -63,18 +61,20 @@ export const buildSolveParams = (
   },
 ): SolveParams => {
   const centerPx = toCanvasPx(center, captured.originMm, captured.pxPerMm);
+  // the coupon on the sheet is the one for the lens in the settings
+  const { features, grid, identity } = couponLayout(config.workarea);
   const of = (kind: 'discovery' | 'validation'): Array<[number, number]> =>
-    couponFeatures.filter((f) => f.kind === kind).map(({ x, y }) => [x, y]);
+    features.filter((f) => f.kind === kind).map(({ x, y }) => [x, y]);
 
   return {
     annotate,
     arm: [...NODE_ARM],
     discovery: of('discovery'),
     expected_center_px: [centerPx.x, centerPx.y],
-    grid: COUPON_GRID,
+    grid,
     grid_field: config.workarea,
     grid_size: GRID_TABLE_SIZE,
-    identity: [IDENTITY_CENTER.x, IDENTITY_CENTER.y],
+    identity: [identity.x, identity.y],
     identity_r: IDENTITY_RADIUS,
     invert: [Boolean(config.field.invertX), Boolean(config.field.invertY)],
     l_frame: { arm: L_FRAME.arm, half: L_FRAME.half },

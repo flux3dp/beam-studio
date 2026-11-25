@@ -2,7 +2,7 @@ import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import deviceMaster from '@core/helpers/device-master';
 
 import type { GalvoConfig, GalvoModule } from '../galvoConfig';
-import { buildCouponPaths, buildLFrameMarks, COUPON_LEAD_MM } from '../galvoCoupon';
+import { buildCouponPaths, buildLFrameMarks, COUPON_LEAD_MM, galvoBlockMm } from '../galvoCoupon';
 import type { GalvoPoint } from '../galvoExec';
 import { awaitGalvoResult, galvoFrame, galvoPaths, mainboardLine } from '../galvoExec';
 import { getGalvoHeadConnectedFeedrate } from '../galvoHeadConnection';
@@ -138,7 +138,14 @@ export const markCoupon = async ({
 
   try {
     onStep?.('Marking the coupon');
-    await galvoPaths({ config, leadMm: COUPON_LEAD_MM, module, paths: buildCouponPaths(), power, speed });
+    await galvoPaths({
+      config,
+      leadMm: COUPON_LEAD_MM,
+      module,
+      paths: buildCouponPaths(config.workarea),
+      power,
+      speed,
+    });
     await awaitGalvoResult('Mark coupon');
     await assertStillAuthorised();
   } finally {
@@ -335,29 +342,27 @@ export const markLFrame = async ({
   }
 };
 
-/** Side of each square in the stitch test, and the gantry step between them. */
-export const STITCH_SQUARE_MM = 100;
-
 /**
- * Three 100 mm squares: one at the station, one 100 mm to the right, one 100 mm below that.
- * Their shared edges should be collinear once the field is calibrated -- the whole point of it.
+ * Three squares of the lens's block (100 mm on the 110 lens): one at the station, one a block to
+ * the right, one a block below that. Their shared edges should be collinear once the field is
+ * calibrated -- the whole point of it.
  */
-export const stitchStations = (center: GalvoPoint, offsets: GalvoPoint): GalvoPoint[] => {
+export const stitchStations = (center: GalvoPoint, offsets: GalvoPoint, squareMm: number): GalvoPoint[] => {
   const base = stationFor(center, offsets);
 
   return [
     base,
-    { x: round3(base.x + STITCH_SQUARE_MM), y: base.y },
-    { x: round3(base.x + STITCH_SQUARE_MM), y: round3(base.y + STITCH_SQUARE_MM) },
+    { x: round3(base.x + squareMm), y: base.y },
+    { x: round3(base.x + squareMm), y: round3(base.y + squareMm) },
   ];
 };
 
 /**
- * Mark one STITCH_SQUARE_MM square with the lens centred on `center`: the first square of the
- * stitch test on its own, on the sheet the coupon is on. Its edges sit at +-50 mm, beyond the
- * node grid (+-44) and inside the L frame (62 to 70), where the f-theta cubic has pushed them
- * 0.4 to 0.9 mm out on every sheet so far; measuring them directly is what decides the scale
- * (PRD §11 decision 31), and the solver reads a coupon with the square on it unchanged.
+ * Mark one block-sized square with the lens centred on `center`: the first square of the stitch
+ * test on its own, on the sheet the coupon is on. On the 110 lens its edges sit at +-50 mm,
+ * beyond the node grid (+-44) and inside the L frame (62 to 70), where the f-theta cubic has
+ * pushed them 0.4 to 0.9 mm out on every sheet so far; measuring them directly is what decides
+ * the scale (PRD §11 decision 31), and the solver reads a coupon with the square on it unchanged.
  */
 export const markSquare = async ({
   center,
@@ -388,8 +393,10 @@ export const markSquare = async ({
   await setAir(true);
 
   try {
-    onStep?.(`Marking the ${STITCH_SQUARE_MM} mm square`);
-    await galvoFrame({ config, module, power, size: STITCH_SQUARE_MM, speed });
+    const size = galvoBlockMm(config.workarea);
+
+    onStep?.(`Marking the ${size} mm square`);
+    await galvoFrame({ config, module, power, size, speed });
     await awaitGalvoResult('Mark square');
     await assertStillAuthorised();
   } finally {
@@ -414,7 +421,8 @@ export const stitchTest = async ({
   power: number;
   speed: number;
 }): Promise<void> => {
-  const stations = stitchStations(center, offsets);
+  const size = galvoBlockMm(config.workarea);
+  const stations = stitchStations(center, offsets, size);
   const problem = stations.map((station) => stationProblem(model, station)).find(Boolean);
 
   if (problem) throw new Error(problem);
@@ -431,7 +439,7 @@ export const stitchTest = async ({
       await moveGantry(station, { fixBacklash, from, model });
       from = station;
       onStep?.(`Square ${i + 1}/${stations.length}: marking`);
-      await galvoFrame({ config, module, power, size: STITCH_SQUARE_MM, speed });
+      await galvoFrame({ config, module, power, size, speed });
       await awaitGalvoResult('Stitch test');
     }
 

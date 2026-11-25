@@ -3,13 +3,15 @@ import {
   buildLFrameMarks,
   COUPON_LEAD_MM,
   couponExtentMm,
-  couponFeatures,
-  IDENTITY_CENTER,
+  couponLayout,
+  galvoBlockMm,
+  IDENTITY_RADIUS,
   L_FRAME,
 } from './galvoCoupon';
 
 describe('galvoCoupon', () => {
-  const paths = buildCouponPaths();
+  const paths = buildCouponPaths(110);
+  const { features: couponFeatures, identity: IDENTITY_CENTER } = couponLayout(110);
 
   it('has one polyline per stroke: 81 nodes × 5, 12 discovery × 4, 8 validation, 1 identity', () => {
     expect(paths).toHaveLength(81 * 5 + 12 * 4 + 8 + 1);
@@ -94,8 +96,87 @@ describe('galvoCoupon', () => {
         expect(Math.abs(y)).toBeLessThanOrEqual(53.4 - lead * Math.SQRT1_2);
       });
     });
-    expect(couponExtentMm()).toBeCloseTo(53.39, 2);
-    expect(couponExtentMm()).toBeLessThan(55);
+    expect(couponExtentMm(110)).toBeCloseTo(53.39, 2);
+    expect(couponExtentMm(110)).toBeLessThan(55);
+  });
+
+  it('keeps the factory layout on the 110 lens', () => {
+    const of = (kind: string) => couponFeatures.filter((f) => f.kind === kind).map(({ x, y }) => [x, y]);
+
+    expect(IDENTITY_CENTER).toEqual({ x: -44, y: -51 });
+    expect(of('discovery')).toEqual([
+      [49.5, 49.5],
+      [-49.5, 49.5],
+      [49.5, -49.5],
+      [-49.5, -49.5],
+      [5.5, 49.5],
+      [-5.5, 49.5],
+      [5.5, -49.5],
+      [-5.5, -49.5],
+      [49.5, 5.5],
+      [-49.5, 5.5],
+      [49.5, -5.5],
+      [-49.5, -5.5],
+    ]);
+    expect(of('validation')).toEqual([
+      [5.5, 5.5],
+      [-5.5, 5.5],
+      [5.5, -5.5],
+      [-5.5, -5.5],
+      [27.5, 27.5],
+      [-27.5, 27.5],
+      [27.5, -27.5],
+      [-27.5, -27.5],
+    ]);
+  });
+
+  describe.each([
+    { field: 70, grid: 5, half: 22, identityY: -32, mid: 16.5 },
+    { field: 90, grid: 7, half: 33, identityY: -42, mid: 16.5 },
+  ] as const)('on the $field lens', ({ field, grid, half, identityY, mid }) => {
+    const layout = couponLayout(field);
+    const strokes = buildCouponPaths(field);
+    const of = (kind: string) => layout.features.filter((f) => f.kind === kind);
+
+    it('has fewer nodes at the same pitch, and every other mark as on the 110 lens', () => {
+      expect(layout).toMatchObject({ grid, half });
+      expect(of('node')).toHaveLength(grid * grid);
+      expect(of('node')[0]).toMatchObject({ x: -half, y: -half });
+      expect(of('node')[1]).toMatchObject({ x: -half + 11, y: -half });
+      expect(of('discovery')).toHaveLength(12);
+      expect(of('discovery')[0]).toMatchObject({ x: half + 5.5, y: half + 5.5 });
+      expect(of('validation')).toHaveLength(8);
+      expect(of('validation')[4]).toMatchObject({ x: mid, y: mid });
+      expect(strokes).toHaveLength(grid * grid * 5 + 12 * 4 + 8 + 1);
+    });
+
+    it('keeps the validation rings off the nodes and the discovery marks', () => {
+      const others = [...of('node'), ...of('discovery')];
+
+      of('validation').forEach((v) => {
+        others.forEach((o) => expect(Math.hypot(v.x - o.x, v.y - o.y)).toBeGreaterThan(5));
+      });
+    });
+
+    it('puts the identity ring above the first node, 2 mm outside the block square', () => {
+      expect(layout.identity).toEqual({ x: -half, y: identityY });
+      expect(Math.abs(identityY) - IDENTITY_RADIUS - galvoBlockMm(field) / 2).toBeCloseTo(1.5, 6);
+      expect(layout.features.at(-1)).toEqual({ ...layout.identity, kind: 'identity' });
+    });
+
+    it('stays inside the field with the lead added', () => {
+      const reach = couponExtentMm(field);
+
+      expect(reach).toBeLessThan(field / 2);
+      strokes.flat().forEach(({ x, y }) => {
+        expect(Math.abs(x)).toBeLessThanOrEqual(reach);
+        expect(Math.abs(y)).toBeLessThanOrEqual(reach);
+      });
+    });
+  });
+
+  it('sizes the stitch square as the block swiftray tiles each lens with', () => {
+    expect([70, 90, 110].map((field) => galvoBlockMm(field as 70 | 90 | 110))).toEqual([60, 80, 100]);
   });
 
   describe('buildLFrameMarks', () => {
