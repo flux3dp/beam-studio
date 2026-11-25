@@ -6,10 +6,7 @@ const CHANGES_TW = {
     '新增 beamo II / Beambox II / HEXA RF 自動全範圍預覽：關上門蓋後自動拍攝全範圍照片作為畫布背景（可於 設定 > 相機 開啟，預設關閉）。',
     '新增 Promark Desktop / MOPA 圖層進階設定「打散掃描順序」與「每行停留」。',
   ],
-  changed: [
-    '變更 beamo II、Beambox II 與 HEXA RF 廣角相機校正標記改為單線雕刻。',
-    '變更 Promark 設定視窗內容過長時可捲動。',
-  ],
+  changed: ['變更 beamo II、Beambox II 與 HEXA RF 廣角相機校正標記改為單線雕刻。'],
   fixed: [
     '修正 相機校正任務遇到可恢復的暫停（如空氣輔助警告、濾網過期）時流程中斷的問題。',
     '修正 Promark 機器資訊未顯示實際序號的問題。',
@@ -25,7 +22,6 @@ const CHANGES_EN = {
   ],
   changed: [
     'beamo II calibration marks and the Beambox II / HEXA RF wide-angle calibration marks are now engraved as single lines.',
-    'The Promark Settings dialog now scrolls when its content is too long.',
   ],
   fixed: [
     'Fixed camera calibration tasks aborting on resumable pauses (such as air assist warnings or an expired filter).',
