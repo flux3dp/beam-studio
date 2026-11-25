@@ -4,6 +4,7 @@ export type AlertConfigKey =
   | 'done-first-cali'
   | 'is-path-engine-dialog-shown'
   | 'skip-auto-feeder-instruction'
+  | 'skip-cut-layer-fill-warning'
   | 'skip-fb-group-invitation'
   | 'skip-high-power-confirm'
   | 'skip-inner-engraving-focus-reminder'

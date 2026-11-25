@@ -471,6 +471,7 @@ const lang: ILang = {
       bug_report: '错误回报',
       change_workarea_before_preview: '%s 的工作范围与目前设定的工作范围不相符，是否要切换目前的工作范围？',
       convert_to_path_fail: '转换成路径失败。',
+      cut_layer_contains_fill: '切割图层检测到填充路径或图片，将会导致加工时间较长，建议检查文件输出方式。',
       disassemble_use: {
         clip_path_warning: '该文件包含剪切蒙版，无法拆解。',
         execute_time_warning: '正要解散外部汇入的 DXF 或是 SVG ，在含有物件较多的情况，可能会需要等一阵子，是否确定解散？',

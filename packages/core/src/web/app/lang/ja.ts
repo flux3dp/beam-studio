@@ -471,6 +471,7 @@ const lang: ILang = {
       bug_report: 'バグ報告',
       change_workarea_before_preview: '%sのワークエリアが、現在設定されているワークエリアと一致しません。現在のワークエリアを切り替えますか？',
       convert_to_path_fail: 'パスへの変換に失敗しました。',
+      cut_layer_contains_fill: 'カットレイヤーに塗りつぶしパスまたは画像が検出されました。加工時間が長くなるため、ファイルの書き出し方法を確認することをおすすめします。',
       disassemble_use: {
         clip_path_warning: 'このファイルにはクリッピングマスクが含まれており、分解できません。',
         execute_time_warning: 'これにより、インポートされた DXF または SVG がグループ解除されます。ファイルには大量の要素が含まれている可能性があるため、グループ解除に時間がかかる場合があります。続行してもよろしいですか？',

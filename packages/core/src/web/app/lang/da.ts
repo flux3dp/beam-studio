@@ -471,6 +471,7 @@ const lang: ILang = {
       bug_report: 'Fejlrapport',
       change_workarea_before_preview: 'Arbejdsområdet for %s matcher ikke det aktuelt indstillede arbejdsområde. Vil du skifte det aktuelle arbejdsområde?',
       convert_to_path_fail: 'Kunne ikke konvertere til sti.',
+      cut_layer_contains_fill: 'Der blev fundet udfyldte stier eller billeder i et skærelag, hvilket vil forlænge bearbejdningstiden. Vi anbefaler at kontrollere, hvordan filen blev eksporteret.',
       disassemble_use: {
         clip_path_warning: 'Denne fil indeholder en klippemaske og kan ikke adskilles.',
         execute_time_warning: 'Dette vil opdele importerede DXF eller SVG filer. Fordi filen kan indeholde et stort antal elementer, kan det tage tid at opdele. Er du sikker på at fortsætte?',

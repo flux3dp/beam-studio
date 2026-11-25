@@ -471,6 +471,7 @@ const lang: ILang = {
       bug_report: 'Laporan Bug',
       change_workarea_before_preview: 'Area kerja %s tidak cocok dengan area kerja yang saat ini diatur. Apakah Anda ingin beralih area kerja saat ini?',
       convert_to_path_fail: 'Gagal mengubah ke jalur.',
+      cut_layer_contains_fill: 'Terdeteksi jalur berisi isian atau gambar pada lapisan potong, yang akan membuat waktu pengerjaan lebih lama. Kami sarankan untuk memeriksa cara file diekspor.',
       disassemble_use: {
         clip_path_warning: 'File ini mengandung clipping mask dan tidak dapat dibongkar.',
         execute_time_warning: 'Ini akan membatalkan pengelompokan DXF atau SVG yang diimpor. Karena file mungkin berisi sejumlah besar elemen, mungkin memerlukan waktu untuk membatalkan pengelompokan. Apakah Anda yakin untuk melanjutkan?',

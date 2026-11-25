@@ -471,6 +471,7 @@ const lang: ILang = {
       bug_report: '버그 리포트',
       change_workarea_before_preview: '작업 영역(%s)이 현재 설정된 작업 영역과 일치하지 않습니다. 현재 작업 영역을 전환하시겠습니까?',
       convert_to_path_fail: '경로로 변환 실패.',
+      cut_layer_contains_fill: '절단 레이어에서 채우기 경로 또는 이미지가 감지되어 가공 시간이 길어질 수 있습니다. 파일 내보내기 방식을 확인해 주세요.',
       disassemble_use: {
         clip_path_warning: '이 파일에는 클리핑 마스크가 포함되어 있어 분해할 수 없습니다.',
         execute_time_warning: '이 작업은 가져온 DXF 또는 SVG를 언그룹화합니다. 파일이 많은 요소를 포함하고 있기 때문에 시간이 걸릴 수 있습니다. 계속 진행하시겠습니까?',

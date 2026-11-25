@@ -471,6 +471,7 @@ const lang: ILang = {
       bug_report: 'Bugrapportage',
       change_workarea_before_preview: 'Het werkgebied van %s komt niet overeen met het huidige werkgebied. Wilt u overschakelen naar het huidige werkgebied?',
       convert_to_path_fail: 'Converteren naar pad is mislukt.',
+      cut_layer_contains_fill: 'Er zijn gevulde paden of afbeeldingen gedetecteerd in een snijlaag, waardoor de bewerking langer duurt. We raden aan te controleren hoe het bestand is geëxporteerd.',
       disassemble_use: {
         clip_path_warning: 'Dit bestand bevat een afsnijdmasker en kan niet worden ontleed.',
         execute_time_warning: 'Dit zal geïmporteerde DXF/SVG ontgroeperen. Omdat er veel elementen kunnen zijn, kan het even duren. Weet u zeker dat u wilt doorgaan?',

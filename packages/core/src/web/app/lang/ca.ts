@@ -471,6 +471,7 @@ const lang: ILang = {
       bug_report: "Informe d'errors",
       change_workarea_before_preview: "L'àrea de treball de %s no coincideix amb l'àrea de treball establerta actualment. Vols canviar l'àrea de treball actual?",
       convert_to_path_fail: 'Error al convertir a traçat.',
+      cut_layer_contains_fill: "S'han detectat camins amb farciment o imatges en una capa de tall, cosa que allargarà el temps de processament. Us recomanem revisar com s'ha exportat el fitxer.",
       disassemble_use: {
         clip_path_warning: 'Aquest fitxer conté una màscara de retall i no es pot desmuntar.',
         execute_time_warning: "Això desagruparà el DXF o SVG importat. Com que el fitxer pot contenir un gran nombre d'elements, pot trigar temps a desagrupar-se. Estàs segur de procedir?",

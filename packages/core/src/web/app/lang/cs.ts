@@ -471,6 +471,7 @@ const lang: ILang = {
       bug_report: 'Nahlášení chyby',
       change_workarea_before_preview: 'Pracovní oblast %s nesedí k momentálně nastavené pracovní oblasti. Chcete přepnout na momentální pracovní oblast?',
       convert_to_path_fail: 'Nepodařilo se převést na cestu.',
+      cut_layer_contains_fill: 'Ve vrstvě řezání byly zjištěny vyplněné cesty nebo obrázky, což prodlouží dobu zpracování. Doporučujeme zkontrolovat způsob exportu souboru.',
       disassemble_use: {
         clip_path_warning: 'Tento soubor obsahuje ořezovou masku a nelze jej rozložit.',
         execute_time_warning: 'Toto odstraní ze skupiny importované DXF nebo SVG. Protože může soubor obsahovat velký počet prvků, může rozdělování skupiny trvat. Opravdu si přejete pokračovat?',

@@ -471,6 +471,7 @@ const lang: ILang = {
       bug_report: 'Segnalazione di bug',
       change_workarea_before_preview: "L'area di lavoro di %s non corrisponde all'area di lavoro attualmente impostata. Vuoi passare all'area di lavoro corrente?",
       convert_to_path_fail: 'Impossibile convertire in percorso.',
+      cut_layer_contains_fill: 'Sono stati rilevati tracciati con riempimento o immagini in un livello di taglio, il che allungherà i tempi di lavorazione. Si consiglia di verificare la modalità di esportazione del file.',
       disassemble_use: {
         clip_path_warning: 'Questo file contiene una maschera di ritaglio e non può essere scomposto.',
         execute_time_warning: 'Questo separerà il gruppo di file DXF o SVG importati. Poiché il file potrebbe contenere un gran numero di elementi, potrebbe volerci del tempo per separare il gruppo. Sei sicuro di voler procedere?',

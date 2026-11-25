@@ -24,6 +24,7 @@ import alertConfig from '@core/helpers/api/alert-config';
 import { swiftrayClient } from '@core/helpers/api/swiftray-client';
 import { getDocumentLensProfile } from '@core/helpers/device/promark/lens-profiles';
 import promarkDataStore from '@core/helpers/device/promark/promark-data-store';
+import { hasCutLayerWithFill, showCutLayerFillAlert } from '@core/helpers/layer/check-cut-layer-fill';
 import { getData } from '@core/helpers/layer/layer-config-helper';
 import { getLayerName } from '@core/helpers/layer/layer-helper';
 import { hasModuleLayer } from '@core/helpers/layer-module/layer-module-helper';
@@ -259,6 +260,8 @@ export const handleExportAlerts = async (device: IDeviceInfo, lang: ILang): Prom
   ) {
     return false;
   }
+
+  if (hasCutLayerWithFill(layers)) await showCutLayerFillAlert();
 
   if (isPromark) {
     if (rotaryMode && !swiftrayClient.checkVersion('PROMARK_ROTARY')) {

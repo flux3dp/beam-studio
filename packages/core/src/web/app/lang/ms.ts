@@ -471,6 +471,7 @@ const lang: ILang = {
       bug_report: 'Laporan Pepijat',
       change_workarea_before_preview: 'Kawasan kerja %s tidak sepadan dengan kawasan kerja yang ditetapkan sekarang. Adakah anda mahu menukar kawasan kerja semasa?',
       convert_to_path_fail: 'Gagal menukar ke laluan.',
+      cut_layer_contains_fill: 'Laluan berisi atau imej dikesan dalam lapisan pemotongan, yang akan memanjangkan masa pemprosesan. Kami mengesyorkan anda menyemak cara fail dieksport.',
       disassemble_use: {
         clip_path_warning: 'Fail ini mengandungi topeng klip dan tidak boleh dibongkar.',
         execute_time_warning: 'Ini akan menyahkumpulkan DXF atau SVG yang diimport. Oleh kerana fail itu mungkin mengandungi sejumlah besar elemen, ia mungkin mengambil masa untuk menyahkumpulkan. Adakah anda pasti untuk meneruskan?',
