@@ -70,12 +70,17 @@ const galvoParameters = {
 const field = { angle: 1, offsetX: 2, offsetY: 3 };
 const redDot = { offsetX: 0.5, offsetY: -0.5, scaleX: 1.01, scaleY: 0.99 };
 
+const laserLens = { field, galvoParameters, worksize: 110 };
+const redLightLens = { field: { ...field, offsetX: 2.5 }, galvoParameters, worksize: 110 };
+const mockGetLens = jest.fn((shouldApplyRedDot: boolean) => (shouldApplyRedDot ? redLightLens : laserLens));
+
 const renderBlock = (serial = 'CARD1234') =>
   render(
     <DevControlBlock
       applyParameters={mockApplyParameters}
       field={field}
       galvoParameters={galvoParameters}
+      getLens={mockGetLens}
       info={{ laserType: LaserType.MOPA, watt: 60 }}
       redDot={redDot}
       serial={serial}
@@ -170,6 +175,9 @@ describe('test DevControlBlock', () => {
     await act(async () => fireEvent.click(getByTestId('dev-pulse-fire')));
     expect(mockApplyParameters).toHaveBeenLastCalledWith(false);
     expect(await readBlob(mockDoCalibration.mock.calls[0][0].blob)).toContain('G1F240000X10Y55S0');
+    // each start carries its own lens: red dot corrected for the move, the laser's for the pulse
+    expect(mockGo.mock.calls[0].slice(1)).toEqual([undefined, undefined, redLightLens]);
+    expect(mockDoCalibration.mock.calls[0][0].lens).toBe(laserLens);
   });
 
   it('should link the nine reference points with the move position', () => {
@@ -202,6 +210,7 @@ describe('test DevControlBlock', () => {
         applyParameters={mockApplyParameters}
         field={field}
         galvoParameters={galvoParameters}
+        getLens={mockGetLens}
         info={{ laserType: LaserType.UV, watt: 5 }}
         redDot={redDot}
         serial="CARD1234"
