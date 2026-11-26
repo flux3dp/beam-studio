@@ -504,6 +504,12 @@ const lang: ILang = {
         advice_message_2: 'Disarankan untuk menyederhanakan file sebelum mengimpor.',
         confirmation_message: 'Apakah Anda ingin melanjutkan?',
         element_count_warning: 'Jumlah elemen: %s (Disarankan: < %s).',
+        export_guide: 'Pelajari lebih lanjut tentang mengekspor dari %s',
+        export_guide_urls: {
+          affinity: 'https://support.flux3dp.com/hc/en-us/articles/360001558716',
+          illustrator: 'https://support.flux3dp.com/hc/en-us/articles/4405279401487',
+          inkscape: 'https://support.flux3dp.com/hc/en-us/articles/4405279437839',
+        },
         file_size_warning: 'Ukuran file: %sMB (Disarankan: < %sMB).',
         intro_message: 'File mungkin terlalu besar atau kompleks:',
         path_d_command_count_warning: 'Jumlah perintah: %s (Disarankan: < %s).',

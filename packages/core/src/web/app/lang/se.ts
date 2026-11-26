@@ -504,6 +504,12 @@ const lang: ILang = {
         advice_message_2: 'Det rekommenderas att förenkla filen innan import.',
         confirmation_message: 'Vill du fortsätta?',
         element_count_warning: 'Antal element: %s (Rekommenderat: < %s).',
+        export_guide: 'Läs mer om export från %s',
+        export_guide_urls: {
+          affinity: 'https://support.flux3dp.com/hc/en-us/articles/360001558716',
+          illustrator: 'https://support.flux3dp.com/hc/en-us/articles/4405279401487',
+          inkscape: 'https://support.flux3dp.com/hc/en-us/articles/4405279437839',
+        },
         file_size_warning: 'Filstorlek: %sMB (Rekommenderat: < %sMB).',
         intro_message: 'Filen kan vara för stor eller för komplex:',
         path_d_command_count_warning: 'Antal kommandon: %s (Rekommenderat: < %s).',

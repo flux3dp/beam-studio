@@ -21,6 +21,8 @@ import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type { ILang } from '@core/interfaces/ILang';
 import type { ImportType } from '@core/interfaces/ImportSvg';
 
+import type { SvgSource } from './utils/detectSvgSource';
+import { detectSvgSource } from './utils/detectSvgSource';
 import { determineImportType } from './utils/determineImportType';
 import { determineTargetModule } from './utils/determineTargetModule';
 import { handleBitmapImport } from './utils/handleBitmapImport';
@@ -93,7 +95,7 @@ export async function performSvgPreChecks(
   sizeThresholdMaxBytes: number = MAX_SVG_FILE_SIZE_BYTES,
   elementCountThreshold: number = ELEMENT_COUNT_THRESHOLD,
   pathDCommandCountThreshold: number = PATH_D_COMMAND_COUNT_THRESHOLD,
-): Promise<{ elementCount?: number; proceed: boolean; totalPathDCommands?: number }> {
+): Promise<{ elementCount?: number; proceed: boolean; source?: SvgSource; totalPathDCommands?: number }> {
   const {
     beambox: {
       popup: { import_svg: t },
@@ -178,7 +180,7 @@ export async function performSvgPreChecks(
     }
 
     // All checks passed, or user agreed to continue through the combined warning
-    return { elementCount, proceed: true, totalPathDCommands };
+    return { elementCount, proceed: true, source: detectSvgSource(doc), totalPathDCommands };
   } catch (error) {
     // Catch any unexpected errors during the process
     console.error('Unexpected error in performSvgPreChecks:', error);
@@ -251,7 +253,7 @@ const importSvg = async (
 
   if (!targetModule) return; // Early exit if no module selected
 
-  importType = await determineImportType(importType, targetModule, skipByLayer, lang);
+  importType = await determineImportType(importType, targetModule, skipByLayer, lang, preCheckResult.source);
 
   if (!importType) return; // Early exit if no import type selected
 

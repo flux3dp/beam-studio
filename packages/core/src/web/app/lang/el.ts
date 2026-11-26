@@ -504,6 +504,12 @@ const lang: ILang = {
         advice_message_2: 'Συνιστάται η απλοποίηση του αρχείου πριν την εισαγωγή.',
         confirmation_message: 'Θέλετε να συνεχίσετε;',
         element_count_warning: 'Αριθμός στοιχείων: %s (Συνιστάται: < %s).',
+        export_guide: 'Μάθετε περισσότερα για την εξαγωγή από το %s',
+        export_guide_urls: {
+          affinity: 'https://support.flux3dp.com/hc/en-us/articles/360001558716',
+          illustrator: 'https://support.flux3dp.com/hc/en-us/articles/4405279401487',
+          inkscape: 'https://support.flux3dp.com/hc/en-us/articles/4405279437839',
+        },
         file_size_warning: 'Μέγεθος αρχείου: %sMB (Συνιστάται: < %sMB).',
         intro_message: 'Το αρχείο μπορεί να είναι πολύ μεγάλο ή πολύπλοκο:',
         path_d_command_count_warning: 'Αριθμός εντολών: %s (Συνιστάται: < %s).',

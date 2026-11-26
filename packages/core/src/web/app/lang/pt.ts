@@ -504,6 +504,12 @@ const lang: ILang = {
         advice_message_2: 'Recomenda-se simplificar o arquivo antes de importar.',
         confirmation_message: 'Deseja continuar?',
         element_count_warning: 'Número de elementos: %s (Recomendado: < %s).',
+        export_guide: 'Saiba mais sobre como exportar do %s',
+        export_guide_urls: {
+          affinity: 'https://support.flux3dp.com/hc/en-us/articles/360001558716',
+          illustrator: 'https://support.flux3dp.com/hc/en-us/articles/4405279401487',
+          inkscape: 'https://support.flux3dp.com/hc/en-us/articles/4405279437839',
+        },
         file_size_warning: 'Tamanho do arquivo: %sMB (Recomendado: < %sMB).',
         intro_message: 'O arquivo pode ser muito grande ou complexo:',
         path_d_command_count_warning: 'Número de comandos: %s (Recomendado: < %s).',

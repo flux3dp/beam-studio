@@ -504,6 +504,12 @@ const lang: ILang = {
         advice_message_2: 'Khuyến nghị đơn giản hóa tệp trước khi nhập.',
         confirmation_message: 'Bạn có muốn tiếp tục không?',
         element_count_warning: 'Số lượng phần tử: %s (Khuyến nghị: < %s).',
+        export_guide: 'Tìm hiểu thêm về cách xuất từ %s',
+        export_guide_urls: {
+          affinity: 'https://support.flux3dp.com/hc/en-us/articles/360001558716',
+          illustrator: 'https://support.flux3dp.com/hc/en-us/articles/4405279401487',
+          inkscape: 'https://support.flux3dp.com/hc/en-us/articles/4405279437839',
+        },
         file_size_warning: 'Kích thước tệp: %sMB (Khuyến nghị: < %sMB).',
         intro_message: 'Tệp có thể quá lớn hoặc phức tạp:',
         path_d_command_count_warning: 'Số lệnh: %s (Khuyến nghị: < %s).',

@@ -506,6 +506,12 @@ export interface ILang {
         advice_message_2: string;
         confirmation_message: string;
         element_count_warning: string;
+        export_guide: string;
+        export_guide_urls: {
+          affinity: string;
+          illustrator: string;
+          inkscape: string;
+        };
         file_size_warning: string;
         intro_message: string;
         path_d_command_count_warning: string;

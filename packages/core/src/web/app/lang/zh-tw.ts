@@ -504,6 +504,12 @@ const lang: ILang = {
         advice_message_2: '建議在匯入前簡化檔案。',
         confirmation_message: '是否繼續？',
         element_count_warning: '元素數量：%s（建議：< %s）。',
+        export_guide: '了解更多關於 %s 的匯出方式',
+        export_guide_urls: {
+          affinity: 'https://support.flux3dp.com/hc/zh-tw/articles/360001558716',
+          illustrator: 'https://support.flux3dp.com/hc/zh-tw/articles/4405279401487',
+          inkscape: 'https://support.flux3dp.com/hc/zh-tw/articles/4405279437839',
+        },
         file_size_warning: '檔案大小：%sMB（建議：< %sMB）。',
         intro_message: '檔案可能過大或過於複雜：',
         path_d_command_count_warning: '命令數量：%s（建議：< %s）。',

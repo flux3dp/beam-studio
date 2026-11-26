@@ -4,16 +4,25 @@ import { Modal, Radio, Space } from 'antd';
 
 import useI18n from '@core/helpers/useI18n';
 
+import styles from './RadioSelectDialog.module.scss';
+
 interface Props<T = string> {
   defaultValue: T;
+  description?: React.ReactNode;
   onCancel: () => void;
   onOk: (val: T) => void;
   options: Array<{ label: string; value: T }>;
   title: string;
 }
 
-// TODO: add test
-function RadioSelectDialog<T = string>({ defaultValue, onCancel, onOk, options, title }: Props<T>): React.JSX.Element {
+function RadioSelectDialog<T = string>({
+  defaultValue,
+  description,
+  onCancel,
+  onOk,
+  options,
+  title,
+}: Props<T>): React.JSX.Element {
   const [value, setValue] = useState(defaultValue);
   const handleOk = () => onOk(value);
   const lang = useI18n().alert;
@@ -38,6 +47,7 @@ function RadioSelectDialog<T = string>({ defaultValue, onCancel, onOk, options, 
           ))}
         </Space>
       </Radio.Group>
+      {description && <div className={styles.description}>{description}</div>}
     </Modal>
   );
 }

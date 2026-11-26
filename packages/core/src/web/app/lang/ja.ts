@@ -504,6 +504,12 @@ const lang: ILang = {
         advice_message_2: 'インポート前にファイルを簡略化することを推奨します。',
         confirmation_message: '続行しますか？',
         element_count_warning: '要素数: %s（推奨: < %s）',
+        export_guide: '%s からの書き出し方法について詳しく見る',
+        export_guide_urls: {
+          affinity: 'https://support.flux3dp.com/hc/en-us/articles/360001558716',
+          illustrator: 'https://support.flux3dp.com/hc/en-us/articles/4405279401487',
+          inkscape: 'https://support.flux3dp.com/hc/en-us/articles/4405279437839',
+        },
         file_size_warning: 'ファイルサイズ: %sMB（推奨: < %sMB）',
         intro_message: 'ファイルが大きすぎるか、複雑すぎる可能性があります:',
         path_d_command_count_warning: 'コマンド数: %s（推奨: < %s）',

@@ -504,6 +504,12 @@ const lang: ILang = {
         advice_message_2: "Es recomana simplificar el fitxer abans d'importar.",
         confirmation_message: 'Vols procedir?',
         element_count_warning: "Nombre d'elements: %s (Recomanat: < %s).",
+        export_guide: 'Més informació sobre com exportar des de %s',
+        export_guide_urls: {
+          affinity: 'https://support.flux3dp.com/hc/en-us/articles/360001558716',
+          illustrator: 'https://support.flux3dp.com/hc/en-us/articles/4405279401487',
+          inkscape: 'https://support.flux3dp.com/hc/en-us/articles/4405279437839',
+        },
         file_size_warning: 'Mida del fitxer: %sMB (Recomanat: < %sMB).',
         intro_message: 'El fitxer pot ser massa gran o complex:',
         path_d_command_count_warning: 'Nombre de comandes: %s (Recomanat: < %s).',

@@ -504,6 +504,12 @@ const lang: ILang = {
         advice_message_2: 'Doporučujeme soubor před importem zjednodušit.',
         confirmation_message: 'Chcete pokračovat?',
         element_count_warning: 'Počet prvků: %s (Doporučeno: < %s).',
+        export_guide: 'Další informace o exportu z %s',
+        export_guide_urls: {
+          affinity: 'https://support.flux3dp.com/hc/en-us/articles/360001558716',
+          illustrator: 'https://support.flux3dp.com/hc/en-us/articles/4405279401487',
+          inkscape: 'https://support.flux3dp.com/hc/en-us/articles/4405279437839',
+        },
         file_size_warning: 'Velikost souboru: %sMB (Doporučeno: < %sMB).',
         intro_message: 'Soubor může být příliš velký nebo složitý:',
         path_d_command_count_warning: 'Počet příkazů: %s (Doporučeno: < %s).',
