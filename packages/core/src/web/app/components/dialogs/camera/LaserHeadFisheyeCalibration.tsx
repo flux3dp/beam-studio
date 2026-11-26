@@ -1,7 +1,5 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 
-import { sprintf } from 'sprintf-js';
-
 import alertCaller from '@core/app/actions/alert-caller';
 import progressCaller from '@core/app/actions/progress-caller';
 import { bb2PerspectiveGrid, bb2PerspectiveGridWide, bb2PnPPoints } from '@core/app/constants/fisheyeCameraConstants';
@@ -22,6 +20,7 @@ import Instruction from './common/Instruction';
 import moveLaserHead from './common/moveLaserHead';
 import ProcessingDialog from './common/ProcessingDialog';
 import showHighResidualAlert from './common/showHighResidualAlert';
+import showNotEnoughMarksAlert from './common/showNotEnoughMarksAlert';
 import SolvePnP from './common/SolvePnP';
 
 /* eslint-disable perfectionist/sort-enums */
@@ -103,6 +102,8 @@ const LaserHeadFisheyeCalibration = ({
   const isHexaRf = useMemo(() => model === 'fhx2rf', [model]);
   // whether the pose came from the automatic step, to know where Back leads from CHECK_PNP
   const isAutoSolved = useRef(false);
+  // where the manual step starts from when it is chosen after the automatic one came up short
+  const manualInitialPoints = useRef<Array<[number, number]> | undefined>(undefined);
   const isUnmounted = useIsUnmounted();
 
   if (step === Steps.PRE_CHESSBOARD) {
@@ -260,16 +261,22 @@ const LaserHeadFisheyeCalibration = ({
                 return;
               }
 
-              alertCaller.popUpError({
-                message:
-                  located.reason === 'NOT_ENOUGH_MARKS'
-                    ? sprintf(tCali.auto_solve_pnp_not_enough_marks, {
-                        found: located.matched ?? 0,
-                        total: bb2PnPPoints.length,
-                      })
-                    : `${tCali.failed_to_calibrate_with_pictures} (${located.reason})`,
-              });
               setStep(Steps.PUT_PAPER);
+
+              if (located.reason === 'NOT_ENOUGH_MARKS') {
+                showNotEnoughMarksAlert({
+                  found: located.matched ?? 0,
+                  onManual: () => {
+                    if (isUnmounted.current) return;
+
+                    manualInitialPoints.current = located.initialPoints;
+                    setStep(Steps.SOLVE_PNP_INSTRUCTION);
+                  },
+                  total: bb2PnPPoints.length,
+                });
+              } else {
+                alertCaller.popUpError({ message: `${tCali.failed_to_calibrate_with_pictures} (${located.reason})` });
+              }
 
               return;
             }
@@ -335,6 +342,7 @@ const LaserHeadFisheyeCalibration = ({
         defaultPoints={isOblique ? DEFAULT_POINTS_OBLIQUE : DEFAULT_POINTS}
         dh={0}
         hasNext
+        initialPoints={manualInitialPoints.current}
         initPoseWithDefaultPoints={isAdvanced}
         onBack={() => setStep(Steps.SOLVE_PNP_INSTRUCTION)}
         onClose={onClose}

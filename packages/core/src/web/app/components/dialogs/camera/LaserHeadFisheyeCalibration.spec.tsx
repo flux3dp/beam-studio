@@ -75,6 +75,15 @@ jest.mock(
       mockShowHighResidualAlert(...args),
 );
 
+const mockShowNotEnoughMarksAlert = jest.fn();
+
+jest.mock(
+  './common/showNotEnoughMarksAlert',
+  () =>
+    (...args: any[]) =>
+      mockShowNotEnoughMarksAlert(...args),
+);
+
 jest.mock('./common/downloadCalibrationFile', () => jest.fn());
 jest.mock('./common/ChArUco', () => ({ onNext }: any) => (
   <div data-testid="charuco">
@@ -83,7 +92,9 @@ jest.mock('./common/ChArUco', () => ({ onNext }: any) => (
     </button>
   </div>
 ));
-jest.mock('./common/SolvePnP', () => () => <div data-testid="solve-pnp" />);
+jest.mock('./common/SolvePnP', () => ({ initialPoints }: any) => (
+  <div data-testid="solve-pnp">{JSON.stringify(initialPoints ?? null)}</div>
+));
 jest.mock('./common/CheckPnP', () => ({ onBack }: any) => (
   <div data-testid="check-pnp">
     <button onClick={onBack} type="button">
@@ -223,15 +234,25 @@ describe('LaserHeadFisheyeCalibration automatic solve step', () => {
 
     await runAutoStep(utils);
 
-    expect(mockPopUpError).toHaveBeenCalledTimes(1);
-
-    const { message } = mockPopUpError.mock.calls[0][0];
-
-    expect(message).toContain('8');
-    expect(message).toContain('6');
-    expect(message).not.toContain('%');
+    expect(mockPopUpError).not.toHaveBeenCalled();
+    expect(mockShowNotEnoughMarksAlert).toHaveBeenCalledWith(expect.objectContaining({ found: 6, total: 8 }));
     expect(utils.getByTestId('title')).toHaveTextContent(t.put_paper);
     expect(mockSolvePnPCalculate).not.toHaveBeenCalled();
+  });
+
+  test('the manual steps chosen after missing marks start from the points that were found', async () => {
+    const initialPoints = Array.from({ length: 8 }, (_, i) => [i, i * 10]);
+
+    mockAutoLocateMarks.mockResolvedValue({ initialPoints, matched: 6, reason: 'NOT_ENOUGH_MARKS', success: false });
+
+    const utils = renderDialog();
+
+    await runAutoStep(utils);
+    act(() => mockShowNotEnoughMarksAlert.mock.calls[0][0].onManual());
+    expect(utils.getByTestId('title')).toHaveTextContent(t.solve_pnp_title);
+
+    fireEvent.click(utils.getByText(t.next));
+    expect(utils.getByTestId('solve-pnp')).toHaveTextContent(JSON.stringify(initialPoints));
   });
 
   test('rests on the paper step while the high-residual warning is open, and continues when asked', async () => {
