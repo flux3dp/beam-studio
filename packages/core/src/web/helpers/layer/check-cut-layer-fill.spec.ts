@@ -1,11 +1,14 @@
-jest.mock('@core/app/actions/alert-caller', () => ({ popUp: jest.fn() }));
+const mockPopUp = jest.fn();
+
+jest.mock('@core/app/actions/alert-caller', () => ({ popUp: (...args: unknown[]) => mockPopUp(...args) }));
+jest.mock('@core/helpers/api/alert-config', () => ({ read: () => false, write: jest.fn() }));
 // the shared __mocks__ return fixed values, the tests need the real key lookup
 jest.mock('@core/app/constants/presets', () => ({ __esModule: true, default: { wood_3mm_cutting: {} } }));
 jest.mock('@core/helpers/layer/layer-config-helper', () => ({
   getData: (layer: Element, key: string) => layer.getAttribute(`data-${key}`),
 }));
 
-import { doesLayerContainFill, hasCutLayerWithFill } from './check-cut-layer-fill';
+import { doesLayerContainFill, hasCutLayerWithFill, showCutLayerFillAlert } from './check-cut-layer-fill';
 
 const setup = (defs: string, layer: string, configName = 'wood_3mm_cutting') => {
   document.body.innerHTML = `<svg xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -62,5 +65,12 @@ describe('check-cut-layer-fill', () => {
     expect(hasCutLayerWithFill([setup('', '<path fill="#000" />')])).toBe(true);
     expect(hasCutLayerWithFill([setup('', '<path fill="#000" />', 'wood_engraving')])).toBe(false);
     expect(hasCutLayerWithFill([setup('', '<path fill="#000" />', 'my_cutting')])).toBe(false);
+  });
+
+  test('closing the alert with Esc continues', async () => {
+    const promise = showCutLayerFillAlert();
+
+    mockPopUp.mock.calls[0][0].onClose();
+    await expect(promise).resolves.toBeUndefined();
   });
 });

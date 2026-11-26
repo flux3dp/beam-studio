@@ -85,6 +85,8 @@ export const showCutLayerFillAlert = (): Promise<void> =>
       },
       id: 'cut-layer-fill-warning',
       message: i18n.lang.beambox.popup.cut_layer_contains_fill,
+      // Esc closes through onClose only; closing is a dismiss, so the job continues
+      onClose: () => resolve(),
       type: alertConstants.SHOW_POPUP_WARNING,
     });
   });
