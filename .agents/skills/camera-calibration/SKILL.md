@@ -111,17 +111,29 @@ No dragging: after the engraving a `ProcessingDialog` step finds the marks and s
   (a later round only after `NOT_ENOUGH_MARKS`; omit `exposureRounds` to take one photo and leave the
   exposure alone; the same happens when the exposure cannot be read, e.g. older `ado1` firmware), each photo → `autoPnPDetect`, all lists so far → `autoPnPMatch(refPoints, blobs, weak,
   rMax)`, restore, disconnect. Returns `{ points, rms, highResidual }` or a failure reason; the caller
-  solves. One photo is dropped after every exposure change (it still has the old exposure). Camera auto exposure is turned off first and back on **after** the exposure value is restored.
-  `isCancelled` is checked before each photo: every dialog passes its unmounted flag (`helpers/hooks/useIsUnmounted`)
+  solves. After `NOT_ENOUGH_MARKS` the failure also carries `initialPoints` when the backend could predict
+  the missing marks (fluxghost 2.5.9, at least 4 found): found marks as found, missing ones as predicted.
+  When an exposure cannot be set, that photo is taken as it is and is the last one; when auto exposure
+  cannot be turned off, the exposure is not touched and one photo is taken. One photo is dropped after every exposure change (it still has the old exposure). Camera auto exposure is turned off first and back on **after** the exposure value is restored.
+  `isCancelled` is checked before each photo, before and after the match, and before each of `fbm2`'s four
+  solves: every dialog passes its unmounted flag (`helpers/hooks/useIsUnmounted`)
   and checks it again before applying or saving; `fbm2` also stops when the door poll (`DoorChecker.keepClosed`)
   sees the door open, then checks the door, relocates and captures again from the first exposure.
+- `cameraCalibrationApi` sends one command at a time (`p-queue`, as `open-cv.ts`): every command swaps the
+  shared reply handlers, so overlapping commands used to take each other's reply. A reply that never comes
+  frees the queue after a timeout (2 min, 10 for the two calibrations); a dead backend rejects at once
+  through `onFatal`. Specs that drive the real api must wait a tick after calling it.
 - The matcher uses `k`, `d` and the mark positions only, never the stored `rvec`/`tvec`, and assumes the
   image is not rotated by 90 / 180 degrees against the bed (Promark's `rotate180` is why it is not wired).
 - Per machine: `fbm2` 16 marks, own rounds, backend residual limit, four quadrant solves
   (`beamo2Calibration/autoSolvePnP.ts`); laser head 8 marks, `EXPOSURE_ROUNDS` / `R_MAX_MM` at the top of
   the dialog file, `cameraIndex: 0`; `ado1` 8 marks, own rounds, one automatic step per height.
-- Outcomes, same in the three dialogs: ok → next step · `UNSUPPORTED` (fluxghost without the commands) →
-  the manual steps · `NOT_ENOUGH_MARKS` / a thrown error → alert, back to the engraving step ·
+- Outcomes, same in the three dialogs: ok → next step · `UNSUPPORTED` (fluxghost without the commands;
+  only `autoPnPDetect` reports it, any other error reply rejects) → the manual steps ·
+  `NOT_ENOUGH_MARKS` → back to the engraving step, then `common/showNotEnoughMarksAlert.ts`: Cancel, or
+  Calibrate Manually (primary), which enters the manual steps with `initialPoints` (`fbm2`: split by
+  quadrant into `imgPoints1`; `ado1`: per height, and the second height stays automatic, see
+  `isAutoSupported`) · any other reason / a thrown error → alert, back to the engraving step ·
   `highResidual` (all marks found, residual over the limit) → `common/showHighResidualAlert.ts`: Continue
   Anyway, plus Calibrate Camera (Advanced) in basic mode (`onSwitchToAdvanced`) or Capture Calibration
   Pattern in advanced mode.
