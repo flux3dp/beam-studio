@@ -29,7 +29,7 @@ interface Options {
    * the same happens when the machine cannot report its exposure (older firmware).
    */
   exposureRounds?: ReadonlyArray<ReadonlyArray<number>>;
-  /** checked before each photo: true stops the capture with `CANCELLED` (dialog closed, door opened) */
+  /** checked before each photo and each match, and before the result is handed back: true ends with `CANCELLED` */
   isCancelled?: () => boolean;
   /** the detection needs `k` and `d` */
   params: FisheyeCaliParameters;
@@ -125,7 +125,12 @@ const autoLocateMarks = async ({
         if (!canSetExposure) break;
       }
 
+      if (isCancelled?.()) return { reason: 'CANCELLED', success: false };
+
       matchRes = await cameraCalibrationApi.autoPnPMatch(refPoints, blobs, weak, rMax);
+
+      if (isCancelled?.()) return { reason: 'CANCELLED', success: false };
+
       console.log('[auto solve pnp]', {
         // the values set for each photo; 'current' when the exposure was left alone
         exposures: shot.map((e) => e ?? 'current'),

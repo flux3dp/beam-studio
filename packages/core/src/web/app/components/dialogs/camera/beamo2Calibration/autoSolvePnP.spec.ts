@@ -77,6 +77,13 @@ describe('autoSolvePnP', () => {
     expect(mockSolvePnPCalculate).not.toHaveBeenCalled();
   });
 
+  test('solves no further quadrant once cancelled', async () => {
+    const res = await autoSolvePnP(params, () => mockSolvePnPCalculate.mock.calls.length >= 2);
+
+    expect(res).toEqual({ reason: 'CANCELLED', success: false });
+    expect(mockSolvePnPCalculate).toHaveBeenCalledTimes(2);
+  });
+
   test('reports a quadrant that cannot be solved', async () => {
     mockSolvePnPCalculate
       .mockResolvedValueOnce({ data: { rvec: [[1]], tvec: [[2]] }, success: true })

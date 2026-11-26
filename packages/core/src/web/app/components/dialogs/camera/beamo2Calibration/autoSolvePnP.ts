@@ -62,6 +62,9 @@ const autoSolvePnP = async (
   for (let i = 0; i < REGIONS.length; i++) {
     const region = REGIONS[i];
     const points = located.points.slice(i * 4, i * 4 + 4);
+
+    if (isCancelled?.()) return { reason: 'CANCELLED', success: false };
+
     const res = await cameraCalibrationApi.solvePnPCalculate(0, points, [...bm2PnPPoints[region]]);
 
     if (!res.success) return { reason: 'SOLVE_PNP_FAILED', success: false };

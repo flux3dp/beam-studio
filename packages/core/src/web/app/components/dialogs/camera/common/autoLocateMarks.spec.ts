@@ -177,6 +177,21 @@ describe('autoLocateMarks', () => {
     expect(mockAutoPnPDetect).toHaveBeenCalledWith(fresh);
   });
 
+  test('sends no match once cancelled during the last photo of a round', async () => {
+    const res = await run({ isCancelled: () => mockAutoPnPDetect.mock.calls.length === firstRound.length });
+
+    expect(res).toEqual({ reason: 'CANCELLED', success: false });
+    expect(mockAutoPnPMatch).not.toHaveBeenCalled();
+    expect(cameraCalls.at(-1)).toEqual(['exposure', 320]);
+  });
+
+  test('hands back no points once cancelled during the match', async () => {
+    const res = await run({ isCancelled: () => mockAutoPnPMatch.mock.calls.length > 0 });
+
+    expect(res).toEqual({ reason: 'CANCELLED', success: false });
+    expect(mockAutoPnPMatch).toHaveBeenCalledTimes(1);
+  });
+
   test('stops before the next photo once cancelled, and still restores the exposure', async () => {
     const res = await run({ isCancelled: () => mockTakeOnePicture.mock.calls.length > 0 });
 
