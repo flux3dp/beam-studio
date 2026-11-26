@@ -212,6 +212,14 @@ describe('autoLocateMarks', () => {
     expect(mockDisconnectCamera).toHaveBeenCalledTimes(1);
   });
 
+  test('disconnects when the camera connection fails', async () => {
+    mockConnectCamera.mockRejectedValueOnce(new Error('timeout'));
+
+    await expect(run()).rejects.toThrow('timeout');
+    expect(cameraCalls).toEqual([]);
+    expect(mockDisconnectCamera).toHaveBeenCalledTimes(1);
+  });
+
   test('restores the exposure and disconnects when a call throws', async () => {
     mockAutoPnPDetect.mockRejectedValue(new Error('socket closed'));
 

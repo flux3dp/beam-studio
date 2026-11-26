@@ -59,9 +59,10 @@ const autoLocateMarks = async ({
   let wasAutoExposure = false;
 
   await cameraCalibrationApi.updateData(params);
-  await deviceMaster.connectCamera();
 
   try {
+    await deviceMaster.connectCamera();
+
     if (cameraIndex !== undefined && !(await deviceMaster.setCamera(cameraIndex))) {
       return { reason: 'NO_IMAGE', success: false };
     }
