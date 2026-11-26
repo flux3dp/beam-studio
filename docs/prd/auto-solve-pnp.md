@@ -301,7 +301,7 @@ and offer to kick it, after which the next step fails.
 The decision between this step and the manual ones is made inside each dialog from the call's
 result. `UNSUPPORTED` is not something the backend sends: a backend that does not know
 `auto_pnp_detect` answers `{"status": "Error", "message": "BAD_PARAM_TYPE"}`, and the client
-(`autoPnPDetect`, `autoPnPMatch`) turns that reply into the reason `UNSUPPORTED` (§8). The
+(`autoPnPDetect` only) turns that reply into the reason `UNSUPPORTED` (§8). The
 flow then continues at SOLVE_PNP_INSTRUCTION (decision 4). There is no switch to force the
 manual steps. The exposure is restored and the camera disconnected in a `finally` block.
 
@@ -530,12 +530,17 @@ Both commands live on the existing `camera-calibration` websocket and need `k` /
 
 `filled` counts the marks taken from `weak`. The first draft also had `workarea`,
 `prior_points`, per-point `residuals`, a `rejected` count and an `AMBIGUOUS` reason; none was
-needed and none exists. The client (`autoPnPDetect`, `autoPnPMatch` in
+needed and none exists. The client (`autoPnPDetect` in
 `helpers/api/camera-calibration.ts`) turns the reply to an unknown command into `UNSUPPORTED`.
 fluxghost sends `{"status": "Error", "message": "BAD_PARAM_TYPE"}` for it, with a capital E: the
 websocket wrapper routes only the lowercase `error` to `onError`, so this reply arrives through
 `onMessage` and is recognised there (`isUnknownCommand`). Before that was handled the promise
-never settled and the step hung (found in review, 2026-11-23).
+never settled and the step hung (found in review, 2026-11-23). Only the detection tells an old
+backend apart: fluxghost sends the same reply when a handler raises `ValueError`
+(`fluxghost/api/misc.py`), which the matching can do and the detection's text command cannot.
+`autoPnPMatch` therefore rejects on that reply, and both reject on a lowercase `error`: the
+step ends with the failure alert instead of the manual steps (decision 4; review of #1063,
+2026-11-26).
 
 Both new commands are stateless apart from `k` / `d`, so they run offline against saved photos.
 Command names are final once fluxghost's `cmd_mapping` has them; do not rename afterwards.

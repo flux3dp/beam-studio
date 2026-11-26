@@ -187,7 +187,7 @@ SOLVE_PNP_INSTRUCTION 與四個 SOLVE_PNP_xx 步驟合併成一個建立在 `Pro
 
 PUT_PAPER 會從 CHECK_PNP 的 Back、比對失敗與殘差過高的警告再次到達，每次機器都還在 raw 模式。因此它的 Next 與 Skip 會先呼叫 `releaseMachine`，而 `releaseMachine` 會用 `getReport` 更新 `currentDevice.info.st_id`：該欄位來自 discovery 廣播，會落後，否則 `checkDeviceStatus` 會把我們自己剛結束的 raw 模式看成機器使用中，並提議把它踢掉，之後下一步就會失敗。
 
-要走這一步還是手動步驟，是在各個對話框內依呼叫的結果決定。`UNSUPPORTED` 不是後端送出來的：不認得 `auto_pnp_detect` 的後端回的是 `{"status": "Error", "message": "BAD_PARAM_TYPE"}`，由前端的 client（`autoPnPDetect`、`autoPnPMatch`）把這個回覆轉成原因 `UNSUPPORTED`（§8）。流程接著從 SOLVE_PNP_INSTRUCTION 繼續（決策 4）。沒有強制走手動步驟的開關。曝光的還原與相機的中斷連線放在 `finally` 區塊。
+要走這一步還是手動步驟，是在各個對話框內依呼叫的結果決定。`UNSUPPORTED` 不是後端送出來的：不認得 `auto_pnp_detect` 的後端回的是 `{"status": "Error", "message": "BAD_PARAM_TYPE"}`，由前端的 client（只有 `autoPnPDetect`）把這個回覆轉成原因 `UNSUPPORTED`（§8）。流程接著從 SOLVE_PNP_INSTRUCTION 繼續（決策 4）。沒有強制走手動步驟的開關。曝光的還原與相機的中斷連線放在 `finally` 區塊。
 
 七張照片之後仍缺標記點的一次執行，會在比對器裡花 8 到 9 秒，這是可接受的；成功的比對花不到可量測的時間。
 
@@ -298,7 +298,7 @@ PUT_PAPER 會從 CHECK_PNP 的 Back、比對失敗與殘差過高的警告再次
 ← {"status": "ok", "rvec": ..., "tvec": ..., "rms": number}   // rms is new
 ```
 
-`filled` 計算取自 `weak` 的標記點數。初稿還有 `workarea`、`prior_points`、逐點的 `residuals`、`rejected` 計數與 `AMBIGUOUS` 原因；都用不到，也都不存在。Client（`helpers/api/camera-calibration.ts` 的 `autoPnPDetect`、`autoPnPMatch`）把對未知指令的回覆轉成 `UNSUPPORTED`。fluxghost 對它送出 `{"status": "Error", "message": "BAD_PARAM_TYPE"}`，E 是大寫：websocket 包裝只把小寫的 `error` 導到 `onError`，所以這個回覆會經由 `onMessage` 抵達，並在那裡被辨識出來（`isUnknownCommand`）。在處理這一點之前，promise 永遠不會 settle，這一步就卡住（review 時發現，2026-11-23）。
+`filled` 計算取自 `weak` 的標記點數。初稿還有 `workarea`、`prior_points`、逐點的 `residuals`、`rejected` 計數與 `AMBIGUOUS` 原因；都用不到，也都不存在。Client（`helpers/api/camera-calibration.ts` 的 `autoPnPDetect`）把對未知指令的回覆轉成 `UNSUPPORTED`。fluxghost 對它送出 `{"status": "Error", "message": "BAD_PARAM_TYPE"}`，E 是大寫：websocket 包裝只把小寫的 `error` 導到 `onError`，所以這個回覆會經由 `onMessage` 抵達，並在那裡被辨識出來（`isUnknownCommand`）。在處理這一點之前，promise 永遠不會 settle，這一步就卡住（review 時發現，2026-11-23）。只有偵測用來分辨舊後端：fluxghost 在處理函式丟出 `ValueError` 時送的是同一個回覆（`fluxghost/api/misc.py`），比對可能發生這種情況，偵測的文字指令則不會。因此 `autoPnPMatch` 收到這個回覆時 reject，兩者收到小寫的 `error` 也都 reject：這一步以失敗警示結束，而不是進入手動步驟（決策 4；#1063 的 review，2026-11-26）。
 
 兩個新指令除了 `k` / `d` 以外都是無狀態的，所以可以對存下來的照片離線執行。指令名稱一旦進了 fluxghost 的 `cmd_mapping` 就定案；之後不要改名。
 

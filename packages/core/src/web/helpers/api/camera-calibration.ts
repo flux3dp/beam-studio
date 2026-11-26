@@ -329,7 +329,9 @@ class CameraCalibrationApi {
 
   /**
    * Find the engraved calibration marks in one raw photo. Needs k / d loaded (`updateData`).
-   * `UNSUPPORTED`: the backend predates the command; callers fall back to the manual steps.
+   * `UNSUPPORTED`: the backend predates the command; callers fall back to the manual steps. This is the only
+   * place that tells: fluxghost sends the same reply when a handler raises ValueError, which this command's
+   * handler cannot, while `autoPnPMatch` can.
    */
   autoPnPDetect = (
     img: ArrayBuffer | Blob,
@@ -346,7 +348,7 @@ class CameraCalibrationApi {
           resolve({ reason: 'UNSUPPORTED', success: false });
         }
       };
-      this.events.onError = () => resolve({ reason: 'UNSUPPORTED', success: false });
+      this.events.onError = (response) => reject(response);
       this.events.onFatal = (response) => reject(response);
 
       const size = img instanceof Blob ? img.size : img.byteLength;
@@ -381,9 +383,9 @@ class CameraCalibrationApi {
       this.events.onMessage = ({ status, ...rest }) => {
         if (status === 'ok') resolve({ ...rest, success: true });
         else if (status === 'fail') resolve({ ...rest, success: false });
-        else if (isUnknownCommand({ status })) resolve({ reason: 'UNSUPPORTED', success: false });
+        else if (isUnknownCommand({ status })) reject(rest);
       };
-      this.events.onError = () => resolve({ reason: 'UNSUPPORTED', success: false });
+      this.events.onError = (response) => reject(response);
       this.events.onFatal = (response) => reject(response);
       this.ws.send(`auto_pnp_match ${JSON.stringify({ blobs, r_max: rMax, ref_points: refPoints, weak })}`);
     });

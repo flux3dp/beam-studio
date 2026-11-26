@@ -32,11 +32,13 @@ describe('cameraCalibrationApi auto PnP commands', () => {
 
     socketOptions.onMessage(unknownCommand);
     expect(await fromMessage).toEqual({ reason: 'UNSUPPORTED', success: false });
+  });
 
-    const fromError = cameraCalibrationApi.autoPnPDetect(img);
+  test('autoPnPDetect rejects on an error reply: only the unknown-command reply means UNSUPPORTED', async () => {
+    const promise = cameraCalibrationApi.autoPnPDetect(img);
 
     socketOptions.onError({ status: 'error' });
-    expect(await fromError).toEqual({ reason: 'UNSUPPORTED', success: false });
+    await expect(promise).rejects.toEqual({ status: 'error' });
   });
 
   test('autoPnPDetect passes a fail reason on', async () => {
@@ -70,10 +72,15 @@ describe('cameraCalibrationApi auto PnP commands', () => {
     });
   });
 
-  test('autoPnPMatch reports a backend without the command as UNSUPPORTED', async () => {
-    const promise = cameraCalibrationApi.autoPnPMatch([[0, 0]], [[]]);
+  test('autoPnPMatch never reports UNSUPPORTED: the backend has detected by then, so the reply is a failure', async () => {
+    const fromMessage = cameraCalibrationApi.autoPnPMatch([[0, 0]], [[]]);
 
     socketOptions.onMessage(unknownCommand);
-    expect(await promise).toEqual({ reason: 'UNSUPPORTED', success: false });
+    await expect(fromMessage).rejects.toEqual({ message: 'BAD_PARAM_TYPE' });
+
+    const fromError = cameraCalibrationApi.autoPnPMatch([[0, 0]], [[]]);
+
+    socketOptions.onError({ status: 'error' });
+    await expect(fromError).rejects.toEqual({ status: 'error' });
   });
 });
