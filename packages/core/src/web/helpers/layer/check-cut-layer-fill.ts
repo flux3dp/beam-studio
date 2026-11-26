@@ -35,36 +35,52 @@ const isFilled = (elem: Element): boolean => {
   return a !== 0 && (r * 11 + g * 16 + b * 5) / 32 <= 248;
 };
 
-// clipPath / mask children only shape other elements, they are never engraved themselves
-const isEngravable = (elem: Element) => !elem.closest('clipPath, mask');
+// below root, defs content is only drawn through a reference and clipPath / mask content only shapes
+// other elements; root itself may sit in the document defs, as every symbol does
+const isDrawn = (elem: Element, root: Element): boolean => {
+  for (let node = elem.parentElement; node && node !== root; node = node.parentElement) {
+    if (['clipPath', 'defs', 'mask'].includes(node.tagName)) return false;
+  }
 
-const doesContentContainFill = (root: Element): boolean =>
-  Array.from(root.querySelectorAll(`image, ${shapeSelector}`)).some(
-    (elem) => isEngravable(elem) && (elem.tagName === 'image' || isFilled(elem)),
+  return true;
+};
+
+const getUseTarget = (use: Element): Element | null => {
+  const href = use.getAttribute('xlink:href') || use.getAttribute('href');
+  const target = href ? document.querySelector(href) : null;
+  // a use may point at its rasterized image symbol, the original symbol holds the real content
+  const originId = target?.getAttribute('data-origin-symbol');
+
+  return (originId && document.getElementById(originId)) || target;
+};
+
+const doesContentContainFill = (root: Element, visited: Set<Element>): boolean =>
+  Array.from(root.querySelectorAll(`image, use, ${shapeSelector}`)).some(
+    (elem) => isDrawn(elem, root) && doesElemContainFill(elem, visited),
   );
 
-const getUseSymbol = (use: Element): Element | null => {
-  const href = use.getAttribute('xlink:href') || use.getAttribute('href');
-  const symbol = href ? document.querySelector(href) : null;
-  // a use may point at its rasterized image symbol, the original symbol holds the real content
-  const originId = symbol?.getAttribute('data-origin-symbol');
+const doesElemContainFill = (elem: Element, visited: Set<Element>): boolean => {
+  if (elem.tagName === 'image') return true;
 
-  return (originId && document.getElementById(originId)) || symbol;
+  if (elem.tagName !== 'use') {
+    return elem.matches(shapeSelector) ? isFilled(elem) : doesContentContainFill(elem, visited);
+  }
+
+  // wireframe imports ("nolayer") turn every symbol child into a stroke-only outline
+  if (elem.getAttribute('data-wireframe') === 'true') return false;
+
+  const target = getUseTarget(elem);
+
+  if (!target || visited.has(target) || target.getAttribute('data-wireframe') === 'true') return false;
+
+  visited.add(target);
+
+  // ponytail: the target's own fill is checked, a fill set only on the <use> (inherited into the
+  // shadow copy) is not; resolve it through the use if stroke-only designs styled that way show up
+  return doesElemContainFill(target, visited);
 };
 
-export const doesLayerContainFill = (layer: Element): boolean => {
-  // shapes inside the layer itself; symbol content lives in defs, outside the layer
-  if (doesContentContainFill(layer)) return true;
-
-  return Array.from(layer.querySelectorAll('use')).some((use) => {
-    // wireframe imports ("nolayer") turn every symbol child into a stroke-only outline
-    if (use.getAttribute('data-wireframe') === 'true') return false;
-
-    const symbol = getUseSymbol(use);
-
-    return Boolean(symbol && symbol.getAttribute('data-wireframe') !== 'true' && doesContentContainFill(symbol));
-  });
-};
+export const doesLayerContainFill = (layer: Element): boolean => doesContentContainFill(layer, new Set());
 
 export const hasCutLayerWithFill = (layers: Element[]): boolean =>
   layers.some((layer) => isCutPreset(getData(layer, 'configName')) && doesLayerContainFill(layer));

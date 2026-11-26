@@ -60,6 +60,23 @@ describe('check-cut-layer-fill', () => {
     ).toBe(false);
   });
 
+  test('defs content counts only when drawn through a use', () => {
+    // parseSvgByLayer copies the file's <defs> into the symbol; a clip shape referenced from there is not drawn
+    const clipByRef =
+      '<symbol id="s"><defs><path id="p" fill="#000" /></defs><clipPath><use xlink:href="#p" /></clipPath>' +
+      '<path fill="none" /></symbol>';
+
+    expect(doesLayerContainFill(setup(clipByRef, '<use xlink:href="#s" />'))).toBe(false);
+    expect(
+      doesLayerContainFill(
+        setup(
+          '<symbol id="s"><defs><path id="p" fill="#000" /></defs><use xlink:href="#p" /></symbol>',
+          '<use xlink:href="#s" />',
+        ),
+      ),
+    ).toBe(true);
+  });
+
   test('only cut presets count', () => {
     expect(hasCutLayerWithFill([setup('', '<path fill="#000" />')])).toBe(true);
     expect(hasCutLayerWithFill([setup('', '<path fill="#000" />', 'wood_engraving')])).toBe(false);
