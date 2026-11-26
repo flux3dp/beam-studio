@@ -1,6 +1,5 @@
 import React, { useCallback, useRef, useState } from 'react';
 
-import { sprintf } from 'sprintf-js';
 import { match } from 'ts-pattern';
 
 import alertCaller from '@core/app/actions/alert-caller';
@@ -22,6 +21,7 @@ import { downloadCalibrationFile } from '../common/downloadCalibrationFile';
 import Instruction from '../common/Instruction';
 import ProcessingDialog from '../common/ProcessingDialog';
 import showHighResidualAlert from '../common/showHighResidualAlert';
+import showNotEnoughMarksAlert from '../common/showNotEnoughMarksAlert';
 import SolvePnP from '../common/SolvePnP';
 
 import CalibrateChessBoard from './CalibrateChessBoard';
@@ -82,6 +82,10 @@ const AdorCalibration = ({
   }, []);
   // whether the first pose came from the automatic step: decides the step after ELEVATED_CUT and its Back
   const isAutoSolved = useRef(false);
+  // false once the backend turned out not to know the automatic commands: the second height then skips them too
+  const isAutoSupported = useRef(true);
+  // per height: where the manual step starts from when it is chosen after the automatic one came up short
+  const manualInitialPoints = useRef<Array<Array<[number, number]> | undefined>>([]);
   const isUnmounted = useIsUnmounted();
 
   const handleFirstPose = async (rvec: number[][], tvec: number[][]) => {
@@ -155,13 +159,16 @@ const AdorCalibration = ({
   const renderAutoSolve = ({
     dh,
     engraveStep,
+    heightIndex,
     manualStep,
     onSolved,
   }: {
     dh: number;
     /** where to go to engrave again */
     engraveStep: Step;
-    /** the manual step for a backend without the auto commands */
+    /** 0 for the first height, 1 for the raised one */
+    heightIndex: number;
+    /** the manual step, for a backend without the auto commands or when the user chooses it after missing marks */
     manualStep: Step;
     /** false when it could not finish: the step then returns to the engraving step instead of spinning on */
     onSolved: (rvec: number[][], tvec: number[][]) => Promise<boolean | void>;
@@ -196,21 +203,30 @@ const AdorCalibration = ({
             // backend without the commands: the manual steps still work
             if (located.reason === 'UNSUPPORTED') {
               isAutoSolved.current = false;
+              isAutoSupported.current = false;
               setStep(manualStep);
 
               return;
             }
 
-            alertCaller.popUpError({
-              message:
-                located.reason === 'NOT_ENOUGH_MARKS'
-                  ? sprintf(tCali.auto_solve_pnp_not_enough_marks, {
-                      found: located.matched ?? 0,
-                      total: adorPnPPoints.length,
-                    })
-                  : `${tCali.failed_to_calibrate_with_pictures} (${located.reason})`,
-            });
             setStep(engraveStep);
+
+            if (located.reason === 'NOT_ENOUGH_MARKS') {
+              showNotEnoughMarksAlert({
+                found: located.matched ?? 0,
+                onManual: () => {
+                  if (isUnmounted.current) return;
+
+                  if (heightIndex === 0) isAutoSolved.current = false;
+
+                  manualInitialPoints.current[heightIndex] = located.initialPoints;
+                  setStep(manualStep);
+                },
+                total: adorPnPPoints.length,
+              });
+            } else {
+              alertCaller.popUpError({ message: `${tCali.failed_to_calibrate_with_pictures} (${located.reason})` });
+            }
 
             return;
           }
@@ -402,6 +418,7 @@ const AdorCalibration = ({
       <SolvePnP
         dh={calibratingParam.current.dh1!}
         hasNext
+        initialPoints={manualInitialPoints.current[0]}
         onBack={() => setStep(Step.SOLVE_PNP_INSTRUCTION_1)}
         onClose={onClose}
         onNext={handleFirstPose}
@@ -434,7 +451,7 @@ const AdorCalibration = ({
           await deviceMaster.doAdorCalibrationV2();
           progressCaller.update(PROGRESS_ID, { message: tCali.preparing_to_take_picture });
           await prepareToTakePicture();
-          setStep(isAutoSolved.current ? Step.AUTO_SOLVE_PNP_2 : Step.SOLVE_PNP_2);
+          setStep(isAutoSupported.current ? Step.AUTO_SOLVE_PNP_2 : Step.SOLVE_PNP_2);
         } catch (err) {
           console.error(err);
         } finally {
@@ -454,6 +471,7 @@ const AdorCalibration = ({
       renderAutoSolve({
         dh: calibratingParam.current.dh1!,
         engraveStep: Step.PUT_PAPER,
+        heightIndex: 0,
         manualStep: Step.SOLVE_PNP_INSTRUCTION_1,
         onSolved: handleFirstPose,
       }),
@@ -462,6 +480,7 @@ const AdorCalibration = ({
       renderAutoSolve({
         dh: calibratingParam.current.dh2!,
         engraveStep: Step.ELEVATED_CUT,
+        heightIndex: 1,
         manualStep: Step.SOLVE_PNP_2,
         onSolved: handleSecondPose,
       }),
@@ -469,6 +488,7 @@ const AdorCalibration = ({
     .otherwise(() => (
       <SolvePnP
         dh={calibratingParam.current.dh2!}
+        initialPoints={manualInitialPoints.current[1]}
         onBack={() => setStep(Step.ELEVATED_CUT)}
         onClose={onClose}
         onNext={async (rvec, tvec) => {

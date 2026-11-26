@@ -72,13 +72,22 @@ jest.mock(
       mockShowHighResidualAlert(...args),
 );
 
+const mockShowNotEnoughMarksAlert = jest.fn();
+
+jest.mock(
+  '../common/showNotEnoughMarksAlert',
+  () =>
+    (...args: any[]) =>
+      mockShowNotEnoughMarksAlert(...args),
+);
+
 jest.mock('../common/checkpointData', () => ({ applyCheckpointData: jest.fn() }));
 jest.mock('../common/downloadCalibrationFile', () => ({ downloadCalibrationFile: jest.fn() }));
 jest.mock('../common/ChArUco', () => () => <div data-testid="charuco" />);
 jest.mock('./CalibrateChessBoard', () => () => <div data-testid="chessboard" />);
-jest.mock('../common/SolvePnP', () => ({ dh, onNext }: any) => (
+jest.mock('../common/SolvePnP', () => ({ dh, initialPoints, onNext }: any) => (
   <div data-testid="solve-pnp">
-    dh:{dh}
+    dh:{dh} initial:{JSON.stringify(initialPoints ?? null)}
     <button onClick={() => onNext([[7]], [[8]])} type="button">
       solve-next
     </button>
@@ -261,10 +270,7 @@ describe('AdorCalibration automatic solve steps', () => {
     await runAutoStep(utils, t.start_engrave, 1);
     await runAutoStep(utils, 'elevate-next', 2);
 
-    const { message } = mockPopUpError.mock.calls[0][0];
-
-    expect(message).toContain('8');
-    expect(message).toContain('7');
+    expect(mockShowNotEnoughMarksAlert).toHaveBeenCalledWith(expect.objectContaining({ found: 7, total: 8 }));
     expect(utils.getByTestId('elevate')).toBeInTheDocument();
     expect(mockExtrinsicRegression).not.toHaveBeenCalled();
 
@@ -293,9 +299,53 @@ describe('AdorCalibration automatic solve steps', () => {
 
     await runAutoStep(utils, t.start_engrave, 1);
 
-    expect(mockPopUpError).toHaveBeenCalledTimes(1);
+    expect(mockShowNotEnoughMarksAlert).toHaveBeenCalledWith(expect.objectContaining({ found: 5, total: 8 }));
     expect(utils.getByTestId('title')).toHaveTextContent(t.put_paper);
     expect(mockSaveCheckPoint).not.toHaveBeenCalled();
+  });
+
+  test('the manual step chosen at the first height starts from the found points, and the second height is automatic again', async () => {
+    const initialPoints = Array.from({ length: 8 }, (_, i) => [i, i * 10]);
+
+    mockAutoLocateMarks
+      .mockResolvedValueOnce({ initialPoints, matched: 6, reason: 'NOT_ENOUGH_MARKS', success: false })
+      .mockResolvedValue(located);
+
+    const utils = renderDialog();
+
+    await runAutoStep(utils, t.start_engrave, 1);
+    act(() => mockShowNotEnoughMarksAlert.mock.calls[0][0].onManual());
+    fireEvent.click(utils.getByText(t.next));
+    expect(utils.getByTestId('solve-pnp')).toHaveTextContent(`initial:${JSON.stringify(initialPoints)}`);
+
+    await act(async () => {
+      fireEvent.click(utils.getByText('solve-next'));
+    });
+    await waitFor(() => expect(utils.getByTestId('elevate')).toBeInTheDocument());
+    await runAutoStep(utils, 'elevate-next', 2, true);
+    // the first pose is the manual one (7 / 8); the second is the first automatic solve of this run (1 / 2)
+    expect(mockExtrinsicRegression).toHaveBeenCalledWith([[[7]], [[1]]], [[[8]], [[2]]], [7, 22]);
+  });
+
+  test('the manual step chosen at the second height starts from the found points and keeps the first pose', async () => {
+    const initialPoints = Array.from({ length: 8 }, (_, i) => [i + 1, i * 5]);
+
+    mockAutoLocateMarks
+      .mockResolvedValueOnce(located)
+      .mockResolvedValueOnce({ initialPoints, matched: 7, reason: 'NOT_ENOUGH_MARKS', success: false });
+
+    const utils = renderDialog();
+
+    await runAutoStep(utils, t.start_engrave, 1);
+    await runAutoStep(utils, 'elevate-next', 2);
+    act(() => mockShowNotEnoughMarksAlert.mock.calls[0][0].onManual());
+    expect(utils.getByTestId('solve-pnp')).toHaveTextContent(`initial:${JSON.stringify(initialPoints)}`);
+
+    await act(async () => {
+      fireEvent.click(utils.getByText('solve-next'));
+    });
+    await waitFor(() => expect(mockOnClose).toHaveBeenCalledWith(true));
+    expect(mockExtrinsicRegression).toHaveBeenCalledWith([[[1]], [[7]]], [[[2]], [[8]]], [7, 22]);
   });
 
   test('falls back to the manual steps at both heights with a backend that lacks the commands', async () => {
