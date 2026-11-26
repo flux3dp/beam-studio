@@ -504,6 +504,12 @@ const lang: ILang = {
         advice_message_2: '가져오기 전에 파일을 단순화하는 것이 좋습니다.',
         confirmation_message: '계속하시겠습니까?',
         element_count_warning: '요소 수: %s (권장: < %s)',
+        export_guide: '%s에서 내보내는 방법 알아보기',
+        export_guide_urls: {
+          affinity: 'https://support.flux3dp.com/hc/en-us/articles/360001558716',
+          illustrator: 'https://support.flux3dp.com/hc/en-us/articles/4405279401487',
+          inkscape: 'https://support.flux3dp.com/hc/en-us/articles/4405279437839',
+        },
         file_size_warning: '파일 크기: %sMB (권장: < %sMB)',
         intro_message: '파일이 너무 크거나 복잡할 수 있습니다:',
         path_d_command_count_warning: '명령 수: %s (권장: < %s)',

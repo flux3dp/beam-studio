@@ -612,10 +612,12 @@ export default {
   showRadioSelectDialog: <T,>({
     options,
     defaultValue = options[0].value,
+    description,
     id = 'radio-select',
     title,
   }: {
     defaultValue?: T;
+    description?: React.ReactNode;
     id?: string;
     options: Array<{ label: string; value: T }>;
     title: string;
@@ -629,6 +631,7 @@ export default {
         id,
         <RadioSelectDialog<T>
           defaultValue={defaultValue}
+          description={description}
           onCancel={() => {
             popDialogById(id);
             resolve(null);
