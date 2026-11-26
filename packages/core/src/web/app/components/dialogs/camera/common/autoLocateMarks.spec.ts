@@ -140,6 +140,35 @@ describe('autoLocateMarks', () => {
     expect(cameraCalls).toEqual([...allExposures.map((e) => ['exposure', e]), ['exposure', 320]]);
   });
 
+  test('hands the found marks back with the predicted ones in the gaps when marks are missing', async () => {
+    mockAutoPnPMatch.mockResolvedValue({
+      matched: 6,
+      points: [...points.slice(0, 6), null, null],
+      predicted: points.map(([x, y]) => [x + 100, y + 100]),
+      reason: 'NOT_ENOUGH_MARKS',
+      rms: 0.3,
+      success: false,
+    });
+
+    const res = await run();
+
+    expect(res).toMatchObject({ matched: 6, reason: 'NOT_ENOUGH_MARKS', success: false });
+    expect((res as any).initialPoints).toEqual([...points.slice(0, 6), [106, 160], [107, 170]]);
+  });
+
+  test('hands back no starting points when the backend predicts none', async () => {
+    mockAutoPnPMatch.mockResolvedValue({
+      matched: 2,
+      points: [points[0], points[1], null, null, null, null, null, null],
+      predicted: null,
+      reason: 'NOT_ENOUGH_MARKS',
+      rms: null,
+      success: false,
+    });
+
+    expect(await run()).toEqual({ matched: 2, reason: 'NOT_ENOUGH_MARKS', rms: null, success: false });
+  });
+
   test('reports missing marks after both rounds', async () => {
     mockAutoPnPMatch.mockResolvedValue({ matched: 6, reason: 'NOT_ENOUGH_MARKS', rms: 0.3, success: false });
 

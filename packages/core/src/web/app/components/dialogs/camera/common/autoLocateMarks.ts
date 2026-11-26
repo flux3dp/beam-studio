@@ -6,18 +6,24 @@ import type { FisheyeCaliParameters } from '@core/interfaces/FisheyePreview';
 
 export type AutoLocateMarksResult =
   | {
+      /**
+       * after `NOT_ENOUGH_MARKS`: a starting position for every mark, for placing them by hand. The found
+       * marks are where they were found, the missing ones where the found ones predict them. Absent when too
+       * few were found to predict from
+       */
+      initialPoints?: Array<[number, number]>;
+      matched?: number;
+      reason: 'CANCELLED' | 'NO_IMAGE' | AutoPnPFailReason;
+      rms?: null | number;
+      success: false;
+    }
+  | {
       /** every mark was found but the residual is over the limit: the caller decides whether to go on */
       highResidual: boolean;
       /** one image point per reference point, in the px space `solvePnPCalculate` takes */
       points: Array<[number, number]>;
       rms: number;
       success: true;
-    }
-  | {
-      matched?: number;
-      reason: 'CANCELLED' | 'NO_IMAGE' | AutoPnPFailReason;
-      rms?: null | number;
-      success: false;
     };
 
 interface Options {
@@ -150,9 +156,10 @@ const autoLocateMarks = async ({
     const points = matchRes.points as Array<[number, number]> | undefined;
 
     if (!points || (!matchRes.success && !(highResidual && points.every(Boolean)))) {
-      const { matched, reason, rms } = matchRes as Extract<typeof matchRes, { success: false }>;
+      const { matched, predicted, reason, rms } = matchRes as Extract<typeof matchRes, { success: false }>;
+      const initialPoints = predicted && matchRes.points?.map((point, i) => point ?? predicted[i]);
 
-      return { matched, reason, rms, success: false };
+      return { initialPoints: initialPoints || undefined, matched, reason, rms, success: false };
     }
 
     return { highResidual, points, rms: matchRes.rms ?? 0, success: true };

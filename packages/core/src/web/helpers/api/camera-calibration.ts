@@ -392,6 +392,8 @@ class CameraCalibrationApi {
         matched?: number;
         /** null for a mark that was not found; complete after HIGH_RESIDUAL */
         points?: Array<[number, number] | null>;
+        /** where each mark should be according to the ones found; null with fewer than 4 found, absent before 2.5.9 */
+        predicted?: Array<[number, number]> | null;
         reason: AutoPnPFailReason;
         rms?: null | number;
         success: false;
