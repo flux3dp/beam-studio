@@ -244,6 +244,7 @@ Edge cases and expected behaviour:
 | Touched file | Caller — behaviour that must stay |
 |---|---|
 | `helpers/api/camera-calibration.ts` (methods added) | `SolvePnP.tsx` — `solvePnPFindCorners` / `solvePnPCalculate` requests and responses unchanged |
+| `helpers/api/camera-calibration.ts` (commands queued, review of #1063, 2026-11-26) | Every caller of `cameraCalibrationApi` (the calibration dialogs of every model including Promark, `camera-calibration-helper.ts`) — same requests and replies, one command at a time (`p-queue`, as in `open-cv.ts`): a command sent while another waits for its reply is held until that reply arrives, instead of taking it. A command sends one tick later than before. A reply that does not come within 2 minutes (10 for `doFisheyeCalibration` and `calibrateCamera`) rejects with a timeout and frees the queue; before, such a call waited for ever |
 | | `Beamo2Calibration.tsx`, `WideAngleCamera/index.tsx` (SOLVE_OTHER_PNP) — `solvePnPCalculate` result shape unchanged (a new `rms` field is additive) |
 | `Beamo2Calibration.tsx` (solve steps replaced) | PRE_CHESSBOARD, CHESSBOARD, PUT_PAPER, SOLVE_OTHER_PNP, CHECK_PNP and the saved V4 parameter shape unchanged |
 | | `releaseMachine` on unmount and at Finish, and `DoorChecker` usage unchanged. `releaseMachine` now also writes the machine's reported status into `currentDevice.info.st_id` after leaving raw mode (the next discovery broadcast replaces `info` anyway) |

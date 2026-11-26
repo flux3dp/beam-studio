@@ -3,6 +3,8 @@
  * API camera calibration
  * Ref: none
  */
+import PQueue from 'p-queue';
+
 import type {
   FisheyeCaliParameters,
   FisheyeCameraParametersV2Cali,
@@ -23,6 +25,11 @@ export type AutoPnPFailReason = 'HIGH_RESIDUAL' | 'NOT_ENOUGH_MARKS' | 'UNSUPPOR
  */
 const isUnknownCommand = (response: { status?: string }): boolean => response.status === 'Error';
 
+// A reply that never comes must not hold the queue for good. Matching can take most of a minute on a photo full
+// of strays; the two calibrations work through a whole photo set.
+const COMMAND_TIMEOUT_MS = 2 * 60 * 1000;
+const LONG_COMMAND_TIMEOUT_MS = 10 * 60 * 1000;
+
 class CameraCalibrationApi {
   private ws: any; // websocket
 
@@ -31,6 +38,17 @@ class CameraCalibrationApi {
     onFatal: (response: any) => void;
     onMessage: (response: any) => void;
   };
+
+  /**
+   * Every command swaps the shared handlers before it sends, so a command sent while another still waits would
+   * take that one's reply. They run one at a time, as in `open-cv.ts`.
+   */
+  private commandQueue = new PQueue({ concurrency: 1 });
+
+  private enqueue = <T>(
+    executor: (resolve: (value: T) => void, reject: (reason?: unknown) => void) => void,
+    timeout = COMMAND_TIMEOUT_MS,
+  ): Promise<T> => this.commandQueue.add(() => new Promise<T>(executor), { timeout }) as Promise<T>;
 
   constructor() {
     this.events = {
@@ -54,7 +72,7 @@ class CameraCalibrationApi {
   }
 
   upload(data: ArrayBuffer | Blob): Promise<any> {
-    return new Promise((resolve, reject) => {
+    return this.enqueue((resolve, reject) => {
       this.events.onMessage = (response) => {
         switch (response.status) {
           case 'ok':
@@ -91,7 +109,7 @@ class CameraCalibrationApi {
   }
 
   startFisheyeCalibrate(): Promise<boolean> {
-    return new Promise((resolve, reject) => {
+    return this.enqueue((resolve, reject) => {
       this.events.onMessage = (response) => {
         switch (response.status) {
           case 'ok':
@@ -116,7 +134,7 @@ class CameraCalibrationApi {
   }
 
   addFisheyeCalibrateImg(height: number, img: ArrayBuffer | Blob): Promise<boolean> {
-    return new Promise((resolve, reject) => {
+    return this.enqueue((resolve, reject) => {
       this.events.onMessage = (response) => {
         switch (response.status) {
           case 'ok':
@@ -147,7 +165,7 @@ class CameraCalibrationApi {
   }
 
   doFisheyeCalibration(onProgress?: (val: number) => void): Promise<FisheyeCameraParametersV2Cali> {
-    return new Promise((resolve, reject) => {
+    return this.enqueue((resolve, reject) => {
       this.events.onMessage = (response) => {
         switch (response.status) {
           case 'ok':
@@ -177,7 +195,7 @@ class CameraCalibrationApi {
         console.log('on fatal', response);
       };
       this.ws.send('do_fisheye_calibration');
-    });
+    }, LONG_COMMAND_TIMEOUT_MS);
   }
 
   calibrateChessboard(
@@ -198,7 +216,7 @@ class CameraCalibrationApi {
       }
     | { data: { reason: string }; success: false }
   > {
-    return new Promise((resolve, reject) => {
+    return this.enqueue((resolve, reject) => {
       let blob: Blob;
 
       this.events.onMessage = (response) => {
@@ -251,7 +269,7 @@ class CameraCalibrationApi {
         success: false;
       }
   > =>
-    new Promise((resolve, reject) => {
+    this.enqueue((resolve, reject) => {
       let data = {} as { points: Array<[number, number]> };
 
       this.events.onMessage = (response) => {
@@ -298,7 +316,7 @@ class CameraCalibrationApi {
     data: { rms?: number; rvec: number[][]; tvec: number[][] };
     success: boolean;
   }> =>
-    new Promise((resolve, reject) => {
+    this.enqueue((resolve, reject) => {
       let success = true;
       let data = {} as { rms?: number; rvec: number[][]; tvec: number[][] };
 
@@ -336,7 +354,7 @@ class CameraCalibrationApi {
   autoPnPDetect = (
     img: ArrayBuffer | Blob,
   ): Promise<{ blobs: AutoPnPBlob[]; success: true; weak: AutoPnPBlob[] } | { reason: string; success: false }> =>
-    new Promise((resolve, reject) => {
+    this.enqueue((resolve, reject) => {
       this.events.onMessage = (response) => {
         if (response.status === 'continue') {
           this.ws.send(img);
@@ -379,7 +397,7 @@ class CameraCalibrationApi {
         success: false;
       }
   > =>
-    new Promise((resolve, reject) => {
+    this.enqueue((resolve, reject) => {
       this.events.onMessage = ({ status, ...rest }) => {
         if (status === 'ok') resolve({ ...rest, success: true });
         else if (status === 'fail') resolve({ ...rest, success: false });
@@ -401,7 +419,7 @@ class CameraCalibrationApi {
   ): Promise<
     { blob: Blob; success: true } | { data: { info: string; reason: string; status: string }; success: false }
   > =>
-    new Promise((resolve, reject) => {
+    this.enqueue((resolve, reject) => {
       this.events.onMessage = (response) => {
         if (response instanceof Blob) {
           resolve({ blob: response, success: true });
@@ -429,7 +447,7 @@ class CameraCalibrationApi {
     });
 
   remapImage = (img: ArrayBuffer | Blob, params?: { d: number[][]; k: number[][] }): Promise<{ blob: Blob }> => {
-    return new Promise((resolve, reject) => {
+    return this.enqueue((resolve, reject) => {
       this.events.onMessage = (response) => {
         if (response instanceof Blob) {
           resolve({ blob: response });
@@ -455,7 +473,7 @@ class CameraCalibrationApi {
   };
 
   updateData = (data: FisheyeCaliParameters): Promise<boolean> =>
-    new Promise((resolve, reject) => {
+    this.enqueue((resolve, reject) => {
       this.events.onMessage = (response) => {
         if (response.status === 'ok') {
           resolve(true);
@@ -484,7 +502,7 @@ class CameraCalibrationApi {
     data?: { rvec_polyfit: number[][]; tvec_polyfit: number[][] };
     success: boolean;
   }> =>
-    new Promise((resolve, reject) => {
+    this.enqueue((resolve, reject) => {
       let success = true;
       let data = {} as { rvec_polyfit: number[][]; tvec_polyfit: number[][] };
 
@@ -525,7 +543,7 @@ class CameraCalibrationApi {
   ): Promise<
     { imgp: number[][]; objp: number[][]; ratio: number; success: true } | { reason: string; success: false }
   > =>
-    new Promise((resolve, reject) => {
+    this.enqueue((resolve, reject) => {
       this.events.onMessage = (response) => {
         if (response.status === 'continue') {
           this.ws.send(img);
@@ -570,7 +588,7 @@ class CameraCalibrationApi {
       }
     | { reason: string; success: false }
   > =>
-    new Promise((resolve, reject) => {
+    this.enqueue((resolve, reject) => {
       this.events.onMessage = (response) => {
         if (response.status === 'fail') {
           console.log('fail', response);
@@ -601,7 +619,7 @@ class CameraCalibrationApi {
       } else {
         this.ws.send(`calibrate_camera ${objPointsStr} ${imgPointsStr} ${imageSizeStr} ${isFisheye}`);
       }
-    });
+    }, LONG_COMMAND_TIMEOUT_MS);
 }
 
 export const cameraCalibrationApi = new CameraCalibrationApi();
