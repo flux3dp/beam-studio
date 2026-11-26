@@ -22,6 +22,14 @@ export const EXPOSURE_ROUNDS = [
 
 export type AutoSolvePnPResult =
   | {
+      /** after `NOT_ENOUGH_MARKS`: starting points per quadrant for the manual steps (see `autoLocateMarks`) */
+      imgPoints?: Record<Region, Array<[number, number]>>;
+      matched?: number;
+      reason: 'CANCELLED' | 'NO_IMAGE' | 'SOLVE_PNP_FAILED' | AutoPnPFailReason;
+      rms?: null | number;
+      success: false;
+    }
+  | {
       /** every mark was found but the residual is over the gate: the caller asks the user before going on */
       highResidual: boolean;
       imgPoints: Record<Region, Array<[number, number]>>;
@@ -29,13 +37,13 @@ export type AutoSolvePnPResult =
       rvecs: Record<Region, number[][]>;
       success: true;
       tvecs: Record<Region, number[][]>;
-    }
-  | {
-      matched?: number;
-      reason: 'CANCELLED' | 'NO_IMAGE' | 'SOLVE_PNP_FAILED' | AutoPnPFailReason;
-      rms?: null | number;
-      success: false;
     };
+
+const splitByRegion = (points: Array<[number, number]>) =>
+  Object.fromEntries(REGIONS.map((region, i) => [region, points.slice(i * 4, i * 4 + 4)])) as Record<
+    Region,
+    Array<[number, number]>
+  >;
 
 /**
  * Locate the 16 engraved marks and solve the four quadrant poses without user input.
@@ -48,7 +56,11 @@ const autoSolvePnP = async (
   const refPoints = REGIONS.flatMap((region) => [...bm2PnPPoints[region]]) as Array<[number, number]>;
   const located = await autoLocateMarks({ exposureRounds: EXPOSURE_ROUNDS, isCancelled, params, refPoints });
 
-  if (!located.success) return located;
+  if (!located.success) {
+    const { initialPoints, ...failure } = located;
+
+    return { ...failure, imgPoints: initialPoints && splitByRegion(initialPoints) };
+  }
 
   const result = {
     highResidual: located.highResidual,

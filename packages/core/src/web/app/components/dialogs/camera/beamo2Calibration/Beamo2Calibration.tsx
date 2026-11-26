@@ -1,6 +1,5 @@
 import React, { type ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 
-import { sprintf } from 'sprintf-js';
 import { match } from 'ts-pattern';
 
 import alertCaller from '@core/app/actions/alert-caller';
@@ -32,6 +31,7 @@ import Instruction from '../common/Instruction';
 import moveLaserHead from '../common/moveLaserHead';
 import ProcessingDialog from '../common/ProcessingDialog';
 import showHighResidualAlert from '../common/showHighResidualAlert';
+import showNotEnoughMarksAlert from '../common/showNotEnoughMarksAlert';
 import SolvePnP from '../common/SolvePnP';
 
 import autoSolvePnP from './autoSolvePnP';
@@ -319,13 +319,19 @@ const Beamo2Calibration = ({ currentData, isAdvanced, onClose, onSwitchToAdvance
                 // backend without the commands: the manual steps still work
                 .with('UNSUPPORTED', () => setStep(Steps.SOLVE_PNP_INSTRUCTION))
                 .with('NOT_ENOUGH_MARKS', () => {
-                  alertCaller.popUpError({
-                    message: sprintf(tCalibration.auto_solve_pnp_not_enough_marks, {
-                      found: res.matched ?? 0,
-                      total: 16,
-                    }),
-                  });
                   setStep(Steps.PUT_PAPER);
+                  showNotEnoughMarksAlert({
+                    found: res.matched ?? 0,
+                    onManual: () => {
+                      if (isUnmounted.current) return;
+
+                      // each quadrant's manual step starts from these, as it does when coming back to one
+                      if (res.imgPoints) updateParam({ imgPoints1: res.imgPoints });
+
+                      setStep(Steps.SOLVE_PNP_INSTRUCTION);
+                    },
+                    total: 16,
+                  });
                 })
                 .otherwise((reason) => {
                   alertCaller.popUpError({ message: `${tCalibration.failed_to_calibrate_with_pictures} (${reason})` });

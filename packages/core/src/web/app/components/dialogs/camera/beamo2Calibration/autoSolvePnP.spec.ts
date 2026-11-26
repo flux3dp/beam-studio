@@ -77,6 +77,26 @@ describe('autoSolvePnP', () => {
     expect(mockSolvePnPCalculate).not.toHaveBeenCalled();
   });
 
+  test('splits the starting points of a failure by quadrant, in the order of the reference points', async () => {
+    mockAutoLocateMarks.mockResolvedValue({
+      initialPoints: points,
+      matched: 14,
+      reason: 'NOT_ENOUGH_MARKS',
+      success: false,
+    });
+
+    const res = await autoSolvePnP(params);
+
+    expect(res).toMatchObject({ matched: 14, reason: 'NOT_ENOUGH_MARKS', success: false });
+    expect((res as any).imgPoints).toEqual({
+      bottomLeft: points.slice(8, 12),
+      bottomRight: points.slice(12, 16),
+      topLeft: points.slice(0, 4),
+      topRight: points.slice(4, 8),
+    });
+    expect(res).not.toHaveProperty('initialPoints');
+  });
+
   test('solves no further quadrant once cancelled', async () => {
     const res = await autoSolvePnP(params, () => mockSolvePnPCalculate.mock.calls.length >= 2);
 
