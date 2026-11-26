@@ -471,6 +471,7 @@ const lang: ILang = {
       bug_report: '錯誤回報',
       change_workarea_before_preview: '%s 的工作範圍與目前設定的工作範圍不相符，是否要切換目前的工作範圍？',
       convert_to_path_fail: '轉換成路徑失敗。',
+      cut_layer_contains_fill: '切割圖層偵測到填充路徑或圖片，將會導致加工時間較長，建議檢查檔案輸出方式。',
       disassemble_use: {
         clip_path_warning: '圖檔中含有剪裁路徑（Clipping Mask），無法解散圖檔。',
         execute_time_warning: '正要解散外部匯入的 DXF 或是 SVG ，在含有物件較多的情況，可能會需要等一陣子，是否確定解散？',

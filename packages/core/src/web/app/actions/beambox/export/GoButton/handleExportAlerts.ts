@@ -24,6 +24,7 @@ import alertConfig from '@core/helpers/api/alert-config';
 import { swiftrayClient } from '@core/helpers/api/swiftray-client';
 import { getDocumentLensProfile } from '@core/helpers/device/promark/lens-profiles';
 import promarkDataStore from '@core/helpers/device/promark/promark-data-store';
+import { hasCutLayerWithFill, showCutLayerFillAlert } from '@core/helpers/layer/check-cut-layer-fill';
 import { getData } from '@core/helpers/layer/layer-config-helper';
 import { getLayerName } from '@core/helpers/layer/layer-helper';
 import { hasModuleLayer } from '@core/helpers/layer-module/layer-module-helper';
@@ -93,6 +94,7 @@ export const handleExportAlerts = async (device: IDeviceInfo, lang: ILang): Prom
           buttonType: alertConstants.CONFIRM_CANCEL,
           message: lang.topbar.alerts.pwm_unavailable,
           onCancel: () => resolve(false),
+          onClose: () => resolve(false),
           onConfirm: () => resolve(true),
           type: alertConstants.SHOW_POPUP_ERROR,
         });
@@ -119,6 +121,7 @@ export const handleExportAlerts = async (device: IDeviceInfo, lang: ILang): Prom
           buttonType: alertConstants.CONFIRM_CANCEL,
           message: lang.topbar.alerts.laser_frequency_unavailable,
           onCancel: () => resolve(false),
+          onClose: () => resolve(false),
           onConfirm: () => resolve(true),
           type: alertConstants.SHOW_POPUP_ERROR,
         });
@@ -142,6 +145,7 @@ export const handleExportAlerts = async (device: IDeviceInfo, lang: ILang): Prom
           buttonType: alertConstants.CONFIRM_CANCEL,
           message: lang.topbar.alerts.job_origin_unavailable,
           onCancel: () => resolve(false),
+          onClose: () => resolve(false),
           onConfirm: () => resolve(true),
           type: alertConstants.SHOW_POPUP_ERROR,
         });
@@ -190,6 +194,7 @@ export const handleExportAlerts = async (device: IDeviceInfo, lang: ILang): Prom
           text: lang.alert.dont_show_again,
         },
         message: lang.beambox.popup.auto_feeder_origin,
+        onClose: () => resolve(),
       });
     });
   }
@@ -214,6 +219,7 @@ export const handleExportAlerts = async (device: IDeviceInfo, lang: ILang): Prom
           message: `${details.join('\n')}\n\n${lang.inner_engraving.continue_export}`,
           messageIcon: 'warning',
           onCancel: () => resolve(false),
+          onClose: () => resolve(false),
           onConfirm: () => resolve(true),
         });
       });
@@ -240,6 +246,7 @@ export const handleExportAlerts = async (device: IDeviceInfo, lang: ILang): Prom
         },
         message: lang.inner_engraving_settings.focus_reminder,
         messageIcon: 'warning',
+        onClose: () => resolve(),
       });
     });
   }
@@ -259,6 +266,8 @@ export const handleExportAlerts = async (device: IDeviceInfo, lang: ILang): Prom
   ) {
     return false;
   }
+
+  if (hasCutLayerWithFill(layers)) await showCutLayerFillAlert();
 
   if (isPromark) {
     if (rotaryMode && !swiftrayClient.checkVersion('PROMARK_ROTARY')) {
@@ -384,6 +393,7 @@ export const handleExportAlerts = async (device: IDeviceInfo, lang: ILang): Prom
         alertCaller.popUp({
           callbacks: () => resolve(),
           message: sprintf(lang.beambox.popup.too_fast_for_curve, { layers: curveLayers.join(', ') }),
+          onClose: () => resolve(),
           type: alertConstants.SHOW_POPUP_WARNING,
         });
       });
@@ -410,6 +420,7 @@ export const handleExportAlerts = async (device: IDeviceInfo, lang: ILang): Prom
                 text: lang.alert.dont_show_again,
               },
               message,
+              onClose: () => resolve(),
               type: alertConstants.SHOW_POPUP_WARNING,
             });
           } else {
@@ -436,6 +447,7 @@ export const handleExportAlerts = async (device: IDeviceInfo, lang: ILang): Prom
               text: lang.alert.dont_show_again,
             },
             message,
+            onClose: () => resolve(),
             type: alertConstants.SHOW_POPUP_WARNING,
           });
         } else {

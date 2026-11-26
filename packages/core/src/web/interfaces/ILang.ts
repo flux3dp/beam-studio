@@ -473,6 +473,7 @@ export interface ILang {
       bug_report: string;
       change_workarea_before_preview: string;
       convert_to_path_fail: string;
+      cut_layer_contains_fill: string;
       disassemble_use: {
         clip_path_warning: string;
         execute_time_warning: string;

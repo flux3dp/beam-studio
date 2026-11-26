@@ -471,6 +471,7 @@ const lang: ILang = {
       bug_report: 'Vianraportti',
       change_workarea_before_preview: '%s:n työalue ei vastaa nykyistä työaluetta. Haluatko vaihtaa nykyisen työalueen?',
       convert_to_path_fail: 'Muuntaminen poluiksi epäonnistui.',
+      cut_layer_contains_fill: 'Leikkaustasolta löytyi täytettyjä polkuja tai kuvia, mikä pidentää käsittelyaikaa. Suosittelemme tarkistamaan, miten tiedosto on viety.',
       disassemble_use: {
         clip_path_warning: 'Tämä tiedosto sisältää leikkausmaskin eikä sitä voi purkaa.',
         execute_time_warning: 'Tämä purkaa tuodun tiedoston ryhmityksen. Koska tiedosto voi sisältää suuren määrän elementtejä, ryhmityksen purku voi viedä aikaa. Haluatko jatkaa?',

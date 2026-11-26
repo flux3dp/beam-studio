@@ -471,6 +471,7 @@ const lang: ILang = {
       bug_report: 'Feilrapport',
       change_workarea_before_preview: 'Arbeidsområdet for %s samsvarer ikke med det gjeldende arbeidsområdet. Vil du bytte gjeldende arbeidsområde?',
       convert_to_path_fail: 'Kunne ikke konvertere til bane.',
+      cut_layer_contains_fill: 'Det ble oppdaget fylte baner eller bilder i et skjærelag, noe som vil forlenge behandlingstiden. Vi anbefaler å kontrollere hvordan filen ble eksportert.',
       disassemble_use: {
         clip_path_warning: 'Denne filen inneholder en klippemaske og kan ikke demonteres.',
         execute_time_warning: 'Dette vil oppheve grupperingen av importerte DXF eller SVG. Fordi filen kan inneholde et stort antall elementer, kan det ta tid å oppheve grupperingen. Er du sikker på at du vil fortsette?',

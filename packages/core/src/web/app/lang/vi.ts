@@ -471,6 +471,7 @@ const lang: ILang = {
       bug_report: 'Báo cáo lỗi',
       change_workarea_before_preview: 'Khu vực làm việc không khớp. Bạn có muốn đổi khu vực làm việc hiện tại?',
       convert_to_path_fail: 'Không thể chuyển thành đường dẫn',
+      cut_layer_contains_fill: 'Phát hiện đường dẫn có tô màu hoặc hình ảnh trong lớp cắt, điều này sẽ khiến thời gian gia công lâu hơn. Bạn nên kiểm tra lại cách xuất tệp.',
       disassemble_use: {
         clip_path_warning: 'Tệp này chứa mặt nạ cắt và không thể được tách rời.',
         execute_time_warning: 'Điều này sẽ bỏ nhóm và có thể mất thời gian. Bạn có chắc tiếp tục?',

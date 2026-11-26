@@ -471,6 +471,7 @@ const lang: ILang = {
       bug_report: 'Felrapport',
       change_workarea_before_preview: 'Arbetsområdet för %s matchar inte det för närvarande inställda arbetsområdet. Vill du byta nuvarande arbetsområde?',
       convert_to_path_fail: 'Misslyckades med att konvertera till bana.',
+      cut_layer_contains_fill: 'Fyllda banor eller bilder upptäcktes i ett skärlager, vilket förlänger bearbetningstiden. Vi rekommenderar att du kontrollerar hur filen exporterades.',
       disassemble_use: {
         clip_path_warning: 'Denna fil innehåller en klippmask och kan inte delas upp.',
         execute_time_warning: 'Detta kommer att separera importerad DXF eller SVG. Eftersom filen kan innehålla ett stort antal element kan det ta tid att separera. Är du säker på att du vill fortsätta?',

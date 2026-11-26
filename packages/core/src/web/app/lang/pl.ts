@@ -471,6 +471,7 @@ const lang: ILang = {
       bug_report: 'Zgłoszenie błędut',
       change_workarea_before_preview: 'Obszar roboczy %s nie pasuje do aktualnie ustawionego obszaru roboczego. Czy chcesz zmienić bieżący obszar roboczy?',
       convert_to_path_fail: 'Nie udało się przekonwertować na ścieżkę.',
+      cut_layer_contains_fill: 'W warstwie cięcia wykryto wypełnione ścieżki lub obrazy, co wydłuży czas obróbki. Zalecamy sprawdzenie sposobu eksportu pliku.',
       disassemble_use: {
         clip_path_warning: 'Ten plik zawiera maskę przycinania i nie może zostać rozłożony.',
         execute_time_warning: 'Spowoduje to rozgrupowanie zaimportowanych plików DXF lub SVG. Ponieważ plik może zawierać dużą liczbę elementów, rozgrupowanie może zająć trochę czasu. Czy na pewno chcesz kontynuować?',

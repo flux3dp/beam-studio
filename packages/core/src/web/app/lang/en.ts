@@ -471,6 +471,7 @@ const lang: ILang = {
       bug_report: 'Bug Report',
       change_workarea_before_preview: 'The workarea of %s does not match the currently set workarea. Do you want to switch current workarea?',
       convert_to_path_fail: 'Failed to convert to path.',
+      cut_layer_contains_fill: 'Fill paths or images were detected in a cutting layer, which will make processing take longer. We recommend checking how the file was exported.',
       disassemble_use: {
         clip_path_warning: 'This file contains a clipping mask and cannot be disassembled.',
         execute_time_warning: 'This will ungroup imported DXF or SVG. Because the file might contain a great number of elements, it might take time to ungroup. Are you sure to proceed?',

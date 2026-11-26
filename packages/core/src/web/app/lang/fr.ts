@@ -471,6 +471,7 @@ const lang: ILang = {
       bug_report: 'Rapport de bug',
       change_workarea_before_preview: 'La zone de travail de %s ne correspond pas à la zone de travail actuellement définie. Voulez-vous basculer la zone de travail actuelle ?',
       convert_to_path_fail: 'Échec de la conversion en chemin.',
+      cut_layer_contains_fill: "Des tracés remplis ou des images ont été détectés dans un calque de découpe, ce qui allongera la durée de traitement. Nous vous recommandons de vérifier la méthode d'exportation du fichier.",
       disassemble_use: {
         clip_path_warning: 'Ce fichier contient un masque d’écrêtage et ne peut pas être dissocié.',
         execute_time_warning: "Cela dégroupera le DXF ou le SVG importé. Comme le fichier pourrait contenir un grand nombre d'éléments, le dégroupage pourrait prendre du temps. Êtes-vous sûr de procéder ?",

@@ -27,6 +27,10 @@ jest.mock('@core/helpers/layer/layer-config-helper', () => ({
   getData: (layer: Element, key: string) =>
     key === 'module' ? Number(layer.getAttribute('data-module') || 15) : Number(layer.getAttribute(`data-${key}`) || 0),
 }));
+jest.mock('@core/helpers/layer/check-cut-layer-fill', () => ({
+  hasCutLayerWithFill: () => false,
+  showCutLayerFillAlert: jest.fn(),
+}));
 jest.mock('@core/helpers/layer/layer-helper', () => ({ getLayerName: jest.fn() }));
 jest.mock('@core/helpers/layer-module/layer-module-helper', () => ({ hasModuleLayer: () => false }));
 // never reached (inner engraving is off for these models); importing it drags undoManager → camera.ts → p-queue ESM

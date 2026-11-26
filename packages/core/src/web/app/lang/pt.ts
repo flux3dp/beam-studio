@@ -471,6 +471,7 @@ const lang: ILang = {
       bug_report: 'Relatório de erros',
       change_workarea_before_preview: 'A área de trabalho de %s não corresponde à área de trabalho atualmente definida. Deseja alterar a área de trabalho atual?',
       convert_to_path_fail: 'Falha ao converter para caminho.',
+      cut_layer_contains_fill: 'Foram detectados caminhos preenchidos ou imagens em uma camada de corte, o que aumentará o tempo de processamento. Recomendamos verificar como o arquivo foi exportado.',
       disassemble_use: {
         clip_path_warning: 'Este arquivo contém uma máscara de recorte e não pode ser desmontado.',
         execute_time_warning: 'Isso irá desagrupar DXF ou SVG importados. Como o arquivo pode conter um grande número de elementos, pode demorar para desagrupar. Tem certeza de que deseja continuar?',

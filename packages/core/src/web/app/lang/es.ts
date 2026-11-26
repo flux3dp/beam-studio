@@ -471,6 +471,7 @@ const lang: ILang = {
       bug_report: 'Informe de errores',
       change_workarea_before_preview: 'El área de trabajo de %s no coincide con el actual área configurado. ¿Desea cambiar el área de trabajo?',
       convert_to_path_fail: 'No se ha podido convertir a trazado',
+      cut_layer_contains_fill: 'Se detectaron trazados con relleno o imágenes en una capa de corte, lo que alargará el tiempo de procesamiento. Le recomendamos revisar cómo se exportó el archivo.',
       disassemble_use: {
         clip_path_warning: 'Este archivo contiene una máscara de recorte y no se puede desagrupar.',
         execute_time_warning: 'Se desagrupará el archivo DXF o SVG importado. Dado que el archivo puede contener un gran número de elementos, es posible que el desagrupado tarde un tiempo.\n¿Seguro que desea continuar?',

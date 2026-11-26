@@ -29,6 +29,7 @@ import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { useSupportedModules } from '@core/helpers/hooks/useSupportedModules';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import i18n from '@core/helpers/i18n';
+import { doesLayerContainFill, isCutPreset, showCutLayerFillAlert } from '@core/helpers/layer/check-cut-layer-fill';
 import {
   applyPreset,
   CUSTOM_PRESET_CONSTANT,
@@ -279,6 +280,19 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
     }
 
     const { isDefault, key } = preset;
+
+    if (
+      isDefault &&
+      isCutPreset(key) &&
+      selectedLayers.some((name) => {
+        const layer = layerManager.getLayerElementByName(name);
+
+        return layer && doesLayerContainFill(layer);
+      })
+    ) {
+      showCutLayerFillAlert();
+    }
+
     const { SET_PRESET_WOOD_CUTTING, SET_PRESET_WOOD_ENGRAVING } = tutorialConstants;
 
     if (SET_PRESET_WOOD_ENGRAVING === tutorialController.getNextStepRequirement()) {

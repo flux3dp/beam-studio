@@ -471,6 +471,7 @@ const lang: ILang = {
       bug_report: 'Fehlerbericht',
       change_workarea_before_preview: 'Der Arbeitsbereich von %s stimmt nicht mit dem aktuell festgelegten Arbeitsbereich überein. Möchten Sie den aktuellen Arbeitsbereich wechseln?',
       convert_to_path_fail: 'Konvertierung in Pfad fehlgeschlagen.',
+      cut_layer_contains_fill: 'In einer Schneideebene wurden gefüllte Pfade oder Bilder erkannt, wodurch die Bearbeitung länger dauert. Wir empfehlen, die Exporteinstellungen der Datei zu überprüfen.',
       disassemble_use: {
         clip_path_warning: 'Diese Datei enthält eine Schnittmaske und kann nicht zerlegt werden.',
         execute_time_warning: 'Dadurch wird die Gruppierung von importiertem DXF oder SVG aufgehoben. Da die Datei möglicherweise eine große Anzahl von Elementen enthält, kann das Aufheben der Gruppierung einige Zeit dauern. Sind Sie sicher, fortzufahren?',
