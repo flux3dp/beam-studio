@@ -4,10 +4,10 @@
 
 | | |
 |---|---|
-| **Status** | 已於 2.7.5 實作，搭配 fluxghost 2.5.8（flux3dp/fluxghost#128；tag 於 2026-11-23 移到該合併），涵蓋 `fbm2`（16 個標記點）、`fbb2` / `fhx2rf` 雷射頭相機與 `ado1`（8 個標記點）。實機（2026-11-19 / 20）：三台 `fbm2`、一台 `fbb2`、一台 `fhx2rf`、一台 `ado1`，各用自己的 `k` / `d`（§11、§12）。未包含：Promark（標記點大小與偵測器，決策 12）與 `fbb2` / `fhx2rf` 廣角相機（決策 1）。待辦：舊後端退回路徑的實機測試（§12 T12）、`ado1` 的曝光輪經由 Beam Studio 的實機測試（§7.3.1）、決策 8 |
+| **Status** | 已於 2.7.5 實作，搭配 fluxghost 2.5.9（自動步驟為 flux3dp/fluxghost#128，手動選項起始用的預測位置為 #130），涵蓋 `fbm2`（16 個標記點）、`fbb2` / `fhx2rf` 雷射頭相機與 `ado1`（8 個標記點）。實機（2026-11-19 / 20）：三台 `fbm2`、一台 `fbb2`、一台 `fhx2rf`、一台 `ado1`，各用自己的 `k` / `d`（§11、§12）。未包含：Promark（標記點大小與偵測器，決策 12）與 `fbb2` / `fhx2rf` 廣角相機（決策 1）。待辦：舊後端退回路徑與缺標記點後手動選項的實機測試（§12 T12）、`ado1` 的曝光輪經由 Beam Studio 的實機測試（§7.3.1）、決策 8 |
 | **Author** | Beam Studio team |
 | **Created** | 2026-11-16 |
-| **Target product** | Beam Studio（桌面版 + 網頁版）、fluxghost 2.5.8（版本號不變；tag 移到 fluxghost #128 的合併） |
+| **Target product** | Beam Studio（桌面版 + 網頁版）、fluxghost 2.5.9 |
 | **Owner area** | 相機校正對話框、fluxghost 相機校正 API |
 | **Related code** | 對話框：`packages/core/src/web/app/components/dialogs/camera/beamo2Calibration/Beamo2Calibration.tsx`、`beamo2Calibration/autoSolvePnP.ts`、`camera/common/autoLocateMarks.ts`、`camera/common/showHighResidualAlert.ts`、`camera/LaserHeadFisheyeCalibration.tsx`、`camera/AdorCalibration/AdorCalibration.tsx`、`camera/common/SolvePnP.tsx`、`camera/common/useCamera.ts`、`camera/common/ProcessingDialog.tsx`、`camera/common/CheckPnP.tsx`；API client：`packages/core/src/web/helpers/api/camera-calibration.ts`；常數：`packages/core/src/web/app/constants/fisheyeCameraConstants.ts`（`bm2PnPPoints`、`getRegionalPoints`）；曝光：`packages/core/src/web/helpers/device/camera/cameraExposure.ts`；雕刻工作：`packages/core/src/web/helpers/device-master.ts`（`doBeamo2Calibration`、`fcode/bm2-calibration.fc`，原始檔 `resources/calibration-tasks/bm2-calibration.beam`） |
 | **External repos** | fluxghost：`fluxghost/utils/camera/auto_pnp.py`、`tests/usage/test_auto_pnp.py`、`fluxghost/api/camera_calibration.py`、`fluxghost/utils/camera/corner_detection/find_corners.py`、`corner_detection/match_points.py`、`utils/camera/solve_pnp.py`、`docs/api/camera-calibration.md`、`tests/usage/test_camera_match_points.py`、`tools/ws_smoke.py` |
@@ -18,7 +18,7 @@
 
 魚眼相機校正的最後一步是 solve-PnP：機器在已知的雷射座標雕刻標記點，相機拍下它們，再把每個標記點的影像位置與它的雷射座標配對，算出相機姿態（`rvec`、`tvec`）。目前的配對是半自動的。fluxghost 提出標記點位置，使用者逐一確認或拖曳。在 beamo II（`fbm2`）上是四個對話框、每個四個標記點。
 
-本 PRD 先在 beamo II 上把配對改為全自動：雕刻一次，以不同曝光拍兩張照片（只有缺標記點時才再拍五張），從「Start Engrave」到最後的檢查之間不需使用者操作。沒有手動拖曳的退回路徑。結果只有兩種：校正解出來，或是失敗並說明原因、可重試。
+本 PRD 先在 beamo II 上把配對改為全自動：雕刻一次，以不同曝光拍兩張照片（只有缺標記點時才再拍五張），從「Start Engrave」到最後的檢查之間不需使用者操作。這一步不會自行退回到拖曳：結果只有兩種，校正解出來，或是失敗並說明原因。缺標記點之後，使用者可以重新雕刻，或選擇手動步驟，手動步驟會從已找到的標記點開始（決策 4）。
 
 三個設計選擇決定了其餘部分：
 
@@ -73,7 +73,7 @@
 **目標**
 
 - G1. 在 `fbm2` 以及 `fbb2` / `fhx2rf` 雷射頭相機上，從開始雕刻到最後的檢查畫面之間，使用者什麼都不用做。在 `ado1` 上，只需要在兩個高度之間墊高材料。
-- G2. 自動流程中任何地方都不需手動拖曳點。失敗就是一則訊息加上重試。手動步驟只留給沒有新指令的後端（決策 4）。
+- G2. 自動流程中任何地方都不需手動拖曳點。失敗就是一則訊息加上重試。手動步驟留給沒有新指令的後端，以及使用者在缺標記點之後自己選擇時（決策 4）。
 - G3. 錯誤的校正絕不會被默默接受：接受的前提是量到的殘差低於門檻。
 - G4. 跨機台都能用，不需每台各自的像素常數。
 - G5. 比對與把關的邏輯可以用存下來的照片離線測試。
@@ -120,7 +120,7 @@
 
 **A8 重複性。** 在同一台機器上不移動紙，執行 A1 五次。結果：九個分區姿態各次之間的差異在步驟 0（§9）定下的容差內。
 
-**A9（S6）舊後端。** 連到沒有 `auto_pnp_detect` 的 fluxghost（在 fluxghost #128 之前建置）並執行 A1。結果：雕刻後出現 SOLVE_PNP_INSTRUCTION 與四個手動的 SOLVE_PNP_xx 畫面，行為與 main 相同。用有這些指令的後端強制比對失敗（A3）：拖曳畫面不得出現。
+**A9（S6）舊後端。** 連到沒有 `auto_pnp_detect` 的 fluxghost（在 fluxghost #128 之前建置）並執行 A1。結果：雕刻後出現 SOLVE_PNP_INSTRUCTION 與四個手動的 SOLVE_PNP_xx 畫面，行為與 main 相同。用有這些指令的後端並遮住一個標記點（A3）：拖曳畫面不得自行出現。警示有「取消」與「手動校正」。取消會留在 PUT_PAPER。手動校正進入 SOLVE_PNP_INSTRUCTION 與手動畫面，畫面上的點已經落在找到的標記點上，被遮住那個標記點的點則在它幾 px 之內；`ado1` 在兩個高度都一樣，而且第一個高度手動之後，第二個高度仍會再跑自動步驟。找到的標記點少於 4 個、或 fluxghost 早於 2.5.9 時，手動畫面的起始方式與 main 相同。
 
 **A10（S7）殘差過高。** 在 fluxghost 把 `R_MAX_MM` 調低（0.1）來強制觸發，再執行 A1。結果：出現警告說明驗證誤差偏大，有兩個按鈕。Continue Anyway 帶著找到的 16 個點繼續到 CHECK_PNP。Calibrate Camera (Advanced) 關閉對話框並從第一步（PRE_CHESSBOARD）開啟進階流程，中間會釋放機器。在進階模式，同一個警告建議重新拍攝校正圖樣，第二個按鈕回到 PRE_CHESSBOARD。關掉警告（Esc）則對話框停在 PUT_PAPER。
 
@@ -136,7 +136,7 @@
 
 | 情況 | 預期 |
 |---|---|
-| 一個標記點被遮住或燒穿 | 以 `NOT_ENOUGH_MARKS` 失敗；訊息列出找到的標記點數（決策 5） |
+| 一個標記點被遮住或燒穿 | 以 `NOT_ENOUGH_MARKS` 失敗；訊息列出找到的標記點數（決策 5），並提供手動步驟（決策 4） |
 | 第一輪之後仍缺標記點 | 拍第二輪，並對所有照片重新比對；仍不夠就因標記點數量而失敗 |
 | 相機回傳影格錯誤 | 既有的 `useCamera` 重試（2 次），之後跳失敗警示 |
 | 使用者在拍攝期間關閉對話框 | 拍攝停止，機器釋放（`releaseMachine`），不儲存任何東西 |
@@ -252,7 +252,7 @@ PUT_PAPER 會從 CHECK_PNP 的 Back、比對失敗與殘差過高的警告再次
 
 | 結果 | 使用者看到的 |
 |---|---|
-| `NOT_ENOUGH_MARKS`（兩輪之後） | `auto_solve_pnp_not_enough_marks` 並帶找到的標記點數，然後 PUT_PAPER |
+| `NOT_ENOUGH_MARKS`（兩輪之後） | PUT_PAPER，接著 `common/showNotEnoughMarksAlert.ts`：`auto_solve_pnp_not_enough_marks` 並帶找到的標記點數、「取消」（留在原處，可重新雕刻）與 `auto_solve_pnp_calibrate_manually`（主要按鈕）。選擇手動會帶著 `autoLocateMarks` 的 `initialPoints` 進入 SOLVE_PNP_INSTRUCTION：找到的標記點用實際位置，缺的用後端的 `predicted` 位置（§8）。`fbm2` 依象限切開寫入 `imgPoints1`，它的四個手動畫面本來就從那裡開始；`ado1` 依高度各自保存，而且第二個高度仍會跑自動步驟（`isAutoSupported`，和只決定 Back 往哪裡的 `isAutoSolved` 分開）。沒有 `predicted` 時，手動畫面和以前一樣自己找角點 |
 | `HIGH_RESIDUAL` 且有全部的點（成功的 `autoSolvePnP` 結果上的 `highResidual`） | 警告，後面的對話框停在 PUT_PAPER。基本模式：`auto_solve_pnp_high_residual`，按鈕為 Continue Anyway（`auto_solve_pnp_continue_anyway`，繼續到 SOLVE_OTHER_PNP）與 Calibrate Camera (Advanced)（`await releaseMachine()`，然後 `onSwitchToAdvanced`）。進階模式：`auto_solve_pnp_high_residual_advanced`，按鈕為 Continue Anyway 與 Capture Calibration Pattern（PRE_CHESSBOARD） |
 | 拋出錯誤 | `failed_to_calibrate_with_pictures`，然後 PUT_PAPER |
 | `UNSUPPORTED`（後端沒有這些指令） | 沒有訊息：SOLVE_PNP_INSTRUCTION 與手動步驟（決策 4） |
@@ -268,7 +268,7 @@ PUT_PAPER 會從 CHECK_PNP 的 Back、比對失敗與殘差過高的警告再次
 
 ### 7.5 i18n
 
-`calibration.auto_solve_pnp_locating`（進度文字）、`auto_solve_pnp_not_enough_marks`（`%(total)d` 與 `%(found)d`，讓 8 個標記點的機型可以共用）、`auto_solve_pnp_high_residual`、`auto_solve_pnp_high_residual_advanced` 與 `auto_solve_pnp_continue_anyway`，共 23 種語言（`en` 與 `zh-tw` 以外為機器草擬，沒有母語者審閱）。訊息避開內部用語：用「verification error」，不用殘差或相機參數；用「calibration pattern」，不用 ChArUco。`solve_pnp_step1..3` 保留；其他對話框還在使用。
+`calibration.auto_solve_pnp_locating`（進度文字）、`auto_solve_pnp_not_enough_marks`（`%(total)d` 與 `%(found)d`，讓 8 個標記點的機型可以共用）、`auto_solve_pnp_high_residual`、`auto_solve_pnp_high_residual_advanced` 與 `auto_solve_pnp_continue_anyway` 與 `auto_solve_pnp_calibrate_manually`，共 23 種語言（`en` 與 `zh-tw` 以外為機器草擬，沒有母語者審閱）。訊息避開內部用語：用「verification error」，不用殘差或相機參數；用「calibration pattern」，不用 ChArUco。`solve_pnp_step1..3` 保留；其他對話框還在使用。
 
 ---
 
@@ -293,6 +293,8 @@ PUT_PAPER 會從 CHECK_PNP 的 Back、比對失敗與殘差過高的警告再次
    "matched": number, "filled": number, "rms": number}
 ← {"status": "fail", "reason": "NOT_ENOUGH_MARKS" | "HIGH_RESIDUAL",
    "points": [[x, y] | null, ...],               // null for a missing mark; complete after HIGH_RESIDUAL
+   "predicted": [[x, y], ...] | null,            // 2.5.9: every ref point, from a homography through the
+                                                 // found marks; null unless marks are missing and >= 4 found
    "matched": number, "filled": number, "rms": number | null}
 
 → solve_pnp_calculate ...            // unchanged request
@@ -314,7 +316,7 @@ PUT_PAPER 會從 CHECK_PNP 的 Back、比對失敗與殘差過高的警告再次
    - 在每一種 A4 干擾下做同樣的掃描。
 
    存成 fluxghost 測試資料（`tests/usage/fixtures/auto_pnp/`），附上機台與拍攝條件：盡可能存暗點清單而不是照片（保留一張照片給偵測器測試）；原始照片留在 repo 之外。決策 2、5 與 7 由這組資料決定。依每個標記點位置、每個曝光回報偵測率；曝光組合是能在每一台上涵蓋每個標記點的最小曝光集合。可用的機台：數台 `fbm2`；`fbb2`、`fhx2rf` 與 `ado1` 各一台。
-1. fluxghost #128（2026-11-23 合併）：`auto_pnp_detect`、`auto_pnp_match`、`solve_pnp_calculate` 的 `rms`、測試資料的測試、`docs/api/camera-calibration.md`、`ws_smoke.py` 的項目。版本不變：tag 2.5.8 移到該合併，所以 CD workflow 不需修改。
+1. fluxghost #128（2026-11-23 合併）：`auto_pnp_detect`、`auto_pnp_match`、`solve_pnp_calculate` 的 `rms`、測試資料的測試、`docs/api/camera-calibration.md`、`ws_smoke.py` 的項目。版本不變：tag 2.5.8 移到該合併。fluxghost #130（2.5.9）在比對失敗的回覆加上 `predicted`；CD workflow 以 2.5.9 建置。
 2. beam-studio（`feat/auto-solve-pnp`）：API client 方法、`common/autoLocateMarks.ts`、三個對話框的自動步驟、所有語言的字串、spec、`camera-calibration` skill。
 3. 實機驗證（§12），門檻記錄在 §11。三台 `fbm2` 上的正常流程與缺標記點已完成；舊後端路徑尚未測試，其餘列在 §12。
 4. 後續 PR：`fbb2` / `fhx2rf` 廣角相機（決策 1），接著是 Promark，它需要先處理偵測器（決策 12）。
@@ -326,7 +328,7 @@ PUT_PAPER 會從 CHECK_PNP 的 Back、比對失敗與殘差過高的警告再次
 1. ~~**`fbm2` 之後的機型順序。**~~ **2026-11-16 定案：** 接下來是 `fbb2` / `fhx2rf` 的廣角相機（同樣的 4×4 象限配置，`bb2WideAngleCameraPnpPoints` / `hx2WideAngleCameraPnpPoints`，兩個高度），然後是雷射頭魚眼與 Ador（8 個標記點、單一分區），Promark 最後。**2026-11-20 變更：** 雷射頭相機與 Ador 先做，並與 `fbm2` 一起出貨；廣角相機與 Promark 隨後。
 2. ~~**粗略關聯的方法。**~~ **2026-11-17 定案：不需先驗**（§7.3）。在步驟 0 的兩台機器上，它不用預設點就把每個看得見的標記點配對正確。
 3. ~~**失敗時加強重新雕刻。** 工作檔的功率與速度是固定的，所以重試沒辦法雕得更深。~~ **2026-11-16 定案：接受。** 到目前為止沒有任何一台無法在紙上留下標記。如果步驟 0 或現場出現淡的標記點，就把雕刻改成場景檔，像 Promark 那樣（`helpers/device/promark/calibration.ts` 的 `loadCameraCalibrationTask` 載入 `.bvg` 並依光源設定功率），這樣功率可以在執行時調整，代價是改動較大。
-4. ~~**沒有新指令的後端**（網頁版搭配較舊的 helper）。~~ **2026-11-16 定案：** 後端不認得 `auto_pnp_detect` 時，原封不動執行既有的手動步驟。這是到達拖曳畫面的唯一路徑；有這些指令的後端不論哪種失敗，都不會退回到它。
+4. ~~**沒有新指令的後端**（網頁版搭配較舊的 helper）。~~ **2026-11-16 定案：** 後端不認得 `auto_pnp_detect` 時，原封不動執行既有的手動步驟。這是會自行到達拖曳畫面的唯一路徑；有這些指令的後端不論哪種失敗，都不會退回到它。**2026-11-26 修訂（#1063 的 review）：** `NOT_ENOUGH_MARKS` 之後，警示每一次都提供手動步驟作為主要選項，並從已找到的標記點開始。否則偵測處理不了的機台（房間亮到超出相機最低曝光、沒有量測過的相機模組）會完全無法校正，比這個功能之前更糟；而且重新雕刻很少改變結果，因為工作功率是固定的（決策 3）。選擇權仍在使用者手上，所以偵測的問題不會被無聲的退回蓋掉。
 5. ~~**找不到的標記點。**~~ **2026-11-19 定案：每個標記點都是必要的。** 至少 8 分之 7 的標記點比對到時，一般偵測器漏掉的標記點可以從其預測位置旁邊的弱候選取得（§7.3 步驟 4）。優先於直接填入預測位置、優先於加強雕刻、也優先於失敗；依此順序排名。第三台 `fbm2` 有兩個標記點需要它，直到標記點放大為止（決策 11）。原文：每個分區姿態都正好由四個標記點求解（`bm2PnPPoints` 的象限，然後 `getRegionalPoints`），所以缺一個標記點最多會破壞四個分區。16 個標記點的冗餘是給剔除離群值用的，不是給缺標記點用的。步驟 0 之前的暫行規則：16 個都必須比對到，否則失敗。依步驟 0 資料集中每個標記點的偵測率決定：
    - 漏失很少：維持這條規則；
    - 漏失常見，且與曝光或位置有關：先修正拍攝（曝光組合的值）；
@@ -373,7 +375,7 @@ PUT_PAPER 會從 CHECK_PNP 的 Back、比對失敗與殘差過高的警告再次
 - **`fbb2`、`fhx2rf` 與 `ado1` 各只有一台。** 機台之間的安裝差異，也就是在床台座標把關的理由，只能在 `fbm2` 上量測。後面的機型門檻來自單一機台，所以它們的後續 PR 必須保留寬的餘裕，並明說這一點。
 - **拍攝時間**：每多一個曝光就多一張照片。目標是總時間低於目前四個手動對話框所花的時間；在步驟 3 量測。
 - 後續：失敗時把照片附到錯誤回報（既有的同意流程）。
-- `Beamo2Calibration.tsx` 裡的 `DEFAULT_POINTS_*` 與像素 `interestArea` 表保留，因為手動步驟還要留給舊後端（決策 4）。等最低支援的 fluxghost 有新指令時再移除。
+- `Beamo2Calibration.tsx` 裡的 `DEFAULT_POINTS_*` 與像素 `interestArea` 表保留，因為手動步驟還要留給舊後端，以及缺標記點之後的選擇（決策 4）。
 
 **第一台的發現（一台 `fbm2`，2026-11-17，探索性質）。** 曝光 50 到 2000 的原始照片，每一側一次 ChArUco 拍攝，乾淨白紙，門蓋關閉。標記點的身分是用眼睛指定的，所以這檢查的是關聯正確時的把關，而不是關聯本身（決策 2）。尚未成為測試資料。
 
@@ -513,4 +515,4 @@ PUT_PAPER 會從 CHECK_PNP 的 Back、比對失敗與殘差過高的警告再次
 | T17 | A13、A14 | 實機，`ado1`，在一張帶有舊 `fbb2` 圖樣的紙上：第一次執行為較低高度存下了錯誤的姿態（舊圖樣，rms 0.05 mm）；加上比例檢查之後，兩個高度都比對到新的標記點（同樣的照片離線為 0.071 與 0.055 mm），預覽正確 |
 | T18 | §7.3.1 | `common/autoLocateMarks.spec.ts`（12 個測試）與 `beamo2Calibration/autoSolvePnP.spec.ts`（4 個測試）。通過。fluxghost `test_auto_pnp.py` 現在有 22 個測試，包含 T17 的 `ado1` 照片 |
 | T15 | 邊界情況表 | 實機，`fbm2`，自動曝光開啟：找到 16 個標記點，之後自動曝光再次開啟。一台通過（2026-11-20） |
-| T12 | A9 | Beam Studio 對上 #128 之前建置的 fluxghost：出現手動步驟；對上新的並強制失敗：不出現。未在實機上執行。`helpers/api/camera-calibration.spec.ts`（6 個測試）涵蓋舊後端實際送出的回覆 |
+| T12 | A9 | Beam Studio 對上 #128 之前建置的 fluxghost：出現手動步驟；對上新的並遮住一個標記點：警示、取消，以及點落在標記點上的手動校正。未在實機上執行。Spec：`common/showNotEnoughMarksAlert.spec.ts`、`autoLocateMarks.spec.ts` 與 `autoSolvePnP.spec.ts` 的起始點，以及三個對話框 spec 裡的手動選擇（`ado1` 兩個高度）；fluxghost `test_auto_pnp.py`（缺兩個標記點的 `fbm2` 照片上，預測位置在 10 px 內）。`helpers/api/camera-calibration.spec.ts`（6 個測試）涵蓋舊後端實際送出的回覆 |

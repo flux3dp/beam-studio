@@ -2,10 +2,10 @@
 
 | | |
 |---|---|
-| **Status** | Implemented in 2.7.5 with fluxghost 2.5.8 (flux3dp/fluxghost#128; the tag moved to it on 2026-11-23) for `fbm2` (16 marks), the `fbb2` / `fhx2rf` laser-head camera and `ado1` (8 marks). Hardware (2026-11-19 / 20): three `fbm2`, one `fbb2`, one `fhx2rf`, one `ado1`, each with its own `k` / `d` (§11, §12). Not included: Promark (mark size and detector, decision 12) and the `fbb2` / `fhx2rf` wide-angle camera (decision 1). Pending: the old-backend fallback on hardware (§12 T12), the `ado1` exposure rounds through Beam Studio on hardware (§7.3.1), decision 8 |
+| **Status** | Implemented in 2.7.5 with fluxghost 2.5.9 (flux3dp/fluxghost#128 for the automatic step, #130 for the predicted positions the manual option starts from) for `fbm2` (16 marks), the `fbb2` / `fhx2rf` laser-head camera and `ado1` (8 marks). Hardware (2026-11-19 / 20): three `fbm2`, one `fbb2`, one `fhx2rf`, one `ado1`, each with its own `k` / `d` (§11, §12). Not included: Promark (mark size and detector, decision 12) and the `fbb2` / `fhx2rf` wide-angle camera (decision 1). Pending: the old-backend fallback and the manual option after missing marks on hardware (§12 T12), the `ado1` exposure rounds through Beam Studio on hardware (§7.3.1), decision 8 |
 | **Author** | Beam Studio team |
 | **Created** | 2026-11-16 |
-| **Target product** | Beam Studio (desktop + web), fluxghost 2.5.8 (the version does not change; the tag moves to the merge of fluxghost #128) |
+| **Target product** | Beam Studio (desktop + web), fluxghost 2.5.9 |
 | **Owner area** | Camera calibration dialogs, fluxghost camera calibration API |
 | **Related code** | Dialog: `packages/core/src/web/app/components/dialogs/camera/beamo2Calibration/Beamo2Calibration.tsx`, `beamo2Calibration/autoSolvePnP.ts`, `camera/common/autoLocateMarks.ts`, `camera/common/showHighResidualAlert.ts`, `camera/LaserHeadFisheyeCalibration.tsx`, `camera/AdorCalibration/AdorCalibration.tsx`, `camera/common/SolvePnP.tsx`, `camera/common/useCamera.ts`, `camera/common/ProcessingDialog.tsx`, `camera/common/CheckPnP.tsx`; API client: `packages/core/src/web/helpers/api/camera-calibration.ts`; constants: `packages/core/src/web/app/constants/fisheyeCameraConstants.ts` (`bm2PnPPoints`, `getRegionalPoints`); exposure: `packages/core/src/web/helpers/device/camera/cameraExposure.ts`; engraving task: `packages/core/src/web/helpers/device-master.ts` (`doBeamo2Calibration`, `fcode/bm2-calibration.fc`, source `resources/calibration-tasks/bm2-calibration.beam`) |
 | **External repos** | fluxghost: `fluxghost/utils/camera/auto_pnp.py`, `tests/usage/test_auto_pnp.py`, `fluxghost/api/camera_calibration.py`, `fluxghost/utils/camera/corner_detection/find_corners.py`, `corner_detection/match_points.py`, `utils/camera/solve_pnp.py`, `docs/api/camera-calibration.md`, `tests/usage/test_camera_match_points.py`, `tools/ws_smoke.py` |
@@ -22,9 +22,10 @@ beamo II (`fbm2`) that is four dialogs of four marks each.
 
 This PRD makes the pairing fully automatic on beamo II first: one engraving, two photos at
 different exposures (five more only when marks are missing), no user interaction between
-"Start Engrave" and the final check. There is
-no manual-drag fallback. The outcome is either a solved calibration or a failure with a stated
-reason and a retry.
+"Start Engrave" and the final check. The step
+never falls back to dragging on its own: the outcome is either a solved calibration or a failure
+with a stated reason. After missing marks the user can engrave again or choose the manual steps,
+which then start from the marks that were found (decision 4).
 
 Three design choices drive the rest:
 
@@ -113,7 +114,8 @@ quality measure and it is not returned.
   starting the engraving and the final check screen. On `ado1`, nothing but raising the
   material between the two heights.
 - G2. No manual point dragging anywhere in the automatic flow. Failure is a message plus retry.
-  The manual steps remain only for a backend without the new commands (decision 4).
+  The manual steps remain for a backend without the new commands, and as a choice the user makes
+  after missing marks (decision 4).
 - G3. A wrong calibration is never accepted silently: acceptance needs measured residuals under
   a threshold.
 - G4. Works across units without per-unit pixel constants.
@@ -191,8 +193,13 @@ region poses agree run to run within a tolerance fixed during step 0 (§9).
 
 **A9 (S6) Old backend.** Connect to a fluxghost without `auto_pnp_detect` (built before fluxghost #128) and
 run A1. Result: after the engraving, SOLVE_PNP_INSTRUCTION and the four manual SOLVE_PNP_xx
-screens appear and behave as on main. With a backend that has the commands, force a match
-failure (A3): the drag screen must not appear.
+screens appear and behave as on main. With a backend that has the commands, cover one mark
+(A3): the drag screen must not appear on its own. The alert has Cancel and Calibrate Manually.
+Cancel stays on PUT_PAPER. Calibrate Manually leads to SOLVE_PNP_INSTRUCTION and the manual
+screens, where the points already lie on the marks that were found and the covered mark's point
+lies within a few px of it; on `ado1` the same at either height, and the second height runs the
+automatic step again after a manual first height. With fewer than 4 marks found, or a fluxghost
+before 2.5.9, the manual screens start as they do on main.
 
 **A10 (S7) High residual.** Force it by lowering `R_MAX_MM` in fluxghost (0.1) and run A1.
 Result: a warning says the verification error is large, with two buttons. Continue Anyway goes
@@ -228,7 +235,7 @@ Edge cases and expected behaviour:
 
 | Case | Expected |
 |---|---|
-| One mark hidden or burnt through | Fails with `NOT_ENOUGH_MARKS`; the message gives the number of marks found (decision 5) |
+| One mark hidden or burnt through | Fails with `NOT_ENOUGH_MARKS`; the message gives the number of marks found (decision 5) and offers the manual steps (decision 4) |
 | Marks missing after the first round | The second round is shot and the match repeated on all photos; fails by mark count if still not enough |
 | Camera returns a frame error | Existing `useCamera` retry (2 attempts), then failure alert |
 | User closes the dialog during capture | Capture stops, machine released (`releaseMachine`), nothing saved |
@@ -466,7 +473,7 @@ No drag screen when the backend has the commands. Results map to:
 
 | Result | What the user sees |
 |---|---|
-| `NOT_ENOUGH_MARKS` (after both rounds) | `auto_solve_pnp_not_enough_marks` with the number of marks found, then PUT_PAPER |
+| `NOT_ENOUGH_MARKS` (after both rounds) | PUT_PAPER, then `common/showNotEnoughMarksAlert.ts`: `auto_solve_pnp_not_enough_marks` with the number of marks found, Cancel (stay, engrave again) and `auto_solve_pnp_calibrate_manually` (primary). The manual choice goes to SOLVE_PNP_INSTRUCTION with `initialPoints` from `autoLocateMarks`: the found marks where they are, the missing ones at the backend's `predicted` position (§8). `fbm2` splits them by quadrant into `imgPoints1`, which its four manual screens already start from; `ado1` keeps them per height and still runs the automatic step at the second height (`isAutoSupported`, apart from `isAutoSolved`, which only says where Back leads). Without `predicted` the manual screens find their own corners as before |
 | `HIGH_RESIDUAL` with all points (`highResidual` on a successful `autoSolvePnP` result) | Warning, dialog on PUT_PAPER behind it. Basic mode: `auto_solve_pnp_high_residual` with Continue Anyway (`auto_solve_pnp_continue_anyway`, on to SOLVE_OTHER_PNP) and Calibrate Camera (Advanced) (`await releaseMachine()`, then `onSwitchToAdvanced`). Advanced mode: `auto_solve_pnp_high_residual_advanced` with Continue Anyway and Capture Calibration Pattern (PRE_CHESSBOARD) |
 | A thrown error | `failed_to_calibrate_with_pictures`, then PUT_PAPER |
 | `UNSUPPORTED` (backend without the commands) | No message: SOLVE_PNP_INSTRUCTION and the manual steps (decision 4) |
@@ -494,7 +501,7 @@ still exists in the tick the old dialog is popped, so its switch passes `replace
 `calibration.auto_solve_pnp_locating` (progress text), `auto_solve_pnp_not_enough_marks`
 (`%(total)d` and `%(found)d`, so the 8-mark machines can share it),
 `auto_solve_pnp_high_residual`, `auto_solve_pnp_high_residual_advanced` and
-`auto_solve_pnp_continue_anyway`, in all 23 languages (machine-drafted outside `en` and
+`auto_solve_pnp_continue_anyway` and `auto_solve_pnp_calibrate_manually`, in all 23 languages (machine-drafted outside `en` and
 `zh-tw`, no native review). The messages avoid internal terms: "verification error", not
 residual or camera parameters; "calibration pattern", not ChArUco. `solve_pnp_step1..3` stay;
 other dialogs use them.
@@ -523,6 +530,8 @@ Both commands live on the existing `camera-calibration` websocket and need `k` /
    "matched": number, "filled": number, "rms": number}
 ← {"status": "fail", "reason": "NOT_ENOUGH_MARKS" | "HIGH_RESIDUAL",
    "points": [[x, y] | null, ...],               // null for a missing mark; complete after HIGH_RESIDUAL
+   "predicted": [[x, y], ...] | null,            // 2.5.9: every ref point, from a homography through the
+                                                 // found marks; null unless marks are missing and >= 4 found
    "matched": number, "filled": number, "rms": number | null}
 
 → solve_pnp_calculate ...            // unchanged request
@@ -570,7 +579,8 @@ Command names are final once fluxghost's `cmd_mapping` has them; do not rename a
    each of `fbb2`, `fhx2rf` and `ado1`.
 1. fluxghost #128 (merged 2026-11-23): `auto_pnp_detect`, `auto_pnp_match`, `rms` in
    `solve_pnp_calculate`, fixture tests, `docs/api/camera-calibration.md`, `ws_smoke.py`
-   entries. No version change: tag 2.5.8 moved to the merge, so the CD workflows need no edit.
+   entries. No version change: tag 2.5.8 moved to the merge. fluxghost #130 (2.5.9) adds
+   `predicted` to the failed match; the CD workflows build with 2.5.9.
 2. beam-studio (`feat/auto-solve-pnp`): API client methods, `common/autoLocateMarks.ts`, the
    automatic step in the three dialogs, strings in all languages, specs, the
    `camera-calibration` skill.
@@ -598,8 +608,14 @@ Command names are final once fluxghost's `cmd_mapping` has them; do not rename a
    cost of a larger change.
 4. ~~**Backend without the new commands** (web with an older helper).~~ **Settled 2026-11-16:**
    when the backend does not know `auto_pnp_detect`, run the existing manual steps unchanged.
-   This is the only path to the drag screen; a backend that has the commands never falls back
-   to it, whatever the failure.
+   This is the only path that leads to the drag screen on its own; a backend that has the
+   commands never falls back to it, whatever the failure. **Amended 2026-11-26 (review of
+   #1063):** after `NOT_ENOUGH_MARKS` the alert offers the manual steps as the primary choice,
+   every time, starting from the marks that were found. A unit the detection cannot handle (a
+   room too bright for the camera's lowest exposure, a camera module that was not measured)
+   would otherwise have no way to calibrate at all, which is worse than before this feature; and
+   engraving again rarely changes the result, since the task power is fixed (decision 3). The
+   choice stays the user's, so a detection problem is not hidden behind a silent fallback.
 5. ~~**A mark that is not found.**~~ **Settled 2026-11-19: every mark is required.** A mark
    the normal detector misses may be taken from the weak blobs next to its predicted position
    when at least 7 in 8 of the marks are matched (§7.3 step 4). Preferred over filling in the
@@ -793,8 +809,7 @@ Command names are final once fluxghost's `cmd_mapping` has them; do not rename a
   manual dialogs take today; measure in step 3.
 - Follow-up: attach the photos to an error report on failure (existing consent flow).
 - `DEFAULT_POINTS_*` and the pixel `interestArea` table in `Beamo2Calibration.tsx` stay, since
-  the manual steps remain for old backends (decision 4). Remove them when the minimum supported
-  fluxghost has the new commands.
+  the manual steps remain for old backends and as the choice after missing marks (decision 4).
 
 **First-unit findings (one `fbm2`, 2026-11-17, exploratory).** Raw photos at exposures 50 to
 2000, one ChArUco capture per side, clean white paper, lid closed. Mark identities were
@@ -1007,4 +1022,4 @@ number of field units R_MAX blocks.
 | T17 | A13, A14 | Hardware, `ado1`, on a sheet carrying an old `fbb2` pattern: first run saved a wrong pose for the lower height (the old pattern, rms 0.05 mm); after the proportion check both heights match the new marks (0.071 and 0.055 mm offline on the same photos) and the preview is right |
 | T18 | §7.3.1 | `common/autoLocateMarks.spec.ts` (12 tests) and `beamo2Calibration/autoSolvePnP.spec.ts` (4 tests). Passing. fluxghost `test_auto_pnp.py` now 22 tests, including the `ado1` photo of T17 |
 | T15 | Edge cases table | Hardware, `fbm2`, auto exposure on: 16 marks found, auto exposure on again afterwards. Passed on one unit (2026-11-20) |
-| T12 | A9 | Beam Studio against a fluxghost built before #128: manual steps appear; against the new one with a forced failure: they do not. Not run on hardware. `helpers/api/camera-calibration.spec.ts` (6 tests) covers the reply an old backend really sends |
+| T12 | A9 | Beam Studio against a fluxghost built before #128: manual steps appear; against the new one with a covered mark: the alert, Cancel, and Calibrate Manually with the points on the marks. Not run on hardware. Specs: `common/showNotEnoughMarksAlert.spec.ts`, the starting points in `autoLocateMarks.spec.ts` and `autoSolvePnP.spec.ts`, and the manual choice in the three dialog specs (both heights on `ado1`); fluxghost `test_auto_pnp.py` (predicted within 10 px on an `fbm2` photo with two marks missing). `helpers/api/camera-calibration.spec.ts` (6 tests) covers the reply an old backend really sends |
