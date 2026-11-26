@@ -86,11 +86,16 @@ const AdorCalibration = ({
 
   const handleFirstPose = async (rvec: number[][], tvec: number[][]) => {
     progressCaller.openNonstopProgress({ id: PROGRESS_ID, message: lang.device.processing });
-    updateParam({ heights: [calibratingParam.current.dh1!], rvec, rvecs: [rvec], tvec, tvecs: [tvec] });
-    await cameraCalibrationApi.updateData(calibratingParam.current);
-    await saveCheckPoint(calibratingParam.current);
-    console.log('calibratingParam.current', calibratingParam.current);
-    progressCaller.popById(PROGRESS_ID);
+
+    try {
+      updateParam({ heights: [calibratingParam.current.dh1!], rvec, rvecs: [rvec], tvec, tvecs: [tvec] });
+      await cameraCalibrationApi.updateData(calibratingParam.current);
+      await saveCheckPoint(calibratingParam.current);
+      console.log('calibratingParam.current', calibratingParam.current);
+    } finally {
+      progressCaller.popById(PROGRESS_ID);
+    }
+
     setStep(Step.ELEVATED_CUT);
   };
 

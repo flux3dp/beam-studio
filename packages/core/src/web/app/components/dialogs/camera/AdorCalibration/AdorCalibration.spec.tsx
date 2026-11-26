@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 
 import { act, fireEvent, render, waitFor } from '@testing-library/react';
 
+import progressCaller from '@core/app/actions/progress-caller';
 import { adorPnPPoints } from '@core/app/constants/fisheyeCameraConstants';
 import i18n from '@core/helpers/i18n';
 
@@ -376,5 +377,19 @@ describe('AdorCalibration automatic solve steps', () => {
 
     expect(mockPopUpError).toHaveBeenCalledWith({ message: t.failed_to_calibrate_with_pictures });
     expect(utils.getByTestId('title')).toHaveTextContent(t.put_paper);
+  });
+
+  test('closes the progress when the first pose cannot be saved', async () => {
+    mockSaveCheckPoint.mockRejectedValueOnce(new Error('disk full'));
+
+    const utils = renderDialog();
+
+    await runAutoStep(utils, t.start_engrave, 1);
+
+    expect(mockPopUpError).toHaveBeenCalledWith({ message: t.failed_to_calibrate_with_pictures });
+    expect(utils.getByTestId('title')).toHaveTextContent(t.put_paper);
+    expect(progressCaller.popById).toHaveBeenCalledTimes(
+      (progressCaller.openNonstopProgress as jest.Mock).mock.calls.length,
+    );
   });
 });
