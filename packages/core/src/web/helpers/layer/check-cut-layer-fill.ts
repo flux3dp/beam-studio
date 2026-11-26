@@ -1,15 +1,18 @@
 import alertCaller from '@core/app/actions/alert-caller';
 import alertConstants from '@core/app/constants/alert-constants';
 import { CanvasElements } from '@core/app/constants/canvasElements';
-import presets from '@core/app/constants/presets';
+import { presetNames } from '@core/app/constants/presetNames';
 import alertConfig from '@core/helpers/api/alert-config';
 import i18n from '@core/helpers/i18n';
 import { getData } from '@core/helpers/layer/layer-config-helper';
 
-// default cut presets are stored by key (wood_3mm_cutting, ...); custom presets by name, so a custom
-// "my_cutting" must not match
-export const isCutPreset = (configName?: string): boolean =>
-  Boolean(configName?.endsWith('_cutting') && Object.hasOwn(presets, configName));
+// default presets are stored by key and presetNames records what each one does; custom presets are
+// stored by name and are not in presetNames, so a custom "my_cutting" does not match
+export const isCutPreset = (configName?: string): boolean => {
+  const preset = configName ? presetNames[configName]?.preset : undefined;
+
+  return preset === 'cutting' || preset === 'kiss_cut';
+};
 
 // symbol content keeps the imported tags, so circle / polyline appear there though never on canvas
 const shapeSelector = [...CanvasElements.fillableElems, 'circle', 'polyline'].join(', ');
