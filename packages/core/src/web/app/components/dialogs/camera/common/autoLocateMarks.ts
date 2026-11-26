@@ -57,6 +57,7 @@ const autoLocateMarks = async ({
   let rounds = exposureRounds;
   let originalExposure: number | undefined;
   let wasAutoExposure = false;
+  let canSetExposure = true;
 
   await cameraCalibrationApi.updateData(params);
 
@@ -84,7 +85,12 @@ const autoLocateMarks = async ({
 
       wasAutoExposure = Boolean(autoRes?.success && autoRes.data);
 
-      if (wasAutoExposure) await deviceMaster.setCameraExposureAuto(false);
+      if (wasAutoExposure && !(await deviceMaster.setCameraExposureAuto(false))) {
+        console.warn('[auto solve pnp] auto exposure cannot be turned off, using one photo as it is');
+        wasAutoExposure = false;
+        originalExposure = undefined;
+        rounds = undefined;
+      }
     }
 
     let matchRes: Awaited<ReturnType<typeof cameraCalibrationApi.autoPnPMatch>> | undefined;
@@ -94,9 +100,14 @@ const autoLocateMarks = async ({
         if (isCancelled?.()) return { reason: 'CANCELLED', success: false };
 
         if (exposure !== undefined) {
-          await setExposure(exposure);
-          // the first photo after a change still has the old exposure (fbm2: every one of 7 changes); drop it
-          await deviceMaster.takeOnePicture();
+          canSetExposure = await setExposure(exposure);
+
+          if (canSetExposure) {
+            // the first photo after a change still has the old exposure (fbm2: every one of 7 changes); drop it
+            await deviceMaster.takeOnePicture();
+          } else {
+            console.warn('[auto solve pnp] exposure cannot be set, this photo is the last one');
+          }
         }
 
         const imgBlob = (await deviceMaster.takeOnePicture())?.imgBlob;
@@ -107,9 +118,11 @@ const autoLocateMarks = async ({
 
         if (!detectRes.success) return { reason: detectRes.reason as AutoPnPFailReason, success: false };
 
-        shot.push(exposure);
+        shot.push(canSetExposure ? exposure : undefined);
         blobs.push(detectRes.blobs);
         weak.push(detectRes.weak);
+
+        if (!canSetExposure) break;
       }
 
       matchRes = await cameraCalibrationApi.autoPnPMatch(refPoints, blobs, weak, rMax);
@@ -123,7 +136,7 @@ const autoLocateMarks = async ({
       });
 
       // more photos only help when marks are missing; a high residual is about k / d
-      if (matchRes.success || matchRes.reason !== 'NOT_ENOUGH_MARKS') break;
+      if (matchRes.success || matchRes.reason !== 'NOT_ENOUGH_MARKS' || !canSetExposure) break;
     }
 
     if (!matchRes) return { reason: 'NOT_ENOUGH_MARKS', success: false };

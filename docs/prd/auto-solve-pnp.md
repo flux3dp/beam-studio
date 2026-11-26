@@ -232,7 +232,7 @@ Edge cases and expected behaviour:
 | Marks missing after the first round | The second round is shot and the match repeated on all photos; fails by mark count if still not enough |
 | Camera returns a frame error | Existing `useCamera` retry (2 attempts), then failure alert |
 | User closes the dialog during capture | Capture stops, machine released (`releaseMachine`), nothing saved |
-| Exposure cannot be set | Failure alert, exposure restored to its previous value |
+| Exposure cannot be set | The photo is taken at whatever exposure the camera has and matched; no more exposures are tried, and the exposure is restored to its previous value. Missing marks then end as `NOT_ENOUGH_MARKS`. When auto exposure cannot be turned off, the exposure is not touched at all: one photo as it is (settled 2026-11-26, review of #1063) |
 | Camera auto exposure is on | Turned off before the first photo, turned back on after the exposure value is restored |
 | Auto-exposure state cannot be read (old firmware, timeout) | Treated as off; the run continues |
 | Anything throws inside the automatic step | `failed_to_calibrate_with_pictures`, back to PUT_PAPER; the step never stays on the spinner |

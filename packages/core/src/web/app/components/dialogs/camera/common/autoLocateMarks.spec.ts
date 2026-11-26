@@ -220,6 +220,25 @@ describe('autoLocateMarks', () => {
     expect(mockDisconnectCamera).toHaveBeenCalledTimes(1);
   });
 
+  test('matches one photo as it is when the exposure cannot be set, and shoots no more', async () => {
+    mockSetExposure.mockResolvedValueOnce(false);
+    mockAutoPnPMatch.mockResolvedValue({ matched: 6, reason: 'NOT_ENOUGH_MARKS', rms: null, success: false });
+
+    expect(await run()).toEqual({ matched: 6, reason: 'NOT_ENOUGH_MARKS', rms: null, success: false });
+    expect(mockTakeOnePicture).toHaveBeenCalledTimes(1);
+    expect(mockAutoPnPMatch).toHaveBeenCalledTimes(1);
+    expect(cameraCalls.at(-1)).toEqual(['exposure', 320]);
+  });
+
+  test('takes one photo and leaves the exposure alone when auto exposure cannot be turned off', async () => {
+    mockGetCameraExposureAuto.mockResolvedValue({ data: true, success: true });
+    mockSetCameraExposureAuto.mockResolvedValueOnce(false);
+
+    expect(await run()).toEqual({ highResidual: false, points, rms: 0.4, success: true });
+    expect(mockTakeOnePicture).toHaveBeenCalledTimes(1);
+    expect(cameraCalls).toEqual([]);
+  });
+
   test('restores the exposure and disconnects when a call throws', async () => {
     mockAutoPnPDetect.mockRejectedValue(new Error('socket closed'));
 
