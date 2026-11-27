@@ -244,6 +244,7 @@ export default (options: Option): WrappedWebSocket => {
   };
 
   let isCreatingWebsocket = false;
+  let isClosed = false;
 
   const createWebSocket = (createWsOpts: Option): void => {
     if (isCreatingWebsocket) {
@@ -286,8 +287,16 @@ export default (options: Option): WrappedWebSocket => {
         handleCreateWebSocketFailed();
       },
       onSettled: (socket, openEvent) => {
-        ws = socket;
         isCreatingWebsocket = false;
+
+        // closed for good while the handshake was still running: nothing is sent on it
+        if (isClosed) {
+          socket.close();
+
+          return;
+        }
+
+        ws = socket;
         wsCreateFailedCount = 0;
         wsErrorCount = 0;
         hasAlerted = false;
@@ -343,6 +352,12 @@ export default (options: Option): WrappedWebSocket => {
     close(reconnect?: boolean) {
       if (typeof reconnect === 'boolean') {
         socketOptions.autoReconnect = reconnect;
+      }
+
+      if (reconnect === false) {
+        isClosed = true;
+        pendingSends = [];
+        clearInterval(timer);
       }
 
       if (ws !== null && ws.readyState !== WebSocket.CLOSED) {

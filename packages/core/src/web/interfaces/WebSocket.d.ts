@@ -11,6 +11,10 @@ export type Option = Partial<{
 }>;
 
 export interface WrappedWebSocket {
+  /**
+   * `reconnect` replaces `autoReconnect`. `false` closes for good: a handshake still running is dropped as soon as
+   * it opens, queued sends are discarded and the keep-alive ping stops; the wrapper cannot be opened again.
+   */
   close: (reconnect?: boolean) => void;
   currentState: number;
   log: string[];

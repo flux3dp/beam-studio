@@ -267,6 +267,7 @@ Edge cases and expected behaviour:
 | `AdorCalibration/index.tsx` (`key`, `onSwitchToAdvanced`, `replaceOpenDialog`) | `showAdorCalibration()` from the menu, factory mode — still returns `false` when the dialog is already open |
 | `packages/core/src/web/app/lang/*.ts` (keys added) | No existing key renamed or removed. Reused as button labels, text unchanged: `topbar.menu.calibrate_camera_advanced`, `calibration.title_capture_calibration_pattern` |
 | `camera/common/SolvePnP.tsx` (remap after a lost connection, review of #1063, 2026-11-27) | Manual steps of every dialog — same requests. When a remap without corner finding (`initialPoints`, exposure change) gets `NO_DATA` because a timed-out command replaced the connection, the parameters are uploaded again and the remap repeats, as corner finding already did; before, the reply was ignored and the step waited for the 2-minute timeout |
+| `helpers/websocket.ts` (`close(false)` during a handshake, review of #1063, 2026-11-27) | Every websocket api client — unchanged while open, and `close()` / `close(true)` unchanged. `close(false)` now also drops a handshake still running (the socket is closed as soon as it opens; nothing queued is sent) and stops the keep-alive ping. Callers of `close(false)`: `camera-calibration.ts` (timeout), `camera.ts`, `camera-transform.ts` (end of use) — none expected a closed wrapper to send afterwards |
 
 Not touched: `WideAngleCamera/`, `PromarkCalibration.tsx`,
 `device-master.ts`, `match_points.py`
