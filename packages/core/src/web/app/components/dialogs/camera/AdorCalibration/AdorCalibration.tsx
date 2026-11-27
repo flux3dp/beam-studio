@@ -105,14 +105,13 @@ const AdorCalibration = ({
 
   /** resolves to whether the parameters were saved (the dialog is closed then) */
   const handleSecondPose = async (rvec: number[][], tvec: number[][]): Promise<boolean> => {
-    const { heights, rvecs, tvecs } = calibratingParam.current;
+    const heights = [calibratingParam.current.heights![0], calibratingParam.current.dh2!];
+    const rvecs = [calibratingParam.current.rvecs![0], rvec];
+    const tvecs = [calibratingParam.current.tvecs![0], tvec];
 
-    rvecs!.push(rvec);
-    tvecs!.push(tvec);
-    heights!.push(calibratingParam.current.dh2!);
     updateParam({ heights, rvecs, tvecs });
 
-    const { data, success } = await cameraCalibrationApi.extrinsicRegression(rvecs!, tvecs!, heights!);
+    const { data, success } = await cameraCalibrationApi.extrinsicRegression(rvecs, tvecs, heights);
 
     if (!success) {
       alertCaller.popUpError({ message: 'Failed to do extrinsic regression.' });

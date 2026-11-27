@@ -280,7 +280,8 @@ describe('AdorCalibration automatic solve steps', () => {
   });
 
   test('returns to the elevate step when the parameters cannot be saved', async () => {
-    mockSetFisheyeConfig.mockResolvedValue({ status: 'error' });
+    mockSetFisheyeConfig.mockResolvedValueOnce({ status: 'error' });
+    mockGetMaterialHeight.mockReset().mockResolvedValueOnce(10).mockResolvedValueOnce(25).mockResolvedValue(30);
 
     const utils = renderDialog();
 
@@ -290,6 +291,10 @@ describe('AdorCalibration automatic solve steps', () => {
     expect(mockPopUpError).toHaveBeenCalledTimes(1);
     expect(mockOnClose).not.toHaveBeenCalled();
     expect(utils.getByTestId('elevate')).toBeInTheDocument();
+
+    // the retry at another height replaces the pose that was not saved
+    await runAutoStep(utils, 'elevate-next', 3, true);
+    expect(mockExtrinsicRegression).toHaveBeenLastCalledWith([[[1]], [[3]]], [[[2]], [[4]]], [7, 27]);
   });
 
   test('a failure at the first height returns to the paper step', async () => {
