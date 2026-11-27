@@ -45,10 +45,34 @@ class CameraCalibrationApi {
    */
   private commandQueue = new PQueue({ concurrency: 1 });
 
+  /**
+   * Replies carry no request id, so one that comes after its command timed out would be taken by the next
+   * command. Before the queue moves on, the connection is dropped and a new one takes its place: the late reply
+   * stays with the old one. The old one is not waited for, since a backend that is stuck does not answer the close
+   * either.
+   */
   private enqueue = <T>(
     executor: (resolve: (value: T) => void, reject: (reason?: unknown) => void) => void,
     timeout = COMMAND_TIMEOUT_MS,
-  ): Promise<T> => this.commandQueue.add(() => new Promise<T>(executor), { timeout }) as Promise<T>;
+  ): Promise<T> =>
+    this.commandQueue.add(async () => {
+      let timer: NodeJS.Timeout | undefined;
+
+      try {
+        return await Promise.race([
+          new Promise<T>(executor),
+          new Promise<never>((_, reject) => {
+            timer = setTimeout(() => {
+              this.ws.close(false);
+              this.ws = this.connect();
+              reject(new Error(`camera-calibration command timed out after ${timeout} ms`));
+            }, timeout);
+          }),
+        ]);
+      } finally {
+        clearTimeout(timer);
+      }
+    }) as Promise<T>;
 
   constructor() {
     this.events = {
@@ -57,19 +81,26 @@ class CameraCalibrationApi {
       onMessage: () => {},
     };
 
-    this.ws = Websocket({
+    this.ws = this.connect();
+  }
+
+  /** a connection that was replaced has no say any more, whatever it still reports while it closes */
+  private connect = () => {
+    const ws = Websocket({
       method: 'camera-calibration',
       onError: (response) => {
-        this.events.onError(response);
+        if (ws === this.ws) this.events.onError(response);
       },
       onFatal: (response) => {
-        this.events.onFatal(response);
+        if (ws === this.ws) this.events.onFatal(response);
       },
       onMessage: (data) => {
-        this.events.onMessage(data);
+        if (ws === this.ws) this.events.onMessage(data);
       },
     });
-  }
+
+    return ws;
+  };
 
   upload(data: ArrayBuffer | Blob): Promise<any> {
     return this.enqueue((resolve, reject) => {

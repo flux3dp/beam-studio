@@ -152,7 +152,7 @@
 | 動到的檔案 | 呼叫端：必須維持的行為 |
 |---|---|
 | `helpers/api/camera-calibration.ts`（新增方法） | `SolvePnP.tsx`：`solvePnPFindCorners` / `solvePnPCalculate` 的請求與回應不變 |
-| `helpers/api/camera-calibration.ts`（指令排隊，#1063 的 review，2026-11-26） | `cameraCalibrationApi` 的所有呼叫端（含 Promark 在內各機型的校正對話框、`camera-calibration-helper.ts`）：請求與回覆不變，一次只送一個指令（`p-queue`，與 `open-cv.ts` 相同）：前一個指令還在等回覆時送出的指令會被擋到該回覆抵達，而不是把它接走。指令比以前晚一個 tick 送出。2 分鐘內沒有回覆（`doFisheyeCalibration` 與 `calibrateCamera` 為 10 分鐘）會以逾時 reject 並放行佇列；以前這種呼叫會永遠等下去 |
+| `helpers/api/camera-calibration.ts`（指令排隊，#1063 的 review，2026-11-26） | `cameraCalibrationApi` 的所有呼叫端（含 Promark 在內各機型的校正對話框、`camera-calibration-helper.ts`）：請求與回覆不變，一次只送一個指令（`p-queue`，與 `open-cv.ts` 相同）：前一個指令還在等回覆時送出的指令會被擋到該回覆抵達，而不是把它接走。指令比以前晚一個 tick 送出。2 分鐘內沒有回覆（`doFisheyeCalibration` 與 `calibrateCamera` 為 10 分鐘）會以逾時 reject 並放行佇列；以前這種呼叫會永遠等下去。逾時時會先丟掉這條連線、換一條新的，再送出下一個指令，所以晚到的回覆不會被當成下一個指令的回覆（回覆沒有請求編號）；被丟掉的連線之後回報的內容一律忽略，在它上面上傳過的參數也會消失，所以流程要從 `updateData` 開始，各對話框本來就是如此（#1063 的 review，2026-11-27） |
 | | `Beamo2Calibration.tsx`、`WideAngleCamera/index.tsx`（SOLVE_OTHER_PNP）：`solvePnPCalculate` 的結果形狀不變（新的 `rms` 欄位是附加的） |
 | `Beamo2Calibration.tsx`（求解步驟被取代） | PRE_CHESSBOARD、CHESSBOARD、PUT_PAPER、SOLVE_OTHER_PNP、CHECK_PNP 與儲存的 V4 參數形狀不變 |
 | | 卸載時與 Finish 時的 `releaseMachine`，以及 `DoorChecker` 的用法不變。`releaseMachine` 現在離開 raw 模式後還會把機器回報的狀態寫進 `currentDevice.info.st_id`（反正下一次 discovery 廣播會取代 `info`） |

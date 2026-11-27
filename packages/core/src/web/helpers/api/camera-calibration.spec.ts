@@ -1,20 +1,15 @@
 const mockSend = jest.fn();
+const mockClose = jest.fn();
 let socketOptions: { onError: (r: any) => void; onFatal: (r: any) => void; onMessage: (r: any) => void };
 
-// p-queue is ESM-only and cannot be loaded here: a stand-in with what the api relies on, one task at a time and a
-// timeout that lets go of the slot
+// p-queue is ESM-only and cannot be loaded here: a stand-in with what the api relies on, one task at a time
 jest.mock('p-queue', () => ({
   __esModule: true,
   default: class {
     private tail: Promise<unknown> = Promise.resolve();
 
-    add = (task: () => Promise<unknown>, { timeout }: { timeout: number }) => {
-      const run = () =>
-        Promise.race([
-          task(),
-          new Promise((_, reject) => setTimeout(() => reject(new Error('Promise timed out')), timeout)),
-        ]);
-      const result = this.tail.then(run);
+    add = (task: () => Promise<unknown>) => {
+      const result = this.tail.then(task);
 
       this.tail = result.catch(() => {});
 
@@ -26,7 +21,7 @@ jest.mock('p-queue', () => ({
 jest.mock('@core/helpers/websocket', () => (options: any) => {
   socketOptions = options;
 
-  return { send: (...args: any[]) => mockSend(...args) };
+  return { close: (...args: any[]) => mockClose(...args), send: (...args: any[]) => mockSend(...args) };
 });
 
 import { cameraCalibrationApi } from './camera-calibration';
@@ -62,10 +57,11 @@ describe('cameraCalibrationApi command queue', () => {
     expect(await update).toBe(true);
   });
 
-  test('a reply that never comes lets go of the queue after the timeout', async () => {
+  test('a command that timed out closes the connection before the next one is sent', async () => {
     jest.useFakeTimers();
 
     try {
+      const oldConnection = socketOptions;
       const lost = cameraCalibrationApi.autoPnPMatch([[0, 0]], [[]]);
       const lostResult = expect(lost).rejects.toThrow(/timed out/i);
 
@@ -73,10 +69,22 @@ describe('cameraCalibrationApi command queue', () => {
 
       const update = cameraCalibrationApi.updateData({ d: [[0]], k: [[1]] } as any);
 
-      await jest.advanceTimersByTimeAsync(2 * 60 * 1000);
+      await jest.advanceTimersByTimeAsync(2 * 60 * 1000 - 1);
+      expect(mockClose).not.toHaveBeenCalled();
+      expect(mockSend).toHaveBeenCalledTimes(1);
+
+      await jest.advanceTimersByTimeAsync(1);
       await lostResult;
       await jest.advanceTimersByTimeAsync(0);
       expect(mockSend).toHaveBeenCalledTimes(2);
+      // closed for good first, and the next command goes out on a new connection
+      expect(mockClose).toHaveBeenCalledWith(false);
+      expect(mockClose.mock.invocationCallOrder[0]).toBeLessThan(mockSend.mock.invocationCallOrder[1]);
+      expect(socketOptions).not.toBe(oldConnection);
+
+      // whatever the old connection still reports is not taken for the reply of update_data
+      oldConnection.onMessage({ status: 'fail' });
+      oldConnection.onFatal({ code: 1006 });
 
       socketOptions.onMessage({ status: 'ok' });
       expect(await update).toBe(true);
