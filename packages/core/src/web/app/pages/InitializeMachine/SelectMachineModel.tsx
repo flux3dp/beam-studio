@@ -12,6 +12,7 @@ import { isMobile } from '@core/app/stores/screenStore';
 import { checkFpm1 } from '@core/helpers/checkFeature';
 import { decodeWorkareaAnnotation } from '@core/helpers/device/workarea-annotation';
 import { getHomePage } from '@core/helpers/hashHelper';
+import isWeb from '@core/helpers/is-web';
 import useI18n from '@core/helpers/useI18n';
 import storage from '@core/implementations/storage';
 
@@ -64,8 +65,8 @@ const SelectMachineModel = (): React.JSX.Element => {
 
     useInitializeMachineStore.getState().set('modelAnnotation', annotation);
 
-    if (workarea === 'fpm1') {
-      window.location.hash = `#/initialize/connect/connect-usb?model=fpm1`;
+    if (workarea === 'fpm1' || workarea === 'fbg1') {
+      window.location.hash = `#/initialize/connect/connect-usb?model=${workarea}`;
 
       return;
     }
@@ -76,6 +77,7 @@ const SelectMachineModel = (): React.JSX.Element => {
   const modelList = useMemo(() => {
     return [
       { Icon: InitializeIcons.Ador, label: 'Ador', model: 'ado1' },
+      !isMobile() && !isWeb() && { Icon: InitializeIcons.BeamGo, label: 'BeamGo', model: 'fbg1' },
       {
         Icon: InitializeIcons.Beamo,
         label: 'beamo Series',

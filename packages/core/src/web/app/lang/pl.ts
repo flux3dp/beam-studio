@@ -989,6 +989,25 @@ const lang: ILang = {
       fit_to_window: 'Dopasuj do oknaw',
     },
   },
+  beamgo: {
+    calibration: 'Kalibracja BeamGo',
+    cut: 'Cięcie',
+    door_check: 'Wykrywanie drzwi bezpieczeństwa',
+    field_warning: 'Zadania wymagają pola 90 × 90 mm. Przy innych wymiarach nie można ich uruchomić.',
+    fill: 'Wypełnienie + obraz',
+    framing_power: 'Moc podglądu',
+    framing_warning: 'Podgląd emituje niebieskie światło laserowe. Załóż odpowiednie okulary ochronne do lasera.',
+    line: 'Linia',
+    readback_error: 'Nie można zweryfikować zapisanych wartości. Przed użyciem przywróć poprzednie wartości.',
+    restore: 'Przywróć poprzednie wartości',
+    reverse_x: 'X ↦ −X',
+    reverse_y: 'Y ↦ −Y',
+    settings: 'Ustawienia BeamGo',
+    swap_xy: 'X ↔ Y',
+    tilt_check: 'Wykrywanie przechylenia',
+    tilt_error: 'Urządzenie jest przechylone. Przed uruchomieniem ustaw je na poziomej powierzchni.',
+    watt: 'Moc lasera (W)',
+  },
   boxgen: {
     add_option: 'Dodaj opcję',
     basic_box: 'Podstawowe pudełko',
@@ -2405,6 +2424,7 @@ const lang: ILang = {
     HARDWARE_ERROR_REMOTE_INTERLOCK_OPENED: '#927 Zdalny interlock wyzwolony\nSprawdź złącze zdalnego interlocka i upewnij się, że jest bezpiecznie podłączone przed ponownym uruchomieniem zadania.',
     HARDWARE_ERROR_ROTARY_NOT_DETECTED: '#914 Nie wykryto modułu obrotowego',
     HARDWARE_ERROR_SUBSYSTEM_ERROR: '#402 Błąd krytyczny: Brak odpowiedzi podsystemu. Skontaktuj się z pomocą techniczną FLUX.', // Deprecated in FW 3.3.1
+    HARDWARE_ERROR_TILT: 'Urządzenie jest przechylone. Przed uruchomieniem ustaw je na poziomej powierzchni.',
     HARDWARE_FAILURE: 'Coś poszło nie tak\nProszę ponownie uruchomić komputer', // Deprecated in FW 3.3.1
     hour: 'h',
     MAINBOARD_OFFLINE: '#905 Błąd podczas łączenia z płytą główną.\nPlease restart the machine. ',

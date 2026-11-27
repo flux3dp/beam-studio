@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { LoadingOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { Button, Checkbox, InputNumber, Segmented, Spin, Tooltip } from 'antd';
 
-import { promarkModels } from '@core/app/actions/beambox/constant';
+import { galvoModels } from '@core/app/actions/beambox/constant';
 import previewModeController from '@core/app/actions/beambox/preview-mode-controller';
 import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
 import { getAddOnInfo } from '@core/app/constants/addOn';
@@ -167,7 +167,7 @@ export const showFramingModal = async (): Promise<void> => {
 
   addDialogComponent(
     'framing-modal',
-    promarkModels.has(device.model) ? (
+    galvoModels.has(device.model) ? (
       <PromarkFramingModal device={device} onClose={() => popDialogById('framing-modal')} startOnOpen />
     ) : (
       <FramingModal device={device} onClose={() => popDialogById('framing-modal')} />

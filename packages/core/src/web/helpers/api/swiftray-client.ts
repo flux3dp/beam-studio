@@ -3,7 +3,7 @@ import { EventEmitter } from 'eventemitter3';
 import { match } from 'ts-pattern';
 
 import alertCaller from '@core/app/actions/alert-caller';
-import constant, { promarkModels } from '@core/app/actions/beambox/constant';
+import constant, { galvoModels } from '@core/app/actions/beambox/constant';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import TopBarController from '@core/app/components/beambox/TopBar/contexts/TopBarController';
 import alertConstants from '@core/app/constants/alert-constants';
@@ -183,7 +183,7 @@ class SwiftrayClient extends EventEmitter {
 
       const device = TopBarController.getSelectedDevice();
 
-      this.lastPromark = promarkModels.has(device?.model) ? device : null;
+      this.lastPromark = device && galvoModels.has(device.model) ? device : null;
     } else if (newStatus === 'connected' && this.status === 'disconnected') {
       // Reconnect to Promark
       let device = TopBarController.getSelectedDevice();
@@ -196,7 +196,7 @@ class SwiftrayClient extends EventEmitter {
         retry -= 1;
       }
 
-      if (promarkModels.has(device?.model)) {
+      if (device && galvoModels.has(device.model)) {
         const resp = await deviceMaster.select(device);
 
         reconnect = resp.success;
@@ -595,6 +595,32 @@ class SwiftrayClient extends EventEmitter {
     return this.action(`/devices/${port}`, 'connect', undefined, undefined, CONNECT_TIMEOUT_MS);
   }
 
+  /** Share the socket, pending callbacks and reconnect state; keep each control's device route. */
+  public forDevice(port: string): SwiftrayClient {
+    const client: SwiftrayClient = Object.create(this);
+
+    client.port = port;
+    client.action = this.action.bind(this);
+
+    return client;
+  }
+
+  private async deviceCommand<T>(command: string, params?: unknown): Promise<T> {
+    const result = await this.action<T & { error?: string; success?: boolean }>(
+      `/devices/${this.port}`,
+      command,
+      params,
+    );
+
+    if (this.port.startsWith('beamgo/') && result.success === false) {
+      const error = result.error ?? 'COMMAND_FAILED';
+
+      throw Object.assign(new Error(error), { error: error.split(',') });
+    }
+
+    return result;
+  }
+
   /**
    * `lens`: applied by Swiftray in the same request, right before the job starts; `scanahead` and
    * `correction` are the params of setScanaheadParams and setCorrection. With it, the answer is
@@ -605,19 +631,19 @@ class SwiftrayClient extends EventEmitter {
     taskTime?: number,
     lens?: { correction: Record<string, number | string>; scanahead: Record<string, number> },
   ): Promise<{ error?: ErrorObject | string; success: boolean }> {
-    return this.action(`/devices/${this.port}`, 'start', { lens, taskTime });
+    return this.deviceCommand('start', { lens, taskTime });
   }
 
   public async pauseTask(): Promise<{ error?: ErrorObject; success: boolean }> {
-    return this.action(`/devices/${this.port}`, 'pause');
+    return this.deviceCommand('pause');
   }
 
   public async resumeTask(): Promise<{ error?: ErrorObject; success: boolean }> {
-    return this.action(`/devices/${this.port}`, 'resume');
+    return this.deviceCommand('resume');
   }
 
   public async stopTask(): Promise<{ error?: ErrorObject; success: boolean }> {
-    return this.action(`/devices/${this.port}`, 'stop');
+    return this.deviceCommand('stop');
   }
 
   public async getDeviceParam<T = number>(name: string): Promise<{ status: string; value: T }> {
@@ -676,7 +702,7 @@ class SwiftrayClient extends EventEmitter {
   }
 
   public async quitTask(): Promise<{ error?: ErrorObject; success: boolean }> {
-    return this.action(`/devices/${this.port}`, 'quit');
+    return this.deviceCommand('quit');
   }
 
   public async downloadLog(logName: string): Promise<Blob> {
@@ -706,13 +732,13 @@ class SwiftrayClient extends EventEmitter {
     opt?: TPromarkFramingOpt,
     lens?: { correction: Record<string, number | string>; scanahead: Record<string, number> },
   ): Promise<{ error?: string; success: boolean }> {
-    const { width } = getWorkarea('fpm1');
+    const { width } = getWorkarea(this.port.startsWith('beamgo/') ? 'fbg1' : 'fpm1');
 
-    return this.action(`/devices/${this.port}`, 'startFraming', { ...opt, lens, width });
+    return this.deviceCommand('startFraming', { ...opt, lens, width });
   }
 
   public async stopFraming(): Promise<void> {
-    return this.action(`/devices/${this.port}`, 'stopFraming');
+    return this.deviceCommand('stopFraming');
   }
 
   public async kick(): Promise<void> {
@@ -721,6 +747,17 @@ class SwiftrayClient extends EventEmitter {
 
   public async upload(data: Blob, path?: string): Promise<void> {
     const checkDoor = useDocumentStore.getState()['promark-safety-door'];
+
+    if (this.port.startsWith('beamgo/')) {
+      const result = await this.action<{ error?: string; success: boolean }>(`/devices/${this.port}`, 'upload', {
+        data: await data.text(),
+        path,
+      });
+
+      if (!result.success) throw new Error(result.error ?? 'UPLOAD_FAILED');
+
+      return;
+    }
 
     try {
       const text = await data.text();
@@ -736,7 +773,13 @@ class SwiftrayClient extends EventEmitter {
   }
 
   public async getDeviceStatus(): Promise<IReport> {
-    return this.action<IReport>(`/devices/${this.port}`, 'getStatus');
+    const result = await this.action<IReport & { success?: boolean }>(`/devices/${this.port}`, 'getStatus');
+
+    if (this.port.startsWith('beamgo/') && result.success === false) {
+      return { ...result, disconnection: 1, st_id: 128 };
+    }
+
+    return result;
   }
 
   public async home(): Promise<void> {
@@ -772,11 +815,16 @@ const swiftrayClient = new SwiftrayClient(`ws://${swiftrayHost}:${SWIFTRAY_PORT}
 
 const getDeviceClient = async (port: string): Promise<SwiftrayClient> => {
   console.log(`Connecting to device on port ${port}`);
+
   // TODO:SWIFTRAY - Open a new instance of Swiftray, and use different port number
   // const sc = new SwiftrayClient(`ws://localhost:${SWIFTRAY_PORT}/`);
-  await swiftrayClient.connectDevice(port);
+  const result = await swiftrayClient.connectDevice(port);
 
-  return swiftrayClient;
+  if (result.success === false) {
+    throw new Error(typeof result.error === 'string' ? result.error : (result.error?.message ?? 'CONNECT_FAILED'));
+  }
+
+  return swiftrayClient.forDevice(port);
 };
 
 export {

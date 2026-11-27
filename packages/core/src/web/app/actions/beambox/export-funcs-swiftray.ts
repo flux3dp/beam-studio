@@ -37,7 +37,7 @@ import type { TaskMetaData } from '@core/interfaces/ITask';
 import type { IBaseConfig, IFcodeConfig } from '@core/interfaces/ITaskConfig';
 import type { IWrappedSwiftrayTaskFile } from '@core/interfaces/IWrappedFile';
 
-import { adorModels, promarkModels } from './constant';
+import { adorModels, galvoModels } from './constant';
 import { getAdorPaddingAccel } from './export/ador-utils';
 import { annotateLayerBBox } from './export/annotateLayerBBox';
 import { annotateLayerDpmm } from './export/annotateLayerDpmm';
@@ -333,7 +333,7 @@ const fetchTaskCodeSwiftray = async (
     const isAdor = adorModels.has(device.model);
 
     doesSupportDiodeAndAF = vc.meetRequirement('DIODE_AND_AUTOFOCUS');
-    shouldUseFastGradient = shouldUseFastGradient && vc.meetRequirement('FAST_GRADIENT');
+    shouldUseFastGradient = shouldUseFastGradient && (device.model === 'fbg1' || vc.meetRequirement('FAST_GRADIENT'));
     supportPwm = vc.meetRequirement(isAdor ? 'ADOR_PWM' : 'PWM');
     supportJobOrigin = vc.meetRequirement(isAdor ? 'ADOR_JOB_ORIGIN' : 'JOB_ORIGIN');
     supportAccOverrideV1 = vc.meetRequirement('BEAMO_ACC_OVERRIDE');
@@ -355,7 +355,7 @@ const fetchTaskCodeSwiftray = async (
   const { fgGcode = false } = opts;
   const isNonFGCode = codeType === 'gcode' && !fgGcode;
   const model = workareaManager.model;
-  const isPromark = promarkModels.has(model);
+  const isPromark = galvoModels.has(model);
 
   if (isPromark) {
     codeType = 'gcode';
@@ -376,7 +376,7 @@ const fetchTaskCodeSwiftray = async (
     supportAccOverrideV1,
     supportJobOrigin,
     supportPwm,
-    travelSpeed: isPromark ? controlConfig.travelSpeed : 100,
+    travelSpeed: model === 'fbg1' ? 2000 : isPromark ? controlConfig.travelSpeed : 100,
   };
 
   taskConfig = {

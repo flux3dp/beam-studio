@@ -22,6 +22,7 @@ import { createParamsLabel } from '@core/app/svgedit/text/paramsLabel';
 import { useInnerEngravingActive } from '@core/helpers/addOn/innerEngraving';
 import { endPreviewMode, handlePreviewClick } from '@core/helpers/device/camera/previewMode';
 import useDidUpdateEffect from '@core/helpers/hooks/useDidUpdateEffect';
+import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import { isParamsLabelDev, isUvDev } from '@core/helpers/is-dev';
 import useI18n from '@core/helpers/useI18n';
 
@@ -41,6 +42,7 @@ type ToolButtonProps = {
 
 const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX.Element => {
   const lang = useI18n();
+  const workarea = useWorkarea();
   const {
     beambox: { left_panel: t },
     topbar: { tag_names: tTag },
@@ -93,7 +95,7 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
     style = undefined,
     supportedIn3D = false,
   }: ToolButtonProps) =>
-    isInnerEngravingMode && !supportedIn3D ? null : (
+    (isInnerEngravingMode && !supportedIn3D) || (workarea === 'fbg1' && id === 'Preview') ? null : (
       <LeftPanelButton
         active={activeButton === id}
         className={className}

@@ -2,10 +2,13 @@ import type { LayerModuleType } from '@core/app/constants/layer-module/layer-mod
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import type { Preset, PresetModel } from '@core/interfaces/ILayerConfig';
 
+import { beamGoPresets } from './beamgo-presets';
+
 /* eslint-disable perfectionist/sort-objects */
 // Promark UV 5W (fpm1_2_5): applyPreset leaves the keys a preset omits untouched, so every one sets
 // fillDwellTime; only PLA pauses after each line, the others turn it off (negative = off)
 export const presets: Record<string, Partial<Record<PresetModel, Partial<Record<LayerModuleType, Preset>>>>> = {
+  ...beamGoPresets,
   wood_3mm_cutting: {
     fpm1_2_5: {
       [LayerModule.LASER_UNIVERSAL]: {

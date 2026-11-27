@@ -1,0 +1,16 @@
+<svg width="108" height="80" viewBox="0 0 108 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- BeamGo device icon as drawn in FLUX Go (src/machine-family-icon.tsx:41-58). Stroke-based. -->
+  <path
+    d="M19 4l29 6v23l-29 6z M48 10h36q2 0 2 2v19q0 2-2 2H48 M48 33v6q0 2 2 2h4q2 0 2-2v-6"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linejoin="round"
+  />
+  <path
+    d="M25 13l18 2v13l-18 3q-2 0-2-2V16q0-3 2-3z M60 33q7 3 5 9l-1 2q3 1 4 5l3 10q1 3-2 5l-6 2 M79 33q-6 2-5 8l5 24 M59 65h20q2 0 2 2v7H53v-4q0-2 2-3z M75 17h4m-4 4h4"
+    stroke="currentColor"
+    stroke-width="1.8"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+</svg>

@@ -42,11 +42,15 @@ const MIN_VALUE = 0;
 
 function PowerBlock({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-item' }): React.JSX.Element {
   const lang = useI18n();
+  const workarea = useWorkarea();
   const t = lang.beambox.right_panel.laser_panel;
   const { change, frequency, power: layerPower, update } = useConfigPanelStore();
   const isPromarkUV = useIsPromarkUV();
   const { power: promarkPowerLimit } = usePromarkLimit();
-  const { max, min } = (isPromarkUV && promarkPowerLimit) || { max: MAX_VALUE, min: MIN_VALUE };
+  const { max, min } = (isPromarkUV && promarkPowerLimit) || {
+    max: MAX_VALUE,
+    min: workarea === 'fbg1' ? 1 : MIN_VALUE,
+  };
   // UV power stands for its frequency, which is what the machine uses: show the power the frequency
   // gives, so a layer whose two values disagree (or a frequency set below 40kHz) reads correctly
   const power = useMemo<ConfigItem<number>>(
@@ -118,7 +122,7 @@ function PowerBlock({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
       undoManager.addCommandToHistory(batchCmd);
     }
   };
-  const workarea = useWorkarea();
+
   const workareaObj = useMemo(() => getWorkarea(workarea), [workarea]);
 
   const content = (

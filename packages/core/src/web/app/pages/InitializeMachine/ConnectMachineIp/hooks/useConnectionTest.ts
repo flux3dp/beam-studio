@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { sprintf } from 'sprintf-js';
 
 import alertCaller from '@core/app/actions/alert-caller';
-import { promarkModels } from '@core/app/actions/beambox/constant';
+import { galvoModels, promarkModels } from '@core/app/actions/beambox/constant';
 import menuDeviceActions from '@core/app/actions/beambox/menuDeviceActions';
 import dialogCaller from '@core/app/actions/dialog-caller';
 import { isTesting, TestState } from '@core/app/constants/connection-test';
@@ -180,7 +180,7 @@ export const useConnectionTest = (
       return;
     }
 
-    const device = await testConnection(({ model }) => promarkModels.has(model));
+    const device = await testConnection((device) => device.model === model);
 
     if (!device) {
       alertCaller.popUp({
@@ -195,9 +195,13 @@ export const useConnectionTest = (
     // for correctly select promark device serial
     const res = await deviceMaster.select(device);
 
-    console.log('🚀 ~ useConnectionTest.ts ~ select promark ~ res:', res);
+    if (!res.success) {
+      updateTestState({ testState: TestState.CONNECTION_TEST_FAILED });
 
-    if (skipCameraTest) {
+      return;
+    }
+
+    if (skipCameraTest || model === 'fbg1') {
       updateTestState({ testState: TestState.TEST_COMPLETED });
 
       return;
@@ -207,7 +211,7 @@ export const useConnectionTest = (
   };
 
   const handleStartTest = async () => {
-    if (isPromark) {
+    if (galvoModels.has(model)) {
       handleStartTestForPromark();
 
       return;
@@ -248,7 +252,7 @@ export const useConnectionTest = (
       return;
     }
 
-    if (skipCameraTest) {
+    if (skipCameraTest || model === 'fbg1') {
       updateTestState({ testState: TestState.TEST_COMPLETED });
 
       return;

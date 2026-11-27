@@ -125,6 +125,8 @@ class PreviewModeController {
   }
 
   async start(device: IDeviceInfo) {
+    if (device.model === 'fbg1') return;
+
     this.startPromise = (async () => {
       this.reset({ keepPendingPreviewMode: true });
       this.setIsStarting(true);

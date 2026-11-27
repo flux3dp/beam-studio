@@ -133,7 +133,7 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
 
   let warningText = '';
 
-  if (!isPromark && isLaser) {
+  if (!isPromark && workarea !== 'fbg1' && isLaser) {
     if (hasVector && hasVectorLimit && vectorSpeedLimit && value > vectorSpeedLimit) {
       warningText = vectorSpeedWarning;
     } else if (minSpeedWarning && value < minSpeedWarning) {
@@ -144,6 +144,8 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
   }
 
   const handleChange = (val: number) => {
+    if (workarea === 'fbg1') val = Math.max(minValue, Math.min(maxValue, Math.round(val)));
+
     change({ configName: CUSTOM_PRESET_CONSTANT, speed: val });
     timeEstimationButtonEventEmitter.emit('SET_ESTIMATED_TIME', null);
 
@@ -190,7 +192,7 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
         )}
       </span>
       <ConfigValueDisplay
-        decimal={decimal}
+        decimal={workarea === 'fbg1' && !isInch ? 0 : decimal}
         hasMultiValue={hasMultiValue}
         inputId="speed-input"
         max={maxValue}
@@ -202,14 +204,14 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
         value={Math.min(Math.max(value, minValue), maxValue)}
       />
       <ConfigSlider
-        decimal={decimal}
+        decimal={workarea === 'fbg1' && !isInch ? 0 : decimal}
         id="speed"
         isGradient
         max={maxValue}
         min={minValue}
         onChange={handleChange}
         options={sliderOptions}
-        step={0.1}
+        step={workarea === 'fbg1' ? 1 : 0.1}
         unit={displayUnit}
         value={value}
         warningPercent={warningPercent}

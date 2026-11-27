@@ -89,6 +89,20 @@ const useMenuData = (email?: string): MenuNode[] => {
 
   const buildDeviceSubmenu = (device: IDeviceInfo): MenuNode => {
     const { model, name, serial } = device;
+
+    if (model === 'fbg1') {
+      return {
+        children: [
+          { device, id: 'DASHBOARD', label: menuCms.dashboard, type: 'item' },
+          { device, id: 'BEAMGO_SETTINGS', label: lang.beamgo.settings, type: 'item' },
+          { device, id: 'BEAMGO_CALIBRATION', label: lang.beamgo.calibration, type: 'item' },
+        ],
+        id: serial,
+        label: name,
+        type: 'submenu',
+      };
+    }
+
     const hasModules = modelsWithModules.has(model);
     const supportedModules = hasModules ? getWorkarea(model).supportedModules : undefined;
     const isPromark = promarkModels.has(model);

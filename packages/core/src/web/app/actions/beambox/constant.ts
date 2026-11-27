@@ -2,7 +2,7 @@ import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 
 const removeReadonly = <T extends string>(arr: ReadonlyArray<T[number]> | T[]) => arr as string[];
 
-export const supportUsbModelsArray = ['ado1', 'fhexa1', 'fhx2rf', 'fpm1', 'fbb2', 'fbm2'] as const;
+export const supportUsbModelsArray = ['ado1', 'fhexa1', 'fhx2rf', 'fpm1', 'fbg1', 'fbb2', 'fbm2'] as const;
 export type SupportUsbModels = (typeof supportUsbModelsArray)[number];
 export const supportUsbModelsStrict = new Set(supportUsbModelsArray);
 export const supportUsbModels = new Set(removeReadonly(supportUsbModelsArray));
@@ -16,6 +16,9 @@ export const adorModels = new Set(adorModelsArray);
 
 export const promarkModelsArray = ['fpm1'] as const;
 export const promarkModels = new Set(promarkModelsArray);
+
+// Shared USB galvo job flow. Keep source, lens, camera and rotary checks Promark-specific.
+export const galvoModels = new Set<string>([...promarkModelsArray, 'fbg1']);
 
 export const modelsWithPrinter4C = ['fbm2', 'fuv1'] as const;
 export const modelsWithModules = new Set([...adorModelsArray, ...modelsWithPrinter4C]);
@@ -49,6 +52,7 @@ export default {
     fbb1b: ['fbb1b', 'fbm1'],
     fbb1p: ['fbb1p', 'fbb1b', 'fbm1'],
     fbb2: ['fbb2', 'fbm2'], // TODO: add fbm2 until beamo2 machine model updated
+    fbg1: ['fbg1'],
     fbm1: ['fbm1'],
     fbm2: ['fbm2', 'fuv1'],
     fhexa1: ['fhexa1', 'fbb1p', 'fbb1b', 'fbm1'],

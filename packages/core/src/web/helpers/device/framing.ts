@@ -2,7 +2,7 @@ import { EventEmitter } from 'eventemitter3';
 import { sprintf } from 'sprintf-js';
 
 import alertCaller from '@core/app/actions/alert-caller';
-import constant, { dpmm, promarkModels } from '@core/app/actions/beambox/constant';
+import constant, { dpmm, galvoModels, promarkModels } from '@core/app/actions/beambox/constant';
 import exportFuncs from '@core/app/actions/beambox/export-funcs';
 import { fetchFramingTaskCode } from '@core/app/actions/beambox/export-funcs-swiftray';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
@@ -101,6 +101,8 @@ export const framingOptions = {
 } as const;
 
 export const getFramingOptions = (device: IDeviceInfo): TFramingType[] => {
+  if (device.model === 'fbg1') return [FramingType.Framing];
+
   if (promarkModels.has(device.model)) {
     const withRotary = Boolean(useDocumentStore.getState().rotary_mode && getAddOnInfo(device.model).rotary);
 
@@ -329,6 +331,7 @@ class FramingTaskManager extends EventEmitter {
   private isAdor = false;
   private isFcodeV2 = false;
   private isPromark = false;
+  private isGalvo = false;
   private isProcessing = false;
   private isBeamo2 = false;
   private isWorking = false;
@@ -364,6 +367,7 @@ class FramingTaskManager extends EventEmitter {
     this.vc = versionChecker(device.version);
     this.isAdor = constant.adorModels.includes(device.model);
     this.isPromark = promarkModels.has(device.model);
+    this.isGalvo = galvoModels.has(device.model);
     this.isBeamo2 = device.model === 'fbm2';
     this.isFcodeV2 = constant.fcodeV2Models.has(device.model);
     this.withVT = hasVariableText();
@@ -402,7 +406,11 @@ class FramingTaskManager extends EventEmitter {
     this.changeWorkingStatus(false);
   };
 
-  public startPromarkFraming = async (noRotation: boolean, taskCode?: string): Promise<boolean> => {
+  public startPromarkFraming = async (
+    noRotation: boolean,
+    taskCode?: string,
+    framingPower?: number,
+  ): Promise<boolean> => {
     if (this.interrupted) {
       return false;
     }
@@ -432,7 +440,7 @@ class FramingTaskManager extends EventEmitter {
     // current canvas, so it is the document's lens, with the red dot correction on top.
     this.showMessage(i18n.lang.message.connecting);
 
-    if (!(await applyLensProfile(deviceMaster, this.device, { redDot: true }))) {
+    if (this.isPromark && !(await applyLensProfile(deviceMaster, this.device, { redDot: true }))) {
       // refused: a job is starting or running, so the red light would run on its lens
       this.closeMessage();
       this.changeWorkingStatus(false);
@@ -446,15 +454,19 @@ class FramingTaskManager extends EventEmitter {
 
     // The same lens goes along with the start: Swiftray applies it in the request that starts the red
     // light, so a lens another tab writes after the one above cannot end up under this run.
-    const lens = getJobLens(this.device, { redDot: true });
+    const lens = this.isPromark ? getJobLens(this.device, { redDot: true }) : undefined;
 
     try {
       if (taskCode) {
-        await deviceMaster.startFraming({ taskCode }, lens);
+        await deviceMaster.startFraming({ taskCode, ...(this.isPromark ? {} : { framingPower }) }, lens);
       } else {
         this.showMessage(i18n.lang.framing.calculating_task, 0);
         await deviceMaster.startFraming(
-          { points: [this.taskPoints[0], this.taskPoints[2]], rotaryInfo: noRotation ? null : this.rotaryInfo },
+          {
+            points: this.isPromark ? [this.taskPoints[0], this.taskPoints[2]] : this.taskPoints,
+            rotaryInfo: this.isPromark && !noRotation ? this.rotaryInfo : null,
+            ...(this.isPromark ? {} : { framingPower }),
+          },
           lens,
         );
       }
@@ -506,6 +518,9 @@ class FramingTaskManager extends EventEmitter {
     }
 
     await deviceMaster.stopFraming();
+
+    if (!this.isPromark) await deviceMaster.quit();
+
     this.changeWorkingStatus(false);
     this.interrupted = true;
   };
@@ -515,7 +530,7 @@ class FramingTaskManager extends EventEmitter {
    * they start, so this only keeps the machine from being left on red light parameters.
    */
   public resetPromarkParams = async (): Promise<void> => {
-    await applyLensProfile(deviceMaster, this.device);
+    if (this.isPromark) await applyLensProfile(deviceMaster, this.device);
   };
 
   private moveTo = async ({
@@ -937,7 +952,7 @@ class FramingTaskManager extends EventEmitter {
   public destroy = async () => {
     await this.stopFraming();
 
-    if (!this.jobOrigin && this.initialized && !this.isPromark) {
+    if (!this.jobOrigin && this.initialized && !this.isGalvo) {
       if (deviceMaster.currentControlMode !== 'raw') await deviceMaster.enterRawMode();
 
       await deviceMaster.rawLooseMotor();
@@ -1065,8 +1080,8 @@ class FramingTaskManager extends EventEmitter {
       return false;
     }
 
-    if (this.isPromark) {
-      return await this.startPromarkFraming(type === FramingType.RotateAxis, taskCode ?? undefined);
+    if (this.isGalvo) {
+      return await this.startPromarkFraming(type === FramingType.RotateAxis, taskCode ?? undefined, opts.lowPower);
     }
 
     try {
@@ -1107,7 +1122,7 @@ class FramingTaskManager extends EventEmitter {
       return;
     }
 
-    if (this.isPromark) {
+    if (this.isGalvo) {
       await this.stopPromarkFraming();
 
       return;

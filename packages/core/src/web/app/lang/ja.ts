@@ -989,6 +989,25 @@ const lang: ILang = {
       fit_to_window: 'ウィンドウに合わせる',
     },
   },
+  beamgo: {
+    calibration: 'BeamGo キャリブレーション',
+    cut: 'カット',
+    door_check: '安全ドア検知',
+    field_warning: '加工には 90 × 90 mm の加工範囲が必要です。他のサイズでは開始できません。',
+    fill: '塗りつぶし＋画像',
+    framing_power: 'プレビュー出力',
+    framing_warning: 'プレビュー中は青色レーザーが照射されます。適切なレーザー保護メガネを着用してください。',
+    line: '線',
+    readback_error: '保存した値を確認できません。使用前に以前の値を復元してください。',
+    restore: '以前の値を復元',
+    reverse_x: 'X ↦ −X',
+    reverse_y: 'Y ↦ −Y',
+    settings: 'BeamGo 設定',
+    swap_xy: 'X ↔ Y',
+    tilt_check: '傾き検知',
+    tilt_error: '本体が傾いています。水平な場所に置いてから開始してください。',
+    watt: 'レーザー出力（W）',
+  },
   boxgen: {
     add_option: 'オプションを追加',
     basic_box: '基本ボックス',
@@ -2405,6 +2424,7 @@ const lang: ILang = {
     HARDWARE_ERROR_REMOTE_INTERLOCK_OPENED: '#927 リモートインターロック作動\nリモートインターロックコネクタを確認し、しっかり接続されていることを確認してからジョブを再開してください。',
     HARDWARE_ERROR_ROTARY_NOT_DETECTED: '#914 ロータリーモジュールが検出されません',
     HARDWARE_ERROR_SUBSYSTEM_ERROR: '#402 重大なエラー：サブシステムが応答しません。 FLUXサポートにお問い合わせください。', // Deprecated in FW 3.3.1
+    HARDWARE_ERROR_TILT: '本体が傾いています。水平な場所に置いてから開始してください。',
     HARDWARE_FAILURE: '何かがうまくいかなかった\nマシンを再起動してください', // Deprecated in FW 3.3.1
     hour: 'h',
     MAINBOARD_OFFLINE: '#905 メインボードへの接続中にエラーが発生しました。\nマシンを再起動してください。',

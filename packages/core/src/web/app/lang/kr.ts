@@ -989,6 +989,25 @@ const lang: ILang = {
       fit_to_window: '화면에 맞게 조정',
     },
   },
+  beamgo: {
+    calibration: 'BeamGo 보정',
+    cut: '커팅',
+    door_check: '안전 도어 감지',
+    field_warning: '작업에는 90 × 90 mm 작업 영역이 필요합니다. 다른 크기에서는 시작할 수 없습니다.',
+    fill: '채우기＋이미지',
+    framing_power: '미리보기 출력',
+    framing_warning: '미리보기 중 파란색 레이저가 방출됩니다. 적절한 레이저 보안경을 착용하세요.',
+    line: '선',
+    readback_error: '저장된 값을 확인할 수 없습니다. 사용 전에 이전 값으로 복원하세요.',
+    restore: '이전 값 복원',
+    reverse_x: 'X ↦ −X',
+    reverse_y: 'Y ↦ −Y',
+    settings: 'BeamGo 설정',
+    swap_xy: 'X ↔ Y',
+    tilt_check: '기울기 감지',
+    tilt_error: '기기가 기울어져 있습니다. 수평면에 놓은 후 시작하세요.',
+    watt: '레이저 출력（W）',
+  },
   boxgen: {
     add_option: '옵션 추가',
     basic_box: '기본 상자',
@@ -2405,6 +2424,7 @@ const lang: ILang = {
     HARDWARE_ERROR_REMOTE_INTERLOCK_OPENED: '#927 원격 인터록 작동\n원격 인터록 커넥터를 확인하고 안전하게 연결되어 있는지 확인한 후 작업을 재시작하세요.',
     HARDWARE_ERROR_ROTARY_NOT_DETECTED: '#914 로터리 모듈이 감지되지 않습니다.',
     HARDWARE_ERROR_SUBSYSTEM_ERROR: '#402 치명적인 오류: 하위 시스템 응답 없음. FLUX 지원팀에 문의하세요.', // Deprecated in FW 3.3.1
+    HARDWARE_ERROR_TILT: '기기가 기울어져 있습니다. 수평면에 놓은 후 시작하세요.',
     HARDWARE_FAILURE: '문제가 발생했습니다. 기계를 다시 시작하세요.', // Deprecated in FW 3.3.1
     hour: '시',
     MAINBOARD_OFFLINE: '#905 메인보드 연결 오류. 기계를 다시 시작하세요.',

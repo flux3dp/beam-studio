@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import Alert from '@core/app/actions/alert-caller';
-import { promarkModels } from '@core/app/actions/beambox/constant';
+import { galvoModels, promarkModels } from '@core/app/actions/beambox/constant';
 import exportFuncs, { getConvertEngine } from '@core/app/actions/beambox/export-funcs';
 import Progress from '@core/app/actions/progress-caller';
 import AlertConstants from '@core/app/constants/alert-constants';
@@ -164,6 +164,7 @@ export class MonitorContextProvider extends React.Component<Props, State> {
   isClosed: boolean;
 
   isPromark: boolean;
+  isGalvo: boolean;
 
   autoStart?: boolean;
 
@@ -180,6 +181,7 @@ export class MonitorContextProvider extends React.Component<Props, State> {
     this.isClosed = false;
     this.autoStart = autoStart;
     this.isPromark = promarkModels.has(device.model);
+    this.isGalvo = galvoModels.has(device.model);
     this.state = {
       currentPath: [],
       downloadProgress: null,
@@ -244,12 +246,12 @@ export class MonitorContextProvider extends React.Component<Props, State> {
     const { mode } = this.state;
     const { device } = this.props;
 
-    if (this.isPromark) {
+    if (this.isGalvo) {
       swiftrayClient.on('disconnected', this.onSwiftrayDisconnected);
     }
 
     if (mode === Mode.WORKING) {
-      if (this.isPromark) {
+      if (this.isGalvo) {
         const cachedTask = exportFuncs.getCachedPromarkTask(device.serial);
 
         if (cachedTask) {
@@ -469,7 +471,7 @@ export class MonitorContextProvider extends React.Component<Props, State> {
             console.log('to work mode');
             this.enterWorkingMode();
           }
-        } else if (report.st_id === IDLE && !this.isPromark) {
+        } else if (report.st_id === IDLE && !this.isGalvo) {
           if (mode === Mode.WORKING || (mode === Mode.CAMERA && this.modeBeforeCamera === Mode.WORKING)) {
             this.exitWorkingMode();
           }
@@ -691,7 +693,7 @@ export class MonitorContextProvider extends React.Component<Props, State> {
         taskImageURL = URL.createObjectURL(imageBlob);
       }
 
-      if (!this.isPromark) {
+      if (!this.isGalvo) {
         taskTime = newTaskTime;
         totalTaskTime = newTaskTime ?? 0;
       }

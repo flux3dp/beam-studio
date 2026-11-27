@@ -989,6 +989,25 @@ const lang: ILang = {
       fit_to_window: 'An Fenster anpassen',
     },
   },
+  beamgo: {
+    calibration: 'BeamGo-Kalibrierung',
+    cut: 'Schneiden',
+    door_check: 'Erkennung der Sicherheitstür',
+    field_warning: 'Aufträge erfordern ein Arbeitsfeld von 90 × 90 mm. Bei anderen Größen ist kein Start möglich.',
+    fill: 'Füllung + Bild',
+    framing_power: 'Vorschauleistung',
+    framing_warning: 'Die Vorschau gibt blaues Laserlicht ab. Tragen Sie eine geeignete Laserschutzbrille.',
+    line: 'Linie',
+    readback_error: 'Die gespeicherten Werte konnten nicht überprüft werden. Stellen Sie vor der Verwendung die vorherigen Werte wieder her.',
+    restore: 'Vorherige Werte wiederherstellen',
+    reverse_x: 'X ↦ −X',
+    reverse_y: 'Y ↦ −Y',
+    settings: 'BeamGo-Einstellungen',
+    swap_xy: 'X ↔ Y',
+    tilt_check: 'Neigungserkennung',
+    tilt_error: 'Das Gerät ist geneigt. Stellen Sie es vor dem Start auf eine ebene Fläche.',
+    watt: 'Laserleistung (W)',
+  },
   boxgen: {
     add_option: 'Option hinzufügen',
     basic_box: 'Basic Box',
@@ -2405,6 +2424,7 @@ const lang: ILang = {
     HARDWARE_ERROR_REMOTE_INTERLOCK_OPENED: '#927 Fernverriegelung ausgelöst\nBitte überprüfen Sie den Fernverriegelungsanschluss und stellen Sie sicher, dass er sicher verbunden ist, bevor Sie den Auftrag neu starten.',
     HARDWARE_ERROR_ROTARY_NOT_DETECTED: '#914 Kein Drehmodul erkannt',
     HARDWARE_ERROR_SUBSYSTEM_ERROR: '#402 Kritischer Fehler: Subsystem keine Antwort. Bitte wenden Sie sich an den FLUX Support', // Deprecated in FW 3.3.1
+    HARDWARE_ERROR_TILT: 'Das Gerät ist geneigt. Stellen Sie es vor dem Start auf eine ebene Fläche.',
     HARDWARE_FAILURE: 'Etwas ist schief gelaufen\nBitte starte die Maschine neu', // Deprecated in FW 3.3.1
     hour: 'h',
     MAINBOARD_OFFLINE: '#905 Fehler beim Verbinden mit dem Mainboard.\nBitte starte die Maschine neu.',

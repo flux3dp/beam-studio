@@ -88,7 +88,7 @@ export const handlePreviewClick = async ({ showModal = false }: { showModal?: bo
 
   const { device, isWorkareaMatched } = await getDevice(showModal);
 
-  if (!device) return false;
+  if (!device || device.model === 'fbg1') return false;
 
   if (!isWorkareaMatched && !(await showResizeAlert(device!))) return false;
 
@@ -121,7 +121,7 @@ export const setupPreviewMode = async ({
 
   const { device, isWorkareaMatched } = await getDevice(showModal);
 
-  if (!(await previewModeController.checkDevice(device))) {
+  if (device?.model === 'fbg1' || !(await previewModeController.checkDevice(device))) {
     isSettingUpPreview = false;
 
     return;

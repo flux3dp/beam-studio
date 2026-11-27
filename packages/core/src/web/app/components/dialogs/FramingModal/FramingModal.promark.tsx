@@ -5,9 +5,11 @@ import { Button, Divider, Flex, Spin, Tooltip } from 'antd';
 import classNames from 'classnames';
 
 import { handleExportClick } from '@core/app/actions/beambox/export/GoButton/handleExportClick';
+import FramingPower from '@core/app/components/dialogs/beamgo/FramingPower';
 import { renderFramingIcon } from '@core/app/icons/framing/FramingIcons';
 import icons from '@core/app/icons/icons';
 import DraggableModal from '@core/app/widgets/DraggableModal';
+import { getFramingPower, setFramingPower } from '@core/helpers/device/beamgo/settings';
 import type { TFramingType } from '@core/helpers/device/framing';
 import { FramingType } from '@core/helpers/device/framing';
 import FramingTaskManager, { framingOptions, getFramingOptions } from '@core/helpers/device/framing';
@@ -28,6 +30,8 @@ const PromarkFramingModal = ({ device, onClose, startOnOpen = false }: Props): R
   const lang = useI18n();
   const { framing: tFraming } = lang;
   const options = useMemo(() => getFramingOptions(device), [device]);
+  const isBeamGo = device.model === 'fbg1';
+  const [framingPower, updateFramingPower] = useState(getFramingPower);
   const [isFraming, setIsFraming] = useState<boolean>(false);
   const [type, setType] = useState<TFramingType>(options[0]);
   const manager = useRef<FramingTaskManager | null>(null);
@@ -37,13 +41,13 @@ const PromarkFramingModal = ({ device, onClose, startOnOpen = false }: Props): R
     async (forceType = type) => {
       setType(forceType);
 
-      const res = await manager.current?.startFraming(forceType, { lowPower: 0 });
+      const res = await manager.current?.startFraming(forceType, { lowPower: isBeamGo ? framingPower : 0 });
 
       if (!res) {
         setType(type);
       }
     },
-    [type],
+    [type, isBeamGo, framingPower],
   );
 
   const handleStop = useCallback(async () => {
@@ -94,12 +98,10 @@ const PromarkFramingModal = ({ device, onClose, startOnOpen = false }: Props): R
             className={styles.button}
             icon={<icons.Play className={styles.icon} />}
             iconPosition="end"
-            onClick={() => {
-              handleStop();
-              setTimeout(() => {
-                handleExportClick(lang)();
-                onClose();
-              }, 500);
+            onClick={async () => {
+              await handleStop();
+              handleExportClick(lang)();
+              onClose();
             }}
             type="primary"
           >
@@ -114,6 +116,16 @@ const PromarkFramingModal = ({ device, onClose, startOnOpen = false }: Props): R
       width={options.length > 1 ? 480 : 360}
     >
       <div className={styles.container}>
+        {isBeamGo && (
+          <FramingPower
+            disabled={isFraming}
+            onChange={(value) => {
+              setFramingPower(value);
+              updateFramingPower(value);
+            }}
+            value={framingPower}
+          />
+        )}
         <Flex gap={16}>
           {options.map((option) => (
             <Button

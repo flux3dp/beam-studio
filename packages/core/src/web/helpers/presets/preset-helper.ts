@@ -5,6 +5,7 @@ import { shallow } from 'zustand/shallow';
 import alertCaller from '@core/app/actions/alert-caller';
 import { promarkModels } from '@core/app/actions/beambox/constant';
 import alertConstants from '@core/app/constants/alert-constants';
+import { beamGoPresetNames } from '@core/app/constants/beamgo-presets';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import { inchLabels, presetNames } from '@core/app/constants/presetNames';
@@ -13,6 +14,7 @@ import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { getStorage, removeFromStorage, setStorage, useStorageStore } from '@core/app/stores/storageStore';
 import { isInnerEngravingActive } from '@core/helpers/addOn/innerEngraving';
+import { getBeamGoWatt } from '@core/helpers/device/beamgo/settings';
 import { getPromarkInfo } from '@core/helpers/device/promark/promark-info';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { getOS } from '@core/helpers/getOS';
@@ -99,6 +101,12 @@ const migrateStorage = () => {
 
 /** `<material> - <thickness> <preset>`, e.g. "Wood - 3mm Cutting"; unknown keys fall back to the key. */
 export const getPresetName = (key: string, unit: 'inches' | 'mm'): string => {
+  const beamGo = beamGoPresetNames[key];
+
+  if (beamGo) {
+    return `${i18n.getActiveLang().startsWith('zh') ? beamGo.nameZh : beamGo.nameEn} · ${i18n.lang.beamgo[beamGo.mode]}`;
+  }
+
   const def = presetNames[key];
 
   if (!def) return key;
@@ -158,6 +166,8 @@ export const initStorageListeners = () => {
 initStorageListeners();
 
 export const getPresetModel = (model: PresetModel): PresetModel => {
+  if (model === 'fbg1') return `fbg1_${getBeamGoWatt()}`;
+
   if (promarkModels.has(model)) {
     // 3D objects are dotted or traced through slices: none of the 2D UV presets fit them
     if (isInnerEngravingActive()) return 'fpm1_inner_engraving';
@@ -341,6 +351,9 @@ initPresets(true);
 
 export const usePresetList = (model: WorkAreaModel, layerModule: LayerModuleType = LayerModule.LASER_UNIVERSAL) => {
   const forceUpdate = useForceUpdate();
+
+  useStorageStore((state) => state['beamgo-watts']);
+  useStorageStore((state) => state['last-beamgo-serial']);
 
   useEffect(() => {
     eventEmitter.on('reload', forceUpdate);

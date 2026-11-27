@@ -989,6 +989,25 @@ const lang: ILang = {
       fit_to_window: 'Ajustar a la ventana',
     },
   },
+  beamgo: {
+    calibration: 'Calibración de BeamGo',
+    cut: 'Corte',
+    door_check: 'Detección de puerta de seguridad',
+    field_warning: 'Los trabajos requieren un área de 90 × 90 mm. No pueden iniciarse con otros tamaños.',
+    fill: 'Relleno + imagen',
+    framing_power: 'Potencia de vista previa',
+    framing_warning: 'La vista previa emite luz láser azul. Use gafas de protección láser adecuadas.',
+    line: 'Línea',
+    readback_error: 'No se pudieron verificar los valores guardados. Restaure los valores anteriores antes de usar la máquina.',
+    restore: 'Restaurar valores anteriores',
+    reverse_x: 'X ↦ −X',
+    reverse_y: 'Y ↦ −Y',
+    settings: 'Ajustes de BeamGo',
+    swap_xy: 'X ↔ Y',
+    tilt_check: 'Detección de inclinación',
+    tilt_error: 'La máquina está inclinada. Colóquela en una superficie nivelada antes de iniciar.',
+    watt: 'Potencia láser (W)',
+  },
   boxgen: {
     add_option: 'Añadir opción',
     basic_box: 'Caja básica',
@@ -2404,6 +2423,7 @@ const lang: ILang = {
     HARDWARE_ERROR_REMOTE_INTERLOCK_OPENED: '#927 Enclavamiento remoto activado\nCompruebe el conector de enclavamiento remoto y asegúrese de que esté conectado de forma segura antes de reiniciar el trabajo.',
     HARDWARE_ERROR_ROTARY_NOT_DETECTED: '#914 No se detectó ningún módulo rotativo.',
     HARDWARE_ERROR_SUBSYSTEM_ERROR: '#402 Error crítico: El subsistema no responde. Contacte con el servicio de asistencia de FLUX.', // Deprecated in FW 3.3.1
+    HARDWARE_ERROR_TILT: 'La máquina está inclinada. Colóquela en una superficie nivelada antes de iniciar.',
     HARDWARE_FAILURE: 'Algo salió mal.\nPor favor, reinicie la máquina.', // Deprecated in FW 3.3.1
     hour: 'h',
     MAINBOARD_OFFLINE: '#905 Error al conectarse a la placa base.\nPor favor, reinicie la máquina.',

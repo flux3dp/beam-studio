@@ -131,6 +131,7 @@ const addOnData: Record<WorkAreaModel, AddOnInfo> = {
     },
     sCurve: '6.2.5',
   },
+  fbg1: {},
   fbm1: {
     autoFeeder: { maxHeight: 2000, rotaryRatio: -CHUCK_ROTARY_DIAMETER / FEEDER_DIAMETER },
     autoFocus: true,

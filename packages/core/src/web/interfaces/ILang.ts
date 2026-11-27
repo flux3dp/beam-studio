@@ -991,6 +991,25 @@ export interface ILang {
       fit_to_window: string;
     };
   };
+  beamgo: {
+    calibration: string;
+    cut: string;
+    door_check: string;
+    field_warning: string;
+    fill: string;
+    framing_power: string;
+    framing_warning: string;
+    line: string;
+    readback_error: string;
+    restore: string;
+    reverse_x: string;
+    reverse_y: string;
+    settings: string;
+    swap_xy: string;
+    tilt_check: string;
+    tilt_error: string;
+    watt: string;
+  };
   boxgen: {
     add_option: string;
     basic_box: string;
@@ -2303,6 +2322,7 @@ export interface ILang {
     HARDWARE_ERROR_REMOTE_INTERLOCK_OPENED: string;
     HARDWARE_ERROR_ROTARY_NOT_DETECTED: string;
     HARDWARE_ERROR_SUBSYSTEM_ERROR: string;
+    HARDWARE_ERROR_TILT: string;
     HARDWARE_FAILURE: string;
     hour: string;
     MAINBOARD_OFFLINE: string;

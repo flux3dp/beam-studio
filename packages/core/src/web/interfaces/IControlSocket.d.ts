@@ -124,7 +124,7 @@ interface IControlSocket extends EventEmitter {
 export default IControlSocket;
 
 // Swiftray
-export type TPromarkFramingOpt =
+export type TPromarkFramingOpt = { framingPower?: number } & (
   | {
       // Bounding box
       points: Array<[number, number]>;
@@ -133,5 +133,6 @@ export type TPromarkFramingOpt =
   | {
       // Contour
       taskCode: string;
-    };
+    }
+);
 export type SwiftrayConvertType = 'contour' | 'fcode' | 'gcode' | 'hull' | 'preview';

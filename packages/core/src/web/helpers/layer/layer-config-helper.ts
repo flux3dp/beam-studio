@@ -19,6 +19,7 @@ import history from '@core/app/svgedit/history/history';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import { isInnerEngravingActive } from '@core/helpers/addOn/innerEngraving';
 import updateLayerColorFilter from '@core/helpers/color/updateLayerColorFilter';
+import { getBeamGoWatt } from '@core/helpers/device/beamgo/settings';
 import { getPromarkInfo } from '@core/helpers/device/promark/promark-info';
 import toggleFullColorLayer from '@core/helpers/layer/full-color/toggleFullColorLayer';
 import {
@@ -447,6 +448,23 @@ export const getDefaultConfig = (): Partial<ConfigKeyTypeMap> => {
   const isPromark = promarkModels.has(workarea);
   const config = structuredClone(baseConfig);
 
+  if (workarea === 'fbg1') {
+    Object.assign(config, {
+      dottingTime: getBeamGoWatt() === 20 ? 200 : 350,
+      dpi: 'medium',
+      fillInterval: 0.1,
+      frequency: 10,
+      power: 80,
+      pulseWidth: 0,
+      qPulseWidth: 0,
+      repeat: 1,
+      speed: getBeamGoWatt() === 20 ? 600 : 300,
+      travelSpeed: 2000,
+      wobbleDiameter: 0,
+      wobbleStep: 0,
+    });
+  }
+
   if (isPromark) {
     const promarkInfo = getPromarkInfo();
 
@@ -810,6 +828,22 @@ export const applyModuleBaseConfig = (
 
 export const getConfigKeys = (module: LayerModuleType): ConfigKey[] => {
   const workarea = useDocumentStore.getState().workarea;
+
+  if (workarea === 'fbg1') {
+    return [
+      'speed',
+      'power',
+      'repeat',
+      'frequency',
+      'fillInterval',
+      'fillAngle',
+      'biDirectional',
+      'crossHatch',
+      'dottingTime',
+      'dpi',
+      'travelSpeed',
+    ];
+  }
 
   if (promarkModels.has(workarea)) {
     return isInnerEngravingActive() ? [...promarkConfigKeys, ...innerEngravingConfigKeys] : promarkConfigKeys;

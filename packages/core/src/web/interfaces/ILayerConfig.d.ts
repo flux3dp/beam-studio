@@ -207,4 +207,4 @@ type TPromarkUV = `${LaserType.UV}_${(typeof uvWatts)[number]}`;
 /** `fpm1_inner_engraving`: an inner engraving document has presets of its own, see getPresetModel */
 export type PromarkModel = 'fpm1_inner_engraving' | `fpm1_${TPromarkDesktop | TPromarkMopa | TPromarkUV}`;
 export type FHX2RFPresetModel = `fhx2rf_${Hexa2RfWatt}`;
-export type PresetModel = FHX2RFPresetModel | PromarkModel | WorkAreaModel;
+export type PresetModel = `fbg1_${10 | 20}` | FHX2RFPresetModel | PromarkModel | WorkAreaModel;

@@ -373,7 +373,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
         />
       )}
       {/* only paths are filled, and an inner engraving layer holds none */}
-      {isPromark && !isInnerEngraving && <FillIntervalBlock type={UIType} />}
+      {(isPromark || workarea === 'fbg1') && !isInnerEngraving && <FillIntervalBlock type={UIType} />}
       {workarea === 'fhx2rf' && <HighQualityBlock type={UIType} />}
       {(isPrinting || isUV) && <MultipassBlock type={UIType} />}
       {addOnInfo.airAssist && isLaser && <AirAssistBlock type={UIType} />}

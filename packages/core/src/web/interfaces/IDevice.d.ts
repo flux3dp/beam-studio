@@ -17,6 +17,8 @@ export interface IDeviceInfo {
   name: string;
   password: boolean;
   plaintext_password: string;
+  /** Swiftray's routing identity (separate from the device UUID). */
+  port?: string;
   serial: string;
   source: string;
   st_id: number;

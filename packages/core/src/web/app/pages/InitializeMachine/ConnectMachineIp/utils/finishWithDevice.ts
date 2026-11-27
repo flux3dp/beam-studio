@@ -35,6 +35,11 @@ export const finishWithDevice = async (device: IDeviceInfo): Promise<void> => {
   storage.set('printer-is-ready', true);
   storage.set('selected-device', device.uuid);
 
+  if (device.model === 'fbg1') {
+    alertConfig.write('done-first-cali', true);
+    await deviceMaster.select(device);
+  }
+
   if (adorModels.has(device.model) || promarkModels.has(device.model)) {
     alertConfig.write('done-first-cali', true);
 

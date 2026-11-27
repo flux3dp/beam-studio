@@ -1,10 +1,11 @@
 import React from 'react';
 
-import { render } from '@testing-library/react';
+import { fireEvent, render } from '@testing-library/react';
 
 import { Mode } from '@core/app/constants/monitor-constants';
 import { MonitorContext } from '@core/app/contexts/MonitorContext';
 import i18n from '@core/helpers/i18n';
+import FramingTaskManager from '@core/helpers/device/framing';
 
 import MonitorTask from './MonitorTask';
 
@@ -47,6 +48,34 @@ describe('should render correctly', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+  });
+
+  test('BeamGo passes the chosen framing power and locks it while framing', () => {
+    const { getByLabelText, getByRole } = render(
+      <MonitorContext
+        value={
+          {
+            mode: Mode.PREVIEW,
+            report: { prog: 0, st_id: 0 },
+            taskImageURL: 'preview.png',
+            totalTaskTime: 0,
+            uploadProgress: null,
+          } as React.ContextType<typeof MonitorContext>
+        }
+      >
+        <MonitorTask device={{ model: 'fbg1', name: 'BeamGo' } as React.ComponentProps<typeof MonitorTask>['device']} />
+      </MonitorContext>,
+    );
+    const input = getByLabelText(i18n.lang.beamgo.framing_power) as HTMLInputElement;
+
+    fireEvent.change(input, { target: { value: '30' } });
+    fireEvent.blur(input);
+    fireEvent.click(getByRole('button', { name: i18n.lang.framing.framing }));
+
+    const manager = jest.mocked(FramingTaskManager).mock.results.at(-1)!.value;
+
+    expect(manager.startFraming).toHaveBeenCalledWith('Framing', { lowPower: 30 });
+    expect(input.disabled).toBe(true);
   });
 
   it.each([

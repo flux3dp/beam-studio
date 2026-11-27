@@ -3,7 +3,7 @@ import React, { useEffect, useMemo } from 'react';
 import { CameraOutlined, FolderOutlined, PictureOutlined } from '@ant-design/icons';
 import { Tabs } from 'antd';
 
-import { promarkModels } from '@core/app/actions/beambox/constant';
+import { galvoModels } from '@core/app/actions/beambox/constant';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import deviceConstants from '@core/app/constants/device-constants';
 import { Mode } from '@core/app/constants/monitor-constants';
@@ -30,7 +30,7 @@ const Monitor = ({ device }: Props): React.JSX.Element => {
   const LANG = useI18n();
   const { currentPath, mode, onClose, report, setMonitorMode, taskImageURL, uploadProgress } =
     React.use(MonitorContext);
-  const isPromark = useMemo(() => promarkModels.has(device.model), [device.model]);
+  const isPromark = useMemo(() => galvoModels.has(device.model), [device.model]);
   // if Promark, taskMode is always working to prevent FramingTaskManager unmount
   const taskMode = report.st_id === deviceConstants.status.IDLE && !isPromark ? Mode.PREVIEW : Mode.WORKING;
   const monitorMode = [Mode.FILE_PREVIEW, Mode.PREVIEW, Mode.WORKING].includes(mode) ? taskMode : mode;

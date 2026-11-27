@@ -102,6 +102,18 @@ function buildDeviceMenu(callback: (data: MenuData) => void, uuid: string, data:
   const isHexa2 = model === 'fhx2rf';
   const vc = versionChecker(version);
   const handleClick = (item: MenuItem) => callback({ ...item, machineName, serial, source, uuid });
+
+  if (model === 'fbg1') {
+    return {
+      label: machineName,
+      submenu: [
+        { click: handleClick, id: 'DASHBOARD', label: r.dashboard },
+        { click: handleClick, id: 'BEAMGO_SETTINGS', label: i18n.lang.beamgo.settings },
+        { click: handleClick, id: 'BEAMGO_CALIBRATION', label: i18n.lang.beamgo.calibration },
+      ],
+    };
+  }
+
   const submenu = [
     { click: handleClick, id: 'DASHBOARD', label: r.dashboard },
     { click: handleClick, id: 'MACHINE_INFO', label: r.machine_info },

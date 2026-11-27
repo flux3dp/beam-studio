@@ -10,6 +10,7 @@ import type { SelectionResult } from '@core/app/constants/connection-constants';
 import { ConnectionError } from '@core/app/constants/connection-constants';
 import DeviceConstants from '@core/app/constants/device-constants';
 import { defaultField, getPromarkLaserSource } from '@core/app/constants/promark-constants';
+import { setStorage } from '@core/app/stores/storageStore';
 import { tryMachineLinking } from '@core/helpers/api/machine-linking';
 import checkSoftwareForAdor from '@core/helpers/check-software';
 import {
@@ -196,7 +197,13 @@ class DeviceMaster {
   }
 
   private async createDeviceControlSocketSwiftray(uuid: string) {
-    const controlSocket = new SwiftrayControl(uuid);
+    const device = this.getDeviceByUUID(uuid);
+
+    if (device.info.model === 'fbg1' && !device.info.port?.startsWith('beamgo/')) {
+      throw new Error('INVALID_DEVICE');
+    }
+
+    const controlSocket = new SwiftrayControl(device.info.model === 'fbg1' ? device.info.port! : uuid);
 
     await controlSocket.connect();
 
@@ -542,6 +549,8 @@ class DeviceMaster {
           await applyDocumentLensProfile(this, device.info);
         }
       }
+
+      if (device.info.model === 'fbg1') setStorage('last-beamgo-serial', device.info.serial);
 
       Progress.popById('select-device');
 

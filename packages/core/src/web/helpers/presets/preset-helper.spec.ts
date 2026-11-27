@@ -93,6 +93,14 @@ describe('test preset-helper', () => {
     ]);
   });
 
+  test('BeamGo material preset model follows the selected device wattage', () => {
+    expect(getPresetModel('fbg1')).toBe('fbg1_10');
+    mockStorage = { 'beamgo-watts': { BG1: 20, BG2: 10 }, 'last-beamgo-serial': 'BG1' };
+    expect(getPresetModel('fbg1')).toBe('fbg1_20');
+    mockStorage['last-beamgo-serial'] = 'BG2';
+    expect(getPresetModel('fbg1')).toBe('fbg1_10');
+  });
+
   test('getDefaultPreset', () => {
     expect(presetHelper.getDefaultPreset('pre1', 'fbm1')).toEqual({
       power: 30,

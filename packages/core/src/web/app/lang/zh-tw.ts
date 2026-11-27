@@ -989,6 +989,25 @@ const lang: ILang = {
       fit_to_window: '配合視窗尺寸',
     },
   },
+  beamgo: {
+    calibration: 'BeamGo 校正參數設定',
+    cut: '切割',
+    door_check: '安全門偵測',
+    field_warning: '工作需要 90 × 90 mm 幅面，其他幅面大小將無法開始工作。',
+    fill: '填色＋圖片',
+    framing_power: '外框預覽功率',
+    framing_warning: '外框預覽會發出藍光雷射，請配戴適用的雷射護目鏡。',
+    line: '線條',
+    readback_error: '無法確認儲存結果，請先還原為寫入前的值，再使用機器。',
+    restore: '還原為寫入前的值',
+    reverse_x: 'X 反向',
+    reverse_y: 'Y 反向',
+    settings: 'BeamGo 機器設定',
+    swap_xy: 'XY 交換',
+    tilt_check: '傾斜偵測',
+    tilt_error: '機器傾斜，請放置於水平表面後再開始。',
+    watt: '雷射瓦數 (W)',
+  },
   boxgen: {
     add_option: '添加選項',
     basic_box: '基本款',
@@ -2406,6 +2425,7 @@ const lang: ILang = {
     HARDWARE_ERROR_REMOTE_INTERLOCK_OPENED: '#927 遠端連鎖保護觸發\n請檢查遠端連鎖保護連接器，確認已牢固連接後再重新啟動工作。',
     HARDWARE_ERROR_ROTARY_NOT_DETECTED: '#914 未偵測到旋轉軸',
     HARDWARE_ERROR_SUBSYSTEM_ERROR: '#402 子系統沒有回應。請聯繫 FLUX 客服。', // Deprecated in FW 3.3.1
+    HARDWARE_ERROR_TILT: '機器傾斜，請放置於水平表面後再開始。',
     HARDWARE_FAILURE: '韌體發生錯誤<br/>請重新啟動機器', // Deprecated in FW 3.3.1
     hour: '小時',
     MAINBOARD_OFFLINE: '#905 連接主板時發生錯誤<br/>請重新啟動機器',

@@ -174,6 +174,26 @@ describe('framing.ts — getCoords frame-preview coordinate logic (via Promark F
     return mockStartFraming.mock.calls[0][0].points;
   };
 
+  test('BeamGo sends a closed rectangle and explicit power without Promark calibration', async () => {
+    mockGetAllLayers.mockReturnValue([makeLayer('beamgo')]);
+    mockGetVisibleElementsAndBBoxes.mockReturnValue([bbox(100, 100, 200, 200)]);
+
+    const deviceMaster = jest.requireMock('@core/helpers/device-master');
+    const manager = new FramingTaskManager({ ...PROMARK_DEVICE, model: 'fbg1' });
+
+    await manager.startFraming(FramingType.Framing, { lowPower: 30 });
+
+    const request = mockStartFraming.mock.calls[0][0];
+
+    expect(request.framingPower).toBe(30);
+    expect(request.rotaryInfo).toBeNull();
+    expect(request.points).toHaveLength(5);
+    expect(request.points[0]).toEqual(request.points[4]);
+    expect(mockStartFraming.mock.calls[0][1]).toBeUndefined();
+    expect(deviceMaster.setField).not.toHaveBeenCalled();
+    expect(deviceMaster.setGalvoParameters).not.toHaveBeenCalled();
+  });
+
   describe('Promark lens before every red light run', () => {
     const deviceMaster = jest.requireMock('@core/helpers/device-master');
     const field = { angle: 0, offsetX: 1, offsetY: 2 };

@@ -14,6 +14,7 @@ export type WorkAreaLabel =
   | 'Beambox'
   | 'Beambox II'
   | 'Beambox Pro'
+  | 'BeamGo'
   | 'beamo'
   | 'beamo II'
   | 'HEXA'
@@ -31,6 +32,7 @@ export const workArea = [
   'fhx2rf',
   'ado1',
   'fpm1',
+  'fbg1',
   'flv1',
   'fbb2',
   'fuv1',
@@ -162,6 +164,17 @@ export const workareaConstants: Record<WorkAreaModel, WorkArea> = {
     vectorSpeedLimit: 50,
     width: 600,
   },
+  fbg1: {
+    height: 90,
+    label: 'BeamGo',
+    maxRepeat: 100,
+    maxSpeed: 2000,
+    minSpeed: 1,
+    pxHeight: 90 * dpmm,
+    pxWidth: 90 * dpmm,
+    supportedModules: [LayerModule.LASER_UNIVERSAL],
+    width: 90,
+  },
   fbm1: {
     autoShrink: 0.05,
     height: 210,
@@ -282,6 +295,7 @@ export const workareaOptions: Array<{ label: string; value: AnnotatedWorkareaMod
   { label: 'HEXA', value: 'fhexa1' },
   { label: 'HEXA RF', value: 'fhx2rf' },
   { label: 'Ador', value: 'ado1' },
+  { label: 'BeamGo', value: 'fbg1' },
   checkFpm1() && { label: 'Promark', value: 'fpm1' },
   checkFpm1() && { label: 'Promark (Safe+)', value: 'fpm1_safe' },
   { label: 'Beambox II', value: 'fbb2' },

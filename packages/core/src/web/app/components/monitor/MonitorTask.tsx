@@ -5,11 +5,13 @@ import type { ProgressProps } from 'antd';
 import { Button, Col, Progress, Row } from 'antd';
 import { sprintf } from 'sprintf-js';
 
-import { promarkModels } from '@core/app/actions/beambox/constant';
+import { galvoModels } from '@core/app/actions/beambox/constant';
+import FramingPower from '@core/app/components/dialogs/beamgo/FramingPower';
 import DeviceConstants from '@core/app/constants/device-constants';
 import { Mode } from '@core/app/constants/monitor-constants';
 import { MonitorContext } from '@core/app/contexts/MonitorContext';
 import { renderFramingIcon } from '@core/app/icons/framing/FramingIcons';
+import { getFramingPower, setFramingPower } from '@core/helpers/device/beamgo/settings';
 import type { TFramingType } from '@core/helpers/device/framing';
 import FramingTaskManager, { framingOptions, getFramingOptions } from '@core/helpers/device/framing';
 import FormatDuration from '@core/helpers/duration-formatter';
@@ -28,10 +30,12 @@ interface Props {
 const MonitorTask = ({ device }: Props): React.JSX.Element => {
   const { framing: tFraming, monitor: tMonitor } = useI18n();
   const { fileInfo, mode, previewTask, report, taskImageURL, totalTaskTime, uploadProgress } = use(MonitorContext);
-  const isPromark = useMemo(() => promarkModels.has(device.model), [device.model]);
+  const isPromark = useMemo(() => galvoModels.has(device.model), [device.model]);
   const [isOnPlaying, setIsOnPlaying] = useState(false);
   /* for Promark framing */
   const options = useMemo(() => getFramingOptions(device), [device]);
+  const isBeamGo = device.model === 'fbg1';
+  const [framingPower, updateFramingPower] = useState(getFramingPower);
   const manager = useRef<FramingTaskManager | null>(null);
   const [isFraming, setIsFraming] = useState(false);
   const [isFramingTask, setIsFramingTask] = useState(false);
@@ -87,13 +91,13 @@ const MonitorTask = ({ device }: Props): React.JSX.Element => {
     async (forceType: TFramingType) => {
       setType(forceType);
 
-      const res = await manager.current?.startFraming(forceType, { lowPower: 0 });
+      const res = await manager.current?.startFraming(forceType, { lowPower: isBeamGo ? framingPower : 0 });
 
       if (!res) {
         setType(type);
       }
     },
-    [type],
+    [type, isBeamGo, framingPower],
   );
 
   const renderIcon = useCallback(
@@ -220,6 +224,16 @@ const MonitorTask = ({ device }: Props): React.JSX.Element => {
       </div>
       {taskImageURL || isInWorkingState ? (
         <>
+          {isBeamGo && (
+            <FramingPower
+              disabled={isFraming || shouldDisableFraming}
+              onChange={(value) => {
+                setFramingPower(value);
+                updateFramingPower(value);
+              }}
+              value={framingPower}
+            />
+          )}
           {renderPromarkFramingButton()}
           <Row>
             <Col md={12} span={24}>

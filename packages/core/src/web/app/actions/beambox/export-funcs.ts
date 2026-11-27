@@ -1,7 +1,7 @@
 import { sprintf } from 'sprintf-js';
 
 import Alert from '@core/app/actions/alert-caller';
-import constant, { promarkModels } from '@core/app/actions/beambox/constant';
+import constant, { galvoModels, promarkModels } from '@core/app/actions/beambox/constant';
 import { fetchTaskCodeSwiftray } from '@core/app/actions/beambox/export-funcs-swiftray';
 import MonitorController from '@core/app/actions/monitor-controller';
 import Progress from '@core/app/actions/progress-caller';
@@ -564,7 +564,7 @@ const openTaskInDeviceMonitor = async (
 
 export const getConvertEngine = (targetDevice?: IDeviceInfo) => {
   const currentWorkarea = workareaManager.model;
-  const isPromark = promarkModels.has(currentWorkarea);
+  const isPromark = galvoModels.has(currentWorkarea);
 
   const useSwiftray =
     hasSwiftray &&
@@ -748,12 +748,12 @@ export default {
 
       if (!res) return;
 
-      if (promarkModels.has(device.model)) {
+      if (galvoModels.has(device.model)) {
         promarkTaskCache[device.serial] = {
           fcodeBlob: taskCodeBlob,
           fileName: '',
           // select applied the document's lens; a rerun from the dashboard must apply the same one
-          lensProfileKey: getDocumentLensProfile(device.serial).key,
+          lensProfileKey: promarkModels.has(device.model) ? getDocumentLensProfile(device.serial).key : undefined,
           metadata,
           taskImageURL: thumbnail,
           taskTime: fileTimeCost,

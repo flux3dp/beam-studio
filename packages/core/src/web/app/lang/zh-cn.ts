@@ -989,6 +989,25 @@ const lang: ILang = {
       fit_to_window: '配合视窗尺寸',
     },
   },
+  beamgo: {
+    calibration: 'BeamGo 校正',
+    cut: '切割',
+    door_check: '安全门检测',
+    field_warning: '工作需要 90 × 90 mm 幅面，其他幅面无法启动工作。',
+    fill: '填色＋图片',
+    framing_power: '预览功率',
+    framing_warning: '预览会发射蓝光激光，请佩戴合适的激光防护眼镜。',
+    line: '线条',
+    readback_error: '无法确认写入值，请先还原原值再使用机器。',
+    restore: '还原原值',
+    reverse_x: 'X ↦ −X',
+    reverse_y: 'Y ↦ −Y',
+    settings: 'BeamGo 设置',
+    swap_xy: 'X ↔ Y',
+    tilt_check: '倾斜检测',
+    tilt_error: '机器倾斜，请放在水平表面后再启动。',
+    watt: '激光功率（W）',
+  },
   boxgen: {
     add_option: '添加选项',
     basic_box: '基本箱体',
@@ -2405,6 +2424,7 @@ const lang: ILang = {
     HARDWARE_ERROR_REMOTE_INTERLOCK_OPENED: '#927 远程联锁装置已触发\n请检查远程联锁接头，确保连接牢固后再重新开始作业。',
     HARDWARE_ERROR_ROTARY_NOT_DETECTED: '#914 未侦测到旋转轴',
     HARDWARE_ERROR_SUBSYSTEM_ERROR: '#402 子系统没有回应。请联系 FLUX 客服。', // Deprecated in FW 3.3.1
+    HARDWARE_ERROR_TILT: '机器倾斜，请放在水平表面后再启动。',
     HARDWARE_FAILURE: '固件发生错误\n请重新启动机器', // Deprecated in FW 3.3.1
     hour: '小时',
     MAINBOARD_OFFLINE: '#905 连接主板时发生错误\n请重新启动机器。',

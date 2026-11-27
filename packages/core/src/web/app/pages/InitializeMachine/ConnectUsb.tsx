@@ -32,6 +32,10 @@ export default function ConnectUsb(): React.JSX.Element {
         ],
         title: 'Ador',
       },
+      fbg1: {
+        steps: [t.connect_usb.tutorial1, t.connect_usb.tutorial2],
+        title: 'BeamGo',
+      },
       fhexa1: {
         steps: [t.connect_usb.tutorial1, t.connect_usb.tutorial2],
         title: 'HEXA',

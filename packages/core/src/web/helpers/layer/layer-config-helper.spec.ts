@@ -15,6 +15,10 @@ jest.mock('@core/helpers/layer-module/layer-module-helper', () => ({
 }));
 
 const mockGetPromarkInfo = jest.fn();
+const mockGetBeamGoWatt = jest.fn(() => 10);
+
+jest.mock('@core/helpers/device/beamgo/settings', () => ({ getBeamGoWatt: () => mockGetBeamGoWatt() }));
+
 const mockIsInnerEngravingActive = jest.fn(() => false);
 
 jest.mock('@core/helpers/addOn/innerEngraving', () => ({
@@ -127,6 +131,7 @@ describe('test layer-config-helper', () => {
       <g class="layer" data-color="#333333"><title>layer 3</title></g>
     `;
     jest.resetAllMocks();
+    mockGetBeamGoWatt.mockReturnValue(10);
     useDocumentStore.setState({ workarea: 'fbm1' });
     useGlobalPreferenceStore.setState({ engrave_dpi: 'high', 'multipass-compensation': false });
     mockGetAllLayers.mockReturnValue([
@@ -138,6 +143,24 @@ describe('test layer-config-helper', () => {
 
   it('should return null layer when layer does not exist', () => {
     expect(getLayerConfig('layer 0')).toBeNull();
+  });
+
+  test('BeamGo layers use watt-specific defaults and exclude unsupported laser controls', () => {
+    useDocumentStore.setState({ workarea: 'fbg1' });
+    expect(getDefaultConfig()).toMatchObject({
+      fillInterval: 0.1,
+      frequency: 10,
+      power: 80,
+      pulseWidth: 0,
+      qPulseWidth: 0,
+      repeat: 1,
+      speed: 300,
+    });
+    mockGetBeamGoWatt.mockReturnValue(20);
+    expect(getDefaultConfig()).toMatchObject({ fillInterval: 0.1, power: 80, repeat: 1, speed: 600 });
+    expect(getConfigKeys(LayerModule.LASER_UNIVERSAL)).not.toEqual(
+      expect.arrayContaining(['qPulseWidth', 'wobbleStep']),
+    );
   });
 
   test('initLayerConfig', () => {

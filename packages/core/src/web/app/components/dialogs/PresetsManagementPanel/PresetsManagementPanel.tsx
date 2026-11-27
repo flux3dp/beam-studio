@@ -41,6 +41,8 @@ import {
 import useI18n from '@core/helpers/useI18n';
 import type { ConfigKey, ConfigKeyTypeMap, Preset } from '@core/interfaces/ILayerConfig';
 
+import BeamGoPresetInputs from '../beamgo/PresetInputs';
+
 import Footer from './Footer';
 import LaserInputs from './LaserInputs';
 import PresetList from './PresetList';
@@ -404,7 +406,9 @@ const PresetsManagementPanel = ({ currentModule, initPreset, onClose }: Props): 
               </Select>
             )}
           </div>
-          {isPromark ? (
+          {workarea === 'fbg1' ? (
+            <BeamGoPresetInputs handleChange={handleChange} preset={displayPreset} />
+          ) : isPromark ? (
             <PromarkInputs
               handleChange={handleChange}
               isInch={isInch}

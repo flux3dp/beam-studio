@@ -7,6 +7,7 @@ import Dialog from '@core/app/actions/dialog-caller';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import MonitorController from '@core/app/actions/monitor-controller';
 import ProgressCaller from '@core/app/actions/progress-caller';
+import { showBeamGoSettings } from '@core/app/components/dialogs/beamgo/BeamGoSettings';
 import { calibrateCamera, showModuleCalibration } from '@core/app/components/dialogs/camera';
 import { showManualConfiguration } from '@core/app/components/dialogs/camera/ManualConfiguration';
 import { parsingChipData } from '@core/app/components/dialogs/CartridgeSettingPanel';
@@ -178,6 +179,8 @@ const getLog = async (device: IDeviceInfo, log: string) => {
 };
 
 export default {
+  BEAMGO_CALIBRATION: (device: IDeviceInfo) => showBeamGoSettings(device, true),
+  BEAMGO_SETTINGS: (device: IDeviceInfo) => showBeamGoSettings(device),
   CALIBRATE_BEAMBOX_CAMERA: async (device: IDeviceInfo): Promise<void> => {
     if (!checkIsAtEditor()) return;
 
@@ -330,12 +333,13 @@ export default {
 
     if (res.success) {
       const vtElemHandler = extractVariableText(false) ?? undefined;
-      const isPromark = promarkModels.has(device.model);
+      const isPromark = promarkModels.has(device.model) || device.model === 'fbg1';
       const isIdle = device.st_id <= 0;
       const cachedTask = isIdle && isPromark ? exportFuncs.getCachedPromarkTask(device.serial) : undefined;
       // A copy for this monitor, with the lens picked for this run: the cache keeps the lens the task
       // was generated for, so asking again later (after another document change) starts from the truth
-      const previewTask = await prepareCachedTaskRerun(device.serial, cachedTask);
+      const previewTask =
+        device.model === 'fbg1' ? cachedTask : await prepareCachedTaskRerun(device.serial, cachedTask);
 
       if (previewTask === false) return;
 

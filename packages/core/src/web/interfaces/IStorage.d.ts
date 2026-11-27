@@ -25,6 +25,8 @@ export interface Storage {
   auto_check_update: boolean;
   auto_connect: boolean;
   'beambox-preference': BeamboxPreference;
+  'beamgo-framing-power'?: number;
+  'beamgo-watts'?: Record<string, 10 | 20>;
   'black-list': string;
   /** @deprecated Customized laser configurations for version <= 2.3.9 */
   customizedLaserConfigs: any;
@@ -60,6 +62,7 @@ export interface Storage {
   'font-name-map': Record<string, string>;
   guessing_poke: boolean;
   'keep-flux-id-login': boolean;
+  'last-beamgo-serial'?: string;
   'last-installed-version': string;
   'last-promark-serial': string;
   'last-record-activity': string;

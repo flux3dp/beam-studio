@@ -989,6 +989,25 @@ const lang: ILang = {
       fit_to_window: 'Přizpůsobit oknu',
     },
   },
+  beamgo: {
+    calibration: 'Kalibrace BeamGo',
+    cut: 'Řezání',
+    door_check: 'Detekce bezpečnostních dvířek',
+    field_warning: 'Úlohy vyžadují pracovní plochu 90 × 90 mm. Při jiných rozměrech je nelze spustit.',
+    fill: 'Výplň + obrázek',
+    framing_power: 'Výkon náhledu',
+    framing_warning: 'Náhled vyzařuje modré laserové světlo. Používejte vhodné ochranné brýle pro laser.',
+    line: 'Čára',
+    readback_error: 'Uložené hodnoty nelze ověřit. Před použitím obnovte předchozí hodnoty.',
+    restore: 'Obnovit předchozí hodnoty',
+    reverse_x: 'X ↦ −X',
+    reverse_y: 'Y ↦ −Y',
+    settings: 'Nastavení BeamGo',
+    swap_xy: 'X ↔ Y',
+    tilt_check: 'Detekce náklonu',
+    tilt_error: 'Zařízení je nakloněné. Před spuštěním jej položte na vodorovný povrch.',
+    watt: 'Výkon laseru (W)',
+  },
   boxgen: {
     add_option: 'Přidat možnost',
     basic_box: 'Základní box',
@@ -2405,6 +2424,7 @@ const lang: ILang = {
     HARDWARE_ERROR_REMOTE_INTERLOCK_OPENED: '#927 Vzdálený bezpečnostní spínač aktivován\nProsím zkontrolujte konektor vzdáleného bezpečnostního spínače a ujistěte se, že je bezpečně připojen, než obnovíte práci.',
     HARDWARE_ERROR_ROTARY_NOT_DETECTED: '#914 Nebyl identifikován rotační modul',
     HARDWARE_ERROR_SUBSYSTEM_ERROR: '#402 Kritická chyba: Subsystém neodpovídá. Kontaktujte prosím FLUX podporu.', // Deprecated in FW 3.3.1
+    HARDWARE_ERROR_TILT: 'Zařízení je nakloněné. Před spuštěním jej položte na vodorovný povrch.',
     HARDWARE_FAILURE: 'Něco je v nepořádku\nRestartujte prosím přístroj', // Deprecated in FW 3.3.1
     hour: 'h',
     MAINBOARD_OFFLINE: '#905 Chyba při připojování k základní desce.\nRestartujte prosím přístroj.',

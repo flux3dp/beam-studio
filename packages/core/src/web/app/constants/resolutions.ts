@@ -23,7 +23,7 @@ export const valueDpiMap: Record<EngraveDpiValue, EngraveDpiOption> = invert(dpi
 export const getEngraveDpmm = (dpi: EngraveDpiOption, workarea: WorkAreaModel): EngraveDpmmValue => {
   return match<EngraveDpiOption, EngraveDpmmValue>(dpi)
     .with('ultra', () => (workarea === 'fhx2rf' ? 80 : 50))
-    .with('detailed', () => (workarea === 'fhx2rf' ? 40 : 50))
+    .with('detailed', () => (workarea === 'fhx2rf' || workarea === 'fbg1' ? 40 : 50))
     .with('high', () => 20)
     .with('medium', () => 10)
     .with('low', () => 5)
