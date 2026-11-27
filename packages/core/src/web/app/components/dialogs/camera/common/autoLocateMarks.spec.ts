@@ -55,6 +55,7 @@ describe('autoLocateMarks', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     jest.spyOn(console, 'log').mockImplementation(() => {});
+    jest.spyOn(console, 'error').mockImplementation(() => {});
     cameraCalls = [];
     mockGetExposureSettings.mockResolvedValue({ max: 1000, min: 50, step: 1, value: 320 });
     mockSetExposure.mockImplementation(async (value: number) => {
@@ -273,8 +274,11 @@ describe('autoLocateMarks', () => {
     expect(mockDisconnectCamera).toHaveBeenCalledTimes(1);
   });
 
-  test('matches one photo as it is when the exposure cannot be set, and shoots no more', async () => {
-    mockSetExposure.mockResolvedValueOnce(false);
+  test.each([
+    ['is refused', () => mockSetExposure.mockResolvedValueOnce(false)],
+    ['throws', () => mockSetExposure.mockRejectedValueOnce(new Error('timeout'))],
+  ])('matches one photo as it is when setting the exposure %s, and shoots no more', async (_, setup) => {
+    setup();
     mockAutoPnPMatch.mockResolvedValue({ matched: 6, reason: 'NOT_ENOUGH_MARKS', rms: null, success: false });
 
     expect(await run()).toEqual({ matched: 6, reason: 'NOT_ENOUGH_MARKS', rms: null, success: false });
@@ -283,9 +287,12 @@ describe('autoLocateMarks', () => {
     expect(cameraCalls.at(-1)).toEqual(['exposure', 320]);
   });
 
-  test('takes one photo and leaves the exposure alone when auto exposure cannot be turned off', async () => {
+  test.each([
+    ['is refused', () => mockSetCameraExposureAuto.mockResolvedValueOnce(false)],
+    ['throws', () => mockSetCameraExposureAuto.mockRejectedValueOnce(new Error('timeout'))],
+  ])('takes one photo and leaves the exposure alone when turning auto exposure off %s', async (_, setup) => {
     mockGetCameraExposureAuto.mockResolvedValue({ data: true, success: true });
-    mockSetCameraExposureAuto.mockResolvedValueOnce(false);
+    setup();
 
     expect(await run()).toEqual({ highResidual: false, points, rms: 0.4, success: true });
     expect(mockTakeOnePicture).toHaveBeenCalledTimes(1);

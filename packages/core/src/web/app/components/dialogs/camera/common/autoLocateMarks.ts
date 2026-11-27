@@ -87,7 +87,17 @@ const locate = async ({
 
       wasAutoExposure = Boolean(autoRes?.success && autoRes.data);
 
-      if (wasAutoExposure && !(await deviceMaster.setCameraExposureAuto(false))) {
+      let isAutoOff = !wasAutoExposure;
+
+      if (wasAutoExposure) {
+        try {
+          isAutoOff = Boolean(await deviceMaster.setCameraExposureAuto(false));
+        } catch (error) {
+          console.error(error);
+        }
+      }
+
+      if (!isAutoOff) {
         console.warn('[auto solve pnp] auto exposure cannot be turned off, using one photo as it is');
         wasAutoExposure = false;
         originalExposure = undefined;
@@ -102,7 +112,12 @@ const locate = async ({
         if (isCancelled?.()) return { reason: 'CANCELLED', success: false };
 
         if (exposure !== undefined) {
-          canSetExposure = await setExposure(exposure);
+          try {
+            canSetExposure = await setExposure(exposure);
+          } catch (error) {
+            console.error(error);
+            canSetExposure = false;
+          }
 
           if (canSetExposure) {
             // the first photo after a change still has the old exposure (fbm2: every one of 7 changes); drop it
