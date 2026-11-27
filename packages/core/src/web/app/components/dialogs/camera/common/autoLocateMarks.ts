@@ -45,11 +45,7 @@ interface Options {
   rMax?: number;
 }
 
-/**
- * Photograph the engraved calibration marks and tell which image point is which mark, without user input.
- * The camera must already be at the position the pose is wanted for.
- */
-const autoLocateMarks = async ({
+const locate = async ({
   cameraIndex,
   exposureRounds,
   isCancelled,
@@ -120,6 +116,8 @@ const autoLocateMarks = async ({
 
         if (!imgBlob) return { reason: 'NO_IMAGE', success: false };
 
+        if (isCancelled?.()) return { reason: 'CANCELLED', success: false };
+
         const detectRes = await cameraCalibrationApi.autoPnPDetect(imgBlob);
 
         if (!detectRes.success) return { reason: detectRes.reason as AutoPnPFailReason, success: false };
@@ -170,6 +168,16 @@ const autoLocateMarks = async ({
 
     deviceMaster.disconnectCamera();
   }
+};
+
+/**
+ * Photograph the engraved calibration marks and tell which image point is which mark, without user input.
+ * The camera must already be at the position the pose is wanted for.
+ */
+const autoLocateMarks = async (options: Options): Promise<AutoLocateMarksResult> => {
+  const result = await locate(options);
+
+  return result.success && options.isCancelled?.() ? { reason: 'CANCELLED', success: false } : result;
 };
 
 export default autoLocateMarks;

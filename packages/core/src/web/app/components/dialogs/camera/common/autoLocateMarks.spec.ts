@@ -227,8 +227,17 @@ describe('autoLocateMarks', () => {
     expect(res).toEqual({ reason: 'CANCELLED', success: false });
     // the dropped photo and the one detected at the first exposure, nothing after
     expect(mockTakeOnePicture).toHaveBeenCalledTimes(2);
+    expect(mockAutoPnPDetect).not.toHaveBeenCalled();
     expect(mockAutoPnPMatch).not.toHaveBeenCalled();
     expect(cameraCalls.at(-1)).toEqual(['exposure', 320]);
+    expect(mockDisconnectCamera).toHaveBeenCalledTimes(1);
+  });
+
+  test('hands back no points once cancelled while the exposure is restored', async () => {
+    const res = await run({ isCancelled: () => cameraCalls.at(-1)?.[1] === 320 });
+
+    expect(res).toEqual({ reason: 'CANCELLED', success: false });
+    expect(mockAutoPnPMatch).toHaveBeenCalledTimes(1);
     expect(mockDisconnectCamera).toHaveBeenCalledTimes(1);
   });
 
