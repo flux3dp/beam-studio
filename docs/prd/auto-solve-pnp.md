@@ -237,7 +237,7 @@ Edge cases and expected behaviour:
 |---|---|
 | One mark hidden or burnt through | Fails with `NOT_ENOUGH_MARKS`; the message gives the number of marks found (decision 5) and offers the manual steps (decision 4) |
 | Marks missing after the first round | The second round is shot and the match repeated on all photos; fails by mark count if still not enough |
-| Camera returns a frame error | Existing `useCamera` retry (2 attempts), then failure alert |
+| Camera returns no frame | `deviceMaster.takeOnePicture` reconnects the camera and shoots again for up to 30 s; when it still returns no frame, the automatic step ends with `NO_IMAGE` and the failure alert, with no retry of its own on top. (The two attempts of `useCamera` belong to the manual step; corrected 2026-11-27, review of #1063) |
 | User closes the dialog during capture | Capture stops, machine released (`releaseMachine`), nothing saved |
 | Exposure cannot be set | The photo is taken at whatever exposure the camera has and matched; no more exposures are tried, and the exposure is restored to its previous value. Missing marks then end as `NOT_ENOUGH_MARKS`. When auto exposure cannot be turned off, the exposure is not touched at all: one photo as it is (settled 2026-11-26, review of #1063) |
 | Camera auto exposure is on | Turned off before the first photo, turned back on after the exposure value is restored |
