@@ -121,7 +121,9 @@ No dragging: after the engraving a `ProcessingDialog` step finds the marks and s
   sees the door open, then checks the door, relocates and captures again from the first exposure.
 - `cameraCalibrationApi` sends one command at a time (`p-queue`, as `open-cv.ts`): every command swaps the
   shared reply handlers, so overlapping commands used to take each other's reply. A reply that never comes
-  frees the queue after a timeout (2 min, 10 for the two calibrations); a dead backend rejects at once
+  frees the queue after a timeout (2 min, 10 for the two calibrations), and the connection is replaced first
+  (`connect()`, callbacks check `ws === this.ws`): replies have no request id, so a late one must not reach
+  the next command, and uploaded parameters are gone with the old connection. A dead backend rejects at once
   through `onFatal`. Specs that drive the real api must wait a tick after calling it.
 - The matcher uses `k`, `d` and the mark positions only, never the stored `rvec`/`tvec`, and assumes the
   image is not rotated by 90 / 180 degrees against the bed (Promark's `rotate180` is why it is not wired).
