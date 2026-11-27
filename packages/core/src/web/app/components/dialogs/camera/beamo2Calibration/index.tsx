@@ -43,9 +43,15 @@ export const showBeamo2Calibration = async (isAdvanced = false): Promise<boolean
       <Beamo2Calibration
         currentData={currentData}
         isAdvanced={isAdvanced}
+        // a switch to advanced mode reuses the dialog id: without the key React keeps the old step and data
+        key={isAdvanced ? 'advanced' : 'basic'}
         onClose={(completed = false) => {
           onClose();
           resolve(completed);
+        }}
+        onSwitchToAdvanced={() => {
+          onClose();
+          resolve(showBeamo2Calibration(true));
         }}
       />,
     );

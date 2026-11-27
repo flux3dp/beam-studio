@@ -3,18 +3,24 @@ import React, { useCallback, useMemo, useRef, useState } from 'react';
 import alertCaller from '@core/app/actions/alert-caller';
 import progressCaller from '@core/app/actions/progress-caller';
 import { bb2PerspectiveGrid, bb2PerspectiveGridWide, bb2PnPPoints } from '@core/app/constants/fisheyeCameraConstants';
+import { cameraCalibrationApi } from '@core/helpers/api/camera-calibration';
 import { setFisheyeConfig } from '@core/helpers/camera-calibration-helper';
 import checkDeviceStatus from '@core/helpers/check-device-status';
 import deviceMaster from '@core/helpers/device-master';
+import useIsUnmounted from '@core/helpers/hooks/useIsUnmounted';
 import useI18n from '@core/helpers/useI18n';
 import type { FisheyeCameraParametersV3, FisheyeCameraParametersV3Cali } from '@core/interfaces/FisheyePreview';
 
 import styles from './Calibration.module.scss';
+import autoLocateMarks from './common/autoLocateMarks';
 import ChArUco from './common/ChArUco';
 import CheckPnP from './common/CheckPnP';
 import downloadCalibrationFile from './common/downloadCalibrationFile';
 import Instruction from './common/Instruction';
 import moveLaserHead from './common/moveLaserHead';
+import ProcessingDialog from './common/ProcessingDialog';
+import showHighResidualAlert from './common/showHighResidualAlert';
+import showNotEnoughMarksAlert from './common/showNotEnoughMarksAlert';
 import SolvePnP from './common/SolvePnP';
 
 /* eslint-disable perfectionist/sort-enums */
@@ -25,6 +31,8 @@ enum Steps {
   SOLVE_PNP_INSTRUCTION = 4,
   SOLVE_PNP = 5,
   CHECK_PNP = 6,
+  // out of sequence on purpose: the manual steps 4 and 5 remain for a backend without the auto commands
+  AUTO_SOLVE_PNP = 7,
 }
 /* eslint-enable perfectionist/sort-enums */
 
@@ -33,9 +41,22 @@ interface Props {
   isAdvanced: boolean;
   isOblique?: boolean;
   onClose: (completed?: boolean) => void;
+  /** close this dialog and start over in advanced mode */
+  onSwitchToAdvanced: () => void;
 }
 
 const PROGRESS_ID = 'laser-head-fisheye-calibration';
+/**
+ * Exposure rounds of the automatic step. One fbb2 found all 8 marks in a single photo at every exposure from
+ * 100 to 800, with the best contrast at 200 to 300; above 800 marks wash out and stray blobs multiply, so the
+ * second round stays below. Not measured on fhx2rf yet.
+ */
+const EXPOSURE_ROUNDS = [[250], [100, 500]] as const;
+/**
+ * Residual limit for the 8 marks, mm. A homography through 8 points absorbs most of one wrong mark: correct
+ * matches measured 0.03 to 0.10, one mark off by 1 mm gives 0.15 to 0.31.
+ */
+const R_MAX_MM = 0.2;
 // TODO: test on different devices
 const DEFAULT_POINTS: Array<[number, number]> = [
   [2000, 1716],
@@ -63,7 +84,13 @@ const DEFAULT_POINTS_OBLIQUE: Array<[number, number]> = [
  * LaserHeadFisheye
  * calibration the fisheye camera on the laser head (bb2, hexa rf)
  */
-const LaserHeadFisheyeCalibration = ({ currentData, isAdvanced, isOblique, onClose }: Props): React.JSX.Element => {
+const LaserHeadFisheyeCalibration = ({
+  currentData,
+  isAdvanced,
+  isOblique,
+  onClose,
+  onSwitchToAdvanced,
+}: Props): React.JSX.Element => {
   const lang = useI18n();
   const tCali = lang.calibration;
   const calibratingParam = useRef<FisheyeCameraParametersV3Cali>(currentData ?? {});
@@ -73,6 +100,11 @@ const LaserHeadFisheyeCalibration = ({ currentData, isAdvanced, isOblique, onClo
   }, []);
   const model = useMemo(() => deviceMaster.currentDevice?.info.model ?? 'fbb2', []);
   const isHexaRf = useMemo(() => model === 'fhx2rf', [model]);
+  // whether the pose came from the automatic step, to know where Back leads from CHECK_PNP
+  const isAutoSolved = useRef(false);
+  // where the manual step starts from when it is chosen after the automatic one came up short
+  const manualInitialPoints = useRef<Array<[number, number]> | undefined>(undefined);
+  const isUnmounted = useIsUnmounted();
 
   if (step === Steps.PRE_CHESSBOARD) {
     return (
@@ -153,7 +185,7 @@ const LaserHeadFisheyeCalibration = ({ currentData, isAdvanced, isOblique, onClo
 
         if (!res) return;
 
-        setStep(Steps.SOLVE_PNP_INSTRUCTION);
+        setStep(Steps.AUTO_SOLVE_PNP);
       } catch (err) {
         console.error(err);
       } finally {
@@ -190,6 +222,101 @@ const LaserHeadFisheyeCalibration = ({ currentData, isAdvanced, isOblique, onClo
     );
   }
 
+  if (step === Steps.AUTO_SOLVE_PNP) {
+    return (
+      <ProcessingDialog
+        onClose={onClose}
+        onNext={() => {}}
+        process={async () => {
+          try {
+            progressCaller.openNonstopProgress({ id: PROGRESS_ID, message: tCali.auto_solve_pnp_locating });
+
+            let located: Awaited<ReturnType<typeof autoLocateMarks>>;
+            let pose: Awaited<ReturnType<typeof cameraCalibrationApi.solvePnPCalculate>> | undefined;
+
+            try {
+              located = await autoLocateMarks({
+                cameraIndex: 0,
+                exposureRounds: EXPOSURE_ROUNDS,
+                isCancelled: () => isUnmounted.current,
+                params: calibratingParam.current,
+                refPoints: bb2PnPPoints,
+                rMax: R_MAX_MM,
+              });
+
+              if (located.success) pose = await cameraCalibrationApi.solvePnPCalculate(0, located.points, bb2PnPPoints);
+            } finally {
+              progressCaller.popById(PROGRESS_ID);
+            }
+
+            if (isUnmounted.current) return;
+
+            isAutoSolved.current = false;
+
+            if (!located.success) {
+              // backend without the commands: the manual steps still work
+              if (located.reason === 'UNSUPPORTED') {
+                setStep(Steps.SOLVE_PNP_INSTRUCTION);
+
+                return;
+              }
+
+              setStep(Steps.PUT_PAPER);
+
+              if (located.reason === 'NOT_ENOUGH_MARKS') {
+                showNotEnoughMarksAlert({
+                  found: located.matched ?? 0,
+                  onManual: () => {
+                    if (isUnmounted.current) return;
+
+                    manualInitialPoints.current = located.initialPoints;
+                    setStep(Steps.SOLVE_PNP_INSTRUCTION);
+                  },
+                  total: bb2PnPPoints.length,
+                });
+              } else {
+                alertCaller.popUpError({ message: `${tCali.failed_to_calibrate_with_pictures} (${located.reason})` });
+              }
+
+              return;
+            }
+
+            if (!pose?.success) throw new Error('solvePnPCalculate failed');
+
+            const { rvec, tvec } = pose.data;
+            const applyResult = () => {
+              if (isUnmounted.current) return;
+
+              isAutoSolved.current = true;
+              updateParam({ rvec, tvec });
+              setStep(Steps.CHECK_PNP);
+            };
+
+            if (!located.highResidual) {
+              applyResult();
+
+              return;
+            }
+
+            // rest on the paper step before the alert opens (see showHighResidualAlert)
+            setStep(Steps.PUT_PAPER);
+            showHighResidualAlert({
+              isAdvanced,
+              onContinue: applyResult,
+              onRecapture: () => setStep(Steps.PRE_CHESSBOARD),
+              onSwitchToAdvanced,
+            });
+          } catch (error) {
+            // never leave this step spinning: the paper step can start it again
+            console.error('Auto solve pnp failed', error);
+            alertCaller.popUpError({ message: tCali.failed_to_calibrate_with_pictures });
+            setStep(Steps.PUT_PAPER);
+          }
+        }}
+      />
+    );
+  }
+
   if (step === Steps.SOLVE_PNP_INSTRUCTION) {
     return (
       <Instruction
@@ -215,6 +342,7 @@ const LaserHeadFisheyeCalibration = ({ currentData, isAdvanced, isOblique, onClo
         defaultPoints={isOblique ? DEFAULT_POINTS_OBLIQUE : DEFAULT_POINTS}
         dh={0}
         hasNext
+        initialPoints={manualInitialPoints.current}
         initPoseWithDefaultPoints={isAdvanced}
         onBack={() => setStep(Steps.SOLVE_PNP_INSTRUCTION)}
         onClose={onClose}
@@ -237,7 +365,7 @@ const LaserHeadFisheyeCalibration = ({ currentData, isAdvanced, isOblique, onClo
         cameraOptions={{ index: 0 }}
         dh={0}
         grid={isOblique ? bb2PerspectiveGridWide : bb2PerspectiveGrid}
-        onBack={() => setStep(Steps.SOLVE_PNP)}
+        onBack={() => setStep(isAutoSolved.current ? Steps.PUT_PAPER : Steps.SOLVE_PNP)}
         onClose={onClose}
         onNext={async () => {
           const param: FisheyeCameraParametersV3 = {

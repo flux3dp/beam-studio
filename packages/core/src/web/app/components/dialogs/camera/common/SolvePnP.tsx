@@ -143,7 +143,18 @@ const SolvePnP = ({
         const { shouldFindCorners = true } = opts;
 
         if (!shouldFindCorners) {
-          const { blob } = await cameraCalibrationApi.remapImage(imgBlob);
+          let blob: Blob;
+
+          try {
+            ({ blob } = await cameraCalibrationApi.remapImage(imgBlob));
+          } catch (error) {
+            // the backend lost the parameters (a command timed out and the connection was replaced)
+            if ((error as { info?: string })?.info !== 'NO_DATA' || !params.k || !params.d) throw error;
+
+            await cameraCalibrationApi.updateData(params);
+
+            return await handleImg(imgBlob, opts);
+          }
 
           setImg({ blob, success: true, url: URL.createObjectURL(blob) });
 

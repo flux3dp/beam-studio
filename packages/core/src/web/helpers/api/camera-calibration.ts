@@ -3,6 +3,8 @@
  * API camera calibration
  * Ref: none
  */
+import PQueue from 'p-queue';
+
 import type {
   FisheyeCaliParameters,
   FisheyeCameraParametersV2Cali,
@@ -10,6 +12,23 @@ import type {
 } from '@core/interfaces/FisheyePreview';
 
 import Websocket from '../websocket';
+
+/** [x, y, size, contrast], x / y in the remapped-image px space `solvePnPCalculate` takes */
+export type AutoPnPBlob = [number, number, number, number];
+
+export type AutoPnPFailReason = 'HIGH_RESIDUAL' | 'NOT_ENOUGH_MARKS' | 'UNSUPPORTED';
+
+/**
+ * fluxghost answers a command it does not know with `{ status: 'Error', message: 'BAD_PARAM_TYPE' }`. The
+ * capital E matters: the websocket wrapper only routes the lowercase `error` to onError, so this one arrives
+ * as an ordinary message and has to be recognised here, or the caller waits forever.
+ */
+const isUnknownCommand = (response: { status?: string }): boolean => response.status === 'Error';
+
+// A reply that never comes must not hold the queue for good. Matching can take most of a minute on a photo full
+// of strays; the two calibrations work through a whole photo set.
+const COMMAND_TIMEOUT_MS = 2 * 60 * 1000;
+const LONG_COMMAND_TIMEOUT_MS = 10 * 60 * 1000;
 
 class CameraCalibrationApi {
   private ws: any; // websocket
@@ -20,6 +39,41 @@ class CameraCalibrationApi {
     onMessage: (response: any) => void;
   };
 
+  /**
+   * Every command swaps the shared handlers before it sends, so a command sent while another still waits would
+   * take that one's reply. They run one at a time, as in `open-cv.ts`.
+   */
+  private commandQueue = new PQueue({ concurrency: 1 });
+
+  /**
+   * Replies carry no request id, so one that comes after its command timed out would be taken by the next
+   * command. Before the queue moves on, the connection is dropped and a new one takes its place: the late reply
+   * stays with the old one. The old one is not waited for, since a backend that is stuck does not answer the close
+   * either.
+   */
+  private enqueue = <T>(
+    executor: (resolve: (value: T) => void, reject: (reason?: unknown) => void) => void,
+    timeout = COMMAND_TIMEOUT_MS,
+  ): Promise<T> =>
+    this.commandQueue.add(async () => {
+      let timer: NodeJS.Timeout | undefined;
+
+      try {
+        return await Promise.race([
+          new Promise<T>(executor),
+          new Promise<never>((_, reject) => {
+            timer = setTimeout(() => {
+              this.ws.close(false);
+              this.ws = this.connect();
+              reject(new Error(`camera-calibration command timed out after ${timeout} ms`));
+            }, timeout);
+          }),
+        ]);
+      } finally {
+        clearTimeout(timer);
+      }
+    }) as Promise<T>;
+
   constructor() {
     this.events = {
       onError: () => {},
@@ -27,22 +81,29 @@ class CameraCalibrationApi {
       onMessage: () => {},
     };
 
-    this.ws = Websocket({
-      method: 'camera-calibration',
-      onError: (response) => {
-        this.events.onError(response);
-      },
-      onFatal: (response) => {
-        this.events.onFatal(response);
-      },
-      onMessage: (data) => {
-        this.events.onMessage(data);
-      },
-    });
+    this.ws = this.connect();
   }
 
+  /** a connection that was replaced has no say any more, whatever it still reports while it closes */
+  private connect = () => {
+    const ws = Websocket({
+      method: 'camera-calibration',
+      onError: (response) => {
+        if (ws === this.ws) this.events.onError(response);
+      },
+      onFatal: (response) => {
+        if (ws === this.ws) this.events.onFatal(response);
+      },
+      onMessage: (data) => {
+        if (ws === this.ws) this.events.onMessage(data);
+      },
+    });
+
+    return ws;
+  };
+
   upload(data: ArrayBuffer | Blob): Promise<any> {
-    return new Promise((resolve, reject) => {
+    return this.enqueue((resolve, reject) => {
       this.events.onMessage = (response) => {
         switch (response.status) {
           case 'ok':
@@ -79,7 +140,7 @@ class CameraCalibrationApi {
   }
 
   startFisheyeCalibrate(): Promise<boolean> {
-    return new Promise((resolve, reject) => {
+    return this.enqueue((resolve, reject) => {
       this.events.onMessage = (response) => {
         switch (response.status) {
           case 'ok':
@@ -104,7 +165,7 @@ class CameraCalibrationApi {
   }
 
   addFisheyeCalibrateImg(height: number, img: ArrayBuffer | Blob): Promise<boolean> {
-    return new Promise((resolve, reject) => {
+    return this.enqueue((resolve, reject) => {
       this.events.onMessage = (response) => {
         switch (response.status) {
           case 'ok':
@@ -135,7 +196,7 @@ class CameraCalibrationApi {
   }
 
   doFisheyeCalibration(onProgress?: (val: number) => void): Promise<FisheyeCameraParametersV2Cali> {
-    return new Promise((resolve, reject) => {
+    return this.enqueue((resolve, reject) => {
       this.events.onMessage = (response) => {
         switch (response.status) {
           case 'ok':
@@ -165,7 +226,7 @@ class CameraCalibrationApi {
         console.log('on fatal', response);
       };
       this.ws.send('do_fisheye_calibration');
-    });
+    }, LONG_COMMAND_TIMEOUT_MS);
   }
 
   calibrateChessboard(
@@ -186,7 +247,7 @@ class CameraCalibrationApi {
       }
     | { data: { reason: string }; success: false }
   > {
-    return new Promise((resolve, reject) => {
+    return this.enqueue((resolve, reject) => {
       let blob: Blob;
 
       this.events.onMessage = (response) => {
@@ -239,7 +300,7 @@ class CameraCalibrationApi {
         success: false;
       }
   > =>
-    new Promise((resolve, reject) => {
+    this.enqueue((resolve, reject) => {
       let data = {} as { points: Array<[number, number]> };
 
       this.events.onMessage = (response) => {
@@ -283,12 +344,12 @@ class CameraCalibrationApi {
     points: Array<[number, number]>,
     refPoints: Array<[number, number]>,
   ): Promise<{
-    data: { rvec: number[][]; tvec: number[][] };
+    data: { rms?: number; rvec: number[][]; tvec: number[][] };
     success: boolean;
   }> =>
-    new Promise((resolve, reject) => {
+    this.enqueue((resolve, reject) => {
       let success = true;
-      let data = {} as { rvec: number[][]; tvec: number[][] };
+      let data = {} as { rms?: number; rvec: number[][]; tvec: number[][] };
 
       this.events.onMessage = (response) => {
         if (response.status === 'fail') {
@@ -315,6 +376,71 @@ class CameraCalibrationApi {
       this.ws.send(`solve_pnp_calculate ${JSON.stringify(refPoints)} ${dh.toFixed(3)} ${JSON.stringify(points)}`);
     });
 
+  /**
+   * Find the engraved calibration marks in one raw photo. Needs k / d loaded (`updateData`).
+   * `UNSUPPORTED`: the backend predates the command; callers fall back to the manual steps. This is the only
+   * place that tells: fluxghost sends the same reply when a handler raises ValueError, which this command's
+   * handler cannot, while `autoPnPMatch` can.
+   */
+  autoPnPDetect = (
+    img: ArrayBuffer | Blob,
+  ): Promise<{ blobs: AutoPnPBlob[]; success: true; weak: AutoPnPBlob[] } | { reason: string; success: false }> =>
+    this.enqueue((resolve, reject) => {
+      this.events.onMessage = (response) => {
+        if (response.status === 'continue') {
+          this.ws.send(img);
+        } else if (response.status === 'ok') {
+          resolve({ blobs: response.blobs, success: true, weak: response.weak ?? [] });
+        } else if (response.status === 'fail') {
+          resolve({ reason: response.info ?? response.reason, success: false });
+        } else if (isUnknownCommand(response)) {
+          resolve({ reason: 'UNSUPPORTED', success: false });
+        }
+      };
+      this.events.onError = (response) => reject(response);
+      this.events.onFatal = (response) => reject(response);
+
+      const size = img instanceof Blob ? img.size : img.byteLength;
+
+      this.ws.send(`auto_pnp_detect ${size}`);
+    });
+
+  /**
+   * Tell which blob is which mark. `blobs` and `weak` are one `autoPnPDetect` result per exposure;
+   * `points` comes back ordered like `refPoints` and feeds `solvePnPCalculate`. `filled` counts the
+   * marks that were only found among the weak candidates, next to their predicted position.
+   * `rMax` (mm) replaces the backend's residual limit for `HIGH_RESIDUAL`.
+   */
+  autoPnPMatch = (
+    refPoints: Array<[number, number]>,
+    blobs: AutoPnPBlob[][],
+    weak: AutoPnPBlob[][] = [],
+    rMax?: number,
+  ): Promise<
+    | { filled: number; matched: number; points: Array<[number, number]>; rms: number; success: true }
+    | {
+        filled?: number;
+        matched?: number;
+        /** null for a mark that was not found; complete after HIGH_RESIDUAL */
+        points?: Array<[number, number] | null>;
+        /** where each mark should be according to the ones found; null with fewer than 4 found, absent before 2.5.9 */
+        predicted?: Array<[number, number]> | null;
+        reason: AutoPnPFailReason;
+        rms?: null | number;
+        success: false;
+      }
+  > =>
+    this.enqueue((resolve, reject) => {
+      this.events.onMessage = ({ status, ...rest }) => {
+        if (status === 'ok') resolve({ ...rest, success: true });
+        else if (status === 'fail') resolve({ ...rest, success: false });
+        else if (isUnknownCommand({ status })) reject(rest);
+      };
+      this.events.onError = (response) => reject(response);
+      this.events.onFatal = (response) => reject(response);
+      this.ws.send(`auto_pnp_match ${JSON.stringify({ blobs, r_max: rMax, ref_points: refPoints, weak })}`);
+    });
+
   checkPnP = (
     img: ArrayBuffer | Blob,
     dh: number,
@@ -326,7 +452,7 @@ class CameraCalibrationApi {
   ): Promise<
     { blob: Blob; success: true } | { data: { info: string; reason: string; status: string }; success: false }
   > =>
-    new Promise((resolve, reject) => {
+    this.enqueue((resolve, reject) => {
       this.events.onMessage = (response) => {
         if (response instanceof Blob) {
           resolve({ blob: response, success: true });
@@ -354,12 +480,14 @@ class CameraCalibrationApi {
     });
 
   remapImage = (img: ArrayBuffer | Blob, params?: { d: number[][]; k: number[][] }): Promise<{ blob: Blob }> => {
-    return new Promise((resolve, reject) => {
+    return this.enqueue((resolve, reject) => {
       this.events.onMessage = (response) => {
         if (response instanceof Blob) {
           resolve({ blob: response });
         } else if (response.status === 'continue') {
           this.ws.send(img);
+        } else {
+          reject(response);
         }
       };
 
@@ -380,7 +508,7 @@ class CameraCalibrationApi {
   };
 
   updateData = (data: FisheyeCaliParameters): Promise<boolean> =>
-    new Promise((resolve, reject) => {
+    this.enqueue((resolve, reject) => {
       this.events.onMessage = (response) => {
         if (response.status === 'ok') {
           resolve(true);
@@ -409,7 +537,7 @@ class CameraCalibrationApi {
     data?: { rvec_polyfit: number[][]; tvec_polyfit: number[][] };
     success: boolean;
   }> =>
-    new Promise((resolve, reject) => {
+    this.enqueue((resolve, reject) => {
       let success = true;
       let data = {} as { rvec_polyfit: number[][]; tvec_polyfit: number[][] };
 
@@ -450,7 +578,7 @@ class CameraCalibrationApi {
   ): Promise<
     { imgp: number[][]; objp: number[][]; ratio: number; success: true } | { reason: string; success: false }
   > =>
-    new Promise((resolve, reject) => {
+    this.enqueue((resolve, reject) => {
       this.events.onMessage = (response) => {
         if (response.status === 'continue') {
           this.ws.send(img);
@@ -495,7 +623,7 @@ class CameraCalibrationApi {
       }
     | { reason: string; success: false }
   > =>
-    new Promise((resolve, reject) => {
+    this.enqueue((resolve, reject) => {
       this.events.onMessage = (response) => {
         if (response.status === 'fail') {
           console.log('fail', response);
@@ -526,7 +654,7 @@ class CameraCalibrationApi {
       } else {
         this.ws.send(`calibrate_camera ${objPointsStr} ${imgPointsStr} ${imageSizeStr} ${isFisheye}`);
       }
-    });
+    }, LONG_COMMAND_TIMEOUT_MS);
 }
 
 export const cameraCalibrationApi = new CameraCalibrationApi();

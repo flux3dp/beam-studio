@@ -97,11 +97,65 @@ No-data handling:
 ## Per-dialog flows
 
 **LaserHeadFisheyeCalibration** (V3, `fbb2`/`fhx2rf`): `[advanced]` PRE_CHESSBOARD → CHESSBOARD(ChArUco)
-→ PUT_PAPER · `[basic]` starts at PUT_PAPER with `currentData` seeded → SOLVE_PNP_INSTRUCTION → SOLVE_PNP
-→ CHECK_PNP → `setFisheyeConfig`. `dh=0`.
+→ PUT_PAPER · `[basic]` starts at PUT_PAPER with `currentData` seeded → AUTO_SOLVE_PNP → CHECK_PNP →
+`setFisheyeConfig`. `dh=0`. The manual SOLVE_PNP_INSTRUCTION → SOLVE_PNP remain for a backend without
+the auto commands.
 
-**Beamo2Calibration** (V4, `fbm2`): same advanced/basic split; CHESSBOARD → PUT_PAPER → 4× SOLVE_PNP
-(TL/TR/BL/BR) → SOLVE_OTHER_PNP → CHECK_PNP. Polyfits faked from a single height.
+### Automatic solve step (`fbm2`, `fbb2`/`fhx2rf` laser head, `ado1`)
+
+No dragging: after the engraving a `ProcessingDialog` step finds the marks and solves. PRD
+`docs/prd/auto-solve-pnp.md`; matcher constants and their basis in fluxghost
+`docs/api/camera-calibration.md` ("auto_pnp constants").
+
+- **`common/autoLocateMarks.ts`** — shared: connect camera, optional `cameraIndex`, exposure rounds
+  (a later round only after `NOT_ENOUGH_MARKS`; omit `exposureRounds` to take one photo and leave the
+  exposure alone; the same happens when the exposure cannot be read, e.g. older `ado1` firmware), each photo → `autoPnPDetect`, all lists so far → `autoPnPMatch(refPoints, blobs, weak,
+  rMax)`, restore, disconnect. Returns `{ points, rms, highResidual }` or a failure reason; the caller
+  solves. After `NOT_ENOUGH_MARKS` the failure also carries `initialPoints` when the backend could predict
+  the missing marks (fluxghost 2.5.9, at least 4 found): found marks as found, missing ones as predicted.
+  When an exposure cannot be set, that photo is taken as it is and is the last one; when auto exposure
+  cannot be turned off, the exposure is not touched and one photo is taken. One photo is dropped after every exposure change (it still has the old exposure). Camera auto exposure is turned off first and back on **after** the exposure value is restored.
+  `isCancelled` is checked before each photo, before and after the match, and before each of `fbm2`'s four
+  solves: every dialog passes its unmounted flag (`helpers/hooks/useIsUnmounted`)
+  and checks it again before applying or saving; `fbm2` also stops when the door poll (`DoorChecker.keepClosed`)
+  sees the door open, then checks the door, relocates and captures again from the first exposure.
+- `cameraCalibrationApi` sends one command at a time (`p-queue`, as `open-cv.ts`): every command swaps the
+  shared reply handlers, so overlapping commands used to take each other's reply. A reply that never comes
+  frees the queue after a timeout (2 min, 10 for the two calibrations), and the connection is replaced first
+  (`connect()`, callbacks check `ws === this.ws`): replies have no request id, so a late one must not reach
+  the next command, and uploaded parameters are gone with the old connection. A dead backend rejects at once
+  through `onFatal`. Specs that drive the real api must wait a tick after calling it.
+- The matcher uses `k`, `d` and the mark positions only, never the stored `rvec`/`tvec`, and assumes the
+  image is not rotated by 90 / 180 degrees against the bed (Promark's `rotate180` is why it is not wired).
+- Per machine: `fbm2` 16 marks, own rounds, backend residual limit, four quadrant solves
+  (`beamo2Calibration/autoSolvePnP.ts`); laser head 8 marks, `EXPOSURE_ROUNDS` / `R_MAX_MM` at the top of
+  the dialog file, `cameraIndex: 0`; `ado1` 8 marks, own rounds, one automatic step per height.
+- Outcomes, same in the three dialogs: ok → next step · `UNSUPPORTED` (fluxghost without the commands;
+  only `autoPnPDetect` reports it, any other error reply rejects) → the manual steps ·
+  `NOT_ENOUGH_MARKS` → back to the engraving step, then `common/showNotEnoughMarksAlert.ts`: Cancel, or
+  Calibrate Manually (primary), which enters the manual steps with `initialPoints` (`fbm2`: split by
+  quadrant into `imgPoints1`; `ado1`: per height, and the second height stays automatic, see
+  `isAutoSupported`) · any other reason / a thrown error → alert, back to the engraving step ·
+  `highResidual` (all marks found, residual over the limit) → `common/showHighResidualAlert.ts`: Continue
+  Anyway, plus Calibrate Camera (Advanced) in basic mode (`onSwitchToAdvanced`) or Capture Calibration
+  Pattern in advanced mode.
+- The launchers key the element by mode (`key={isAdvanced ? 'advanced' : 'basic'}`): the switch to
+  advanced reuses the dialog id, and without the key React keeps the mounted instance (step, stored
+  `k` / `d`). `showAdorCalibration` needs `replaceOpenDialog` for it, since it refuses to open while its id
+  exists and `isIdExist` still sees a dialog popped in the same tick.
+- Set the step **before** opening an alert from inside a `ProcessingDialog` `process`: the alert can be
+  dismissed with Esc, and `ProcessingDialog` re-runs `process` whenever its parent re-renders.
+
+**Beamo2Calibration** (V4, `fbm2`): same advanced/basic split; CHESSBOARD → PUT_PAPER → AUTO_SOLVE_PNP
+→ SOLVE_OTHER_PNP → CHECK_PNP. Polyfits faked from a single height. PRD `docs/prd/auto-solve-pnp.md`.
+
+- CHECK_PNP's Back goes to PUT_PAPER when the pose came from the automatic step (`isAutoSolved`); same
+  in the laser-head dialog.
+- `fbm2` keeps the machine in raw mode with the motors held through the photos (the camera rides on the
+  gantry), so PUT_PAPER can be re-entered in raw mode: its Next / Skip call `releaseMachine` first, and
+  `releaseMachine` writes `getReport().st_id` into `currentDevice.info` — that field comes from the
+  discovery broadcast and lags, and `checkDeviceStatus` would offer to kick our own finished raw mode.
+  The laser-head and Ador dialogs release the machine before the photos and do not need this.
 
 **WideAngleCamera** (V4, cam #2): always opens at PREPARE_MATERIALS; **Skip button** there (when
 `currentData`) jumps to PUT_PAPER. Two heights (focus + lowered 40mm via `moveZRel`), each: 4× SolvePnP
@@ -110,7 +164,7 @@ No-data handling:
 **AdorCalibration** (V2, `ado1`): initial step = advanced→PREPARE_CALIBRATION, factory→CALIBRATE, basic→PUT_PAPER.
 - advanced → ChArUco (sets `d,k,rvec,tvec`); its `onNext` **also seeds `levelingData`(zeros)/`refHeight:0`/`source:'device'`** (matching CalibrateChessBoard, since ChArUco alone leaves them unset).
 - factory → `CalibrateChessBoard` (sets those same fields); `onSkip` (when `currentData`) applies + jumps to PUT_PAPER.
-- then PUT_PAPER → SOLVE_PNP_1 (@dh1) → ELEVATED_CUT → SOLVE_PNP_2 (@dh2) → `extrinsicRegression` → `setFisheyeConfig`.
+- then PUT_PAPER → AUTO_SOLVE_PNP_1 (@dh1) → ELEVATED_CUT → AUTO_SOLVE_PNP_2 (@dh2) → `extrinsicRegression` → `setFisheyeConfig`. No CHECK_PNP: the preview is the only check. `handleFirstPose` / `handleSecondPose` are shared with the manual SOLVE_PNP_1 / SOLVE_PNP_2 (backend without the auto commands). A failure at the second height (marks, regression or save) returns to ELEVATED_CUT; the first pose is already a checkpoint. Specs: `AdorCalibration.spec.tsx`, `LaserHeadFisheyeCalibration.spec.tsx`, `beamo2Calibration/Beamo2Calibration.spec.tsx` mock the step components and drive the automatic step.
 
 **PromarkCalibration** (V3, `fpm1`): params from localStorage (`promarkDataStore`), passed as `currentData`.
 Starts at PRE_CHESSBOARD with a **Skip** button (when `currentData`) → PUT_PAPER. CALIBRATION(`Calibration`)
@@ -123,9 +177,10 @@ output: `frequency = UV_FREQUENCY_LIMIT.max`, `power = UV_POWER_LIMIT.min` (`hel
 
 **Calibration task files**: the PUT_PAPER tasks are pre-exported fcode in `assets/fcode/*.fc`, sent by
 `deviceMaster.doCalibration` (which adds `IGNORE_AIR_ASSIST_WARNING` to v2+ FILE metadata at send time).
-The source `.beam` of `bm2-calibration.fc`, `bb2-calibration-wide-angle.fc` and
-`hx2-calibration-wide-angle.fc` (the ones with A–D labels, single-line, air assist 0%) live in
-`resources/calibration-tasks/` (named after the `.fc`, not bundled); edit there and re-export.
+The source `.beam` files live in `resources/calibration-tasks/` (not bundled; its README maps each
+one to its `.fc`): `bm2-calibration`, `bb2-calibration-wide-angle`, `hx2-calibration-wide-angle` (the
+ones with A–D labels, single-line, air assist 0%) and the 8-mark `ador-calibration`, `bb2-calibration`,
+`hx2-calibration`. Edit there and re-export.
 
 ### Promark camera rotation (`rotate180`)
 
@@ -175,7 +230,7 @@ on Save writes that sum and clears pnc.
   corner detection would otherwise project from a random pose. Later steps reuse the previous step's solve.
 - **`CheckPnP`** — overlay a grid using the params to verify alignment.
 - **`Instruction`** — video + steps + `buttons: Array<{label,onClick,type?}>` (+ optional `renderWrapper`).
-- **`ProcessingDialog`** — runs a `process()` with progress, then `onNext`.
+- **`ProcessingDialog`** — runs a `process()` with progress, then `onNext`. A throw shows "Failed to process" and leaves the spinner up: catch inside `process` and set a step.
 - **`AdorCalibration/CalibrateChessBoard`** — chessboard intrinsics; optional `onSkip` prop renders a Skip button.
 
 ## Key files
@@ -183,7 +238,8 @@ on Save writes that sum and clears pnc.
 - `camera/index.tsx` — `calibrateCamera` + `showLaserHeadFisheyeCalibration` / `showWideAngleCameraCalibration` / `showPromarkCalibration`
 - `common/checkpointData.ts` — `getCheckpointData`, `applyCheckpointData`
 - `AdorCalibration/{index,AdorCalibration,CalibrateChessBoard,utils}.tsx` (`utils.ts`: `calibrateWithDevicePictures`, `calibrateFromDevicePictures`, `saveCheckPoint`, `getMaterialHeight`)
-- `beamo2Calibration/{index,Beamo2Calibration}.tsx`, `WideAngleCamera/index.tsx`, `PromarkCalibration.tsx`
+- `common/autoLocateMarks.ts` (+ spec), `common/showHighResidualAlert.ts`
+- `beamo2Calibration/{index,Beamo2Calibration}.tsx`, `beamo2Calibration/autoSolvePnP.ts` (+ spec), `WideAngleCamera/index.tsx`, `PromarkCalibration.tsx`
 - `ManualConfiguration/{ManualConfiguration,CameraTab,FisheyeOffsetBlock,RegionOffsetGrid,LegacyCameraBlock,ModulesTab,PrintAndCutTab}.tsx`, `store.ts`, `offsetParams.ts` — PRD `docs/prd/manual-calibration-config.md`
 - `interfaces/FisheyePreview.d.ts`, `helpers/api/camera-calibration.ts`, `helpers/device/jsonDataHelper.ts`, `helpers/device/promark/promark-data-store.ts`, `helpers/device/promark/camera-rotation.ts`, `helpers/webcam-helper.ts`
 
@@ -191,5 +247,5 @@ on Save writes that sum and clears pnc.
 
 Update this doc when the Promark rotation rule changes, or when: a parameter version changes (new `Vn`), the storage files/keys change, the
 data-fetch-before-dialog pattern or the `getCheckpointData`/`applyCheckpointData`/`calibrateFromDevicePictures`
-helpers change, a machine family's step flow/modes change, or the manual `offset` / `region_offsets`
+helpers change, a machine family's step flow/modes change (including the automatic solve step: its outcomes, exposure handling, and which machines have it), or the manual `offset` / `region_offsets`
 contract (storage rule, sign, fluxghost fallback) or the `clearPnc` rule changes.

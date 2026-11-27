@@ -64,9 +64,15 @@ export const showLaserHeadFisheyeCalibration = async (device: IDeviceInfo, isAdv
         currentData={currentData}
         isAdvanced={isAdvanced}
         isOblique={isOblique}
+        // a switch to advanced mode reuses the dialog id: without the key React keeps the old step and data
+        key={isAdvanced ? 'advanced' : 'basic'}
         onClose={(completed = false) => {
           onClose();
           resolve(completed);
+        }}
+        onSwitchToAdvanced={() => {
+          onClose();
+          resolve(showLaserHeadFisheyeCalibration(device, true));
         }}
       />,
     );

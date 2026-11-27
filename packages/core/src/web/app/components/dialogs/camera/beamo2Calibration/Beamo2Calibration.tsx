@@ -1,4 +1,4 @@
-import { type ReactNode, useCallback, useEffect, useRef, useState } from 'react';
+import React, { type ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 
 import { match } from 'ts-pattern';
 
@@ -14,6 +14,7 @@ import { cameraCalibrationApi } from '@core/helpers/api/camera-calibration';
 import { setFisheyeConfig } from '@core/helpers/camera-calibration-helper';
 import checkDeviceStatus from '@core/helpers/check-device-status';
 import deviceMaster from '@core/helpers/device-master';
+import useIsUnmounted from '@core/helpers/hooks/useIsUnmounted';
 import i18n from '@core/helpers/i18n';
 import useI18n from '@core/helpers/useI18n';
 import type {
@@ -29,7 +30,11 @@ import downloadCalibrationFile from '../common/downloadCalibrationFile';
 import Instruction from '../common/Instruction';
 import moveLaserHead from '../common/moveLaserHead';
 import ProcessingDialog from '../common/ProcessingDialog';
+import showHighResidualAlert from '../common/showHighResidualAlert';
+import showNotEnoughMarksAlert from '../common/showNotEnoughMarksAlert';
 import SolvePnP from '../common/SolvePnP';
+
+import autoSolvePnP from './autoSolvePnP';
 
 /* eslint-disable perfectionist/sort-objects */
 const Steps = {
@@ -43,6 +48,8 @@ const Steps = {
   SOLVE_PNP_BR: 8,
   SOLVE_OTHER_PNP: 9,
   CHECK_PNP: 10,
+  // out of sequence on purpose: next() / prev() step through the manual steps 5 to 10 by number
+  AUTO_SOLVE_PNP: 11,
 } as const;
 /* eslint-enable perfectionist/sort-objects */
 
@@ -52,6 +59,8 @@ interface Props {
   currentData?: FisheyeCameraParametersV4Cali;
   isAdvanced: boolean;
   onClose: (completed?: boolean) => void;
+  /** close this dialog and start over in advanced mode; the machine is released before it is called */
+  onSwitchToAdvanced: () => void;
 }
 
 const DEFAULT_POINTS_TL: Array<[number, number]> = [
@@ -82,7 +91,7 @@ const DEFAULT_POINTS_BR: Array<[number, number]> = [
   [3671, 2905],
 ];
 
-const Beamo2Calibration = ({ currentData, isAdvanced, onClose }: Props): ReactNode => {
+const Beamo2Calibration = ({ currentData, isAdvanced, onClose, onSwitchToAdvanced }: Props): ReactNode => {
   const PROGRESS_ID = 'fbm2-calibration';
   const { calibration: tCalibration, device: tDevice, global: tGlobal } = useI18n();
   const calibratingParam = useRef<FisheyeCameraParametersV4Cali>(currentData ?? {});
@@ -92,13 +101,19 @@ const Beamo2Calibration = ({ currentData, isAdvanced, onClose }: Props): ReactNo
   const [step, setStep] = useState<StepsType>(isAdvanced ? Steps.PRE_CHESSBOARD : Steps.PUT_PAPER);
   const next = useCallback(() => setStep((step) => (step + 1) as StepsType), []);
   const prev = useCallback(() => setStep((step) => (step - 1) as StepsType), []);
+  const isUnmounted = useIsUnmounted();
   const doorChecker = useRef<DoorChecker | null>(null);
+  // whether the quadrant poses came from the automatic step, to know where Back leads from CHECK_PNP
+  const isAutoSolved = useRef(false);
   const releaseMachine = useCallback(async () => {
     if (deviceMaster.currentControlMode === 'raw') {
       progressCaller.openNonstopProgress({ id: PROGRESS_ID, message: i18n.lang.message.endingRawMode });
       try {
         await deviceMaster.rawLooseMotor();
         await deviceMaster.endSubTask();
+        // info.st_id comes from the discovery broadcast and would still say raw for a moment: a status check
+        // right after this (PUT_PAPER) must not take our own finished raw mode for a running task
+        deviceMaster.currentDevice!.info.st_id = (await deviceMaster.getReport()).st_id;
       } catch {
         console.error('Failed to release machine');
       } finally {
@@ -172,6 +187,10 @@ const Beamo2Calibration = ({ currentData, isAdvanced, onClose }: Props): ReactNo
     })
     .with(Steps.PUT_PAPER, () => {
       const handleNext = async (doEngraving = true) => {
+        // coming back from the solve or check steps the machine is still held in raw mode; the status check
+        // below would take that for a running task and offer to abort it, which breaks the steps that follow
+        await releaseMachine();
+
         const deviceStatus = await checkDeviceStatus(deviceMaster.currentDevice!.info);
 
         if (!deviceStatus) return;
@@ -184,7 +203,7 @@ const Beamo2Calibration = ({ currentData, isAdvanced, onClose }: Props): ReactNo
 
           if (doEngraving) await deviceMaster.doBeamo2Calibration();
 
-          setStep(Steps.SOLVE_PNP_INSTRUCTION);
+          setStep(Steps.AUTO_SOLVE_PNP);
         } catch (err) {
           console.error(err);
         } finally {
@@ -216,6 +235,115 @@ const Beamo2Calibration = ({ currentData, isAdvanced, onClose }: Props): ReactNo
             tCalibration.put_paper_bm2_4,
           ]}
           title={tCalibration.put_paper}
+        />
+      );
+    })
+    .with(Steps.AUTO_SOLVE_PNP, () => {
+      return (
+        <ProcessingDialog
+          onClose={onClose}
+          onNext={() => {}}
+          process={async () => {
+            try {
+              const isDoorOpened = () => doorChecker.current?.keepClosed === false;
+              let res: Awaited<ReturnType<typeof autoSolvePnP>>;
+
+              // a door opened during capture voids the whole capture: close it, relocate, shoot from the first exposure
+              do {
+                const moved = await doorChecker.current?.doorClosedWrapper(() =>
+                  moveLaserHead(undefined, { shouldKeepPosition: true }),
+                );
+
+                if (isUnmounted.current) return;
+
+                if (!moved) {
+                  setStep(Steps.PUT_PAPER);
+
+                  return;
+                }
+
+                progressCaller.openNonstopProgress({
+                  id: PROGRESS_ID,
+                  message: tCalibration.auto_solve_pnp_locating,
+                });
+
+                try {
+                  res = await autoSolvePnP(calibratingParam.current, () => isUnmounted.current || isDoorOpened());
+                } finally {
+                  progressCaller.popById(PROGRESS_ID);
+                }
+
+                if (isUnmounted.current) return;
+              } while (isDoorOpened());
+
+              if (res.success) {
+                const { imgPoints, rvecs, tvecs } = res;
+                const applyResult = () => {
+                  if (isUnmounted.current) return;
+
+                  isAutoSolved.current = true;
+                  updateParam({
+                    imgPoints1: imgPoints,
+                    rvec: rvecs.bottomRight,
+                    rvecs1: rvecs,
+                    tvec: tvecs.bottomRight,
+                    tvecs1: tvecs,
+                  });
+                  setStep(Steps.SOLVE_OTHER_PNP);
+                };
+
+                if (!res.highResidual) {
+                  applyResult();
+
+                  return;
+                }
+
+                // back to the paper step first, so that dismissing the alert does not leave this step spinning
+                setStep(Steps.PUT_PAPER);
+                showHighResidualAlert({
+                  isAdvanced,
+                  onContinue: applyResult,
+                  onRecapture: () => setStep(Steps.PRE_CHESSBOARD),
+                  onSwitchToAdvanced: async () => {
+                    // awaited here: the unmount cleanup does not wait, and the advanced flow moves the head at once
+                    await releaseMachine();
+                    onSwitchToAdvanced();
+                  },
+                });
+
+                return;
+              }
+
+              isAutoSolved.current = false;
+              match(res.reason)
+                // backend without the commands: the manual steps still work
+                .with('UNSUPPORTED', () => setStep(Steps.SOLVE_PNP_INSTRUCTION))
+                .with('NOT_ENOUGH_MARKS', () => {
+                  setStep(Steps.PUT_PAPER);
+                  showNotEnoughMarksAlert({
+                    found: res.matched ?? 0,
+                    onManual: () => {
+                      if (isUnmounted.current) return;
+
+                      // each quadrant's manual step starts from these, as it does when coming back to one
+                      updateParam({ imgPoints1: res.imgPoints });
+
+                      setStep(Steps.SOLVE_PNP_INSTRUCTION);
+                    },
+                    total: 16,
+                  });
+                })
+                .otherwise((reason) => {
+                  alertCaller.popUpError({ message: `${tCalibration.failed_to_calibrate_with_pictures} (${reason})` });
+                  setStep(Steps.PUT_PAPER);
+                });
+            } catch (error) {
+              // never leave this step spinning: the paper step can start it again
+              console.error('Auto solve pnp failed', error);
+              alertCaller.popUpError({ message: tCalibration.failed_to_calibrate_with_pictures });
+              setStep(Steps.PUT_PAPER);
+            }
+          }}
         />
       );
     })
@@ -362,7 +490,7 @@ const Beamo2Calibration = ({ currentData, isAdvanced, onClose }: Props): ReactNo
         <CheckPnP
           dh={0}
           grid={bm2FullAreaPerspectiveGrid}
-          onBack={() => setStep(Steps.SOLVE_PNP_BR)}
+          onBack={() => setStep(isAutoSolved.current ? Steps.PUT_PAPER : Steps.SOLVE_PNP_BR)}
           onClose={onClose}
           onNext={async () => {
             const rvecPolyfits: Record<WideAngleRegion, number[][]> = {} as any;

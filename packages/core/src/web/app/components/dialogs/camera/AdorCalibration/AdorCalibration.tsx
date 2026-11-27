@@ -9,14 +9,19 @@ import { cameraCalibrationApi } from '@core/helpers/api/camera-calibration';
 import { setFisheyeConfig } from '@core/helpers/camera-calibration-helper';
 import checkDeviceStatus from '@core/helpers/check-device-status';
 import deviceMaster from '@core/helpers/device-master';
+import useIsUnmounted from '@core/helpers/hooks/useIsUnmounted';
 import useI18n from '@core/helpers/useI18n';
 import type { FisheyeCameraParametersV2, FisheyeCameraParametersV2Cali } from '@core/interfaces/FisheyePreview';
 
 import styles from '../Calibration.module.scss';
+import autoLocateMarks from '../common/autoLocateMarks';
 import ChArUco from '../common/ChArUco';
 import { applyCheckpointData } from '../common/checkpointData';
 import { downloadCalibrationFile } from '../common/downloadCalibrationFile';
 import Instruction from '../common/Instruction';
+import ProcessingDialog from '../common/ProcessingDialog';
+import showHighResidualAlert from '../common/showHighResidualAlert';
+import showNotEnoughMarksAlert from '../common/showNotEnoughMarksAlert';
 import SolvePnP from '../common/SolvePnP';
 
 import CalibrateChessBoard from './CalibrateChessBoard';
@@ -33,16 +38,28 @@ const enum Step {
   ELEVATED_CUT = 7,
   SOLVE_PNP_2 = 8,
   FINISH = 9,
+  // out of sequence on purpose: onNext / onBack step through the manual steps by number
+  AUTO_SOLVE_PNP_1 = 10,
+  AUTO_SOLVE_PNP_2 = 11,
 }
 /* eslint-enable perfectionist/sort-enums */
 
 const PROGRESS_ID = 'fisheye-calibration-v2';
+/**
+ * Residual limit of the automatic steps for the 8 marks, mm. A homography through 8 points absorbs most of one
+ * wrong mark: correct matches measured 0.04 to 0.05 on one unit, one mark off by 1 mm gives 0.15 to 0.31.
+ */
+const R_MAX_MM = 0.2;
+/** best contrast first, then one below and one above; all 8 marks are found from 100 to 450 (see the PRD) */
+const EXPOSURE_ROUNDS = [[250], [125, 450]];
 
 interface Props {
   currentData?: FisheyeCameraParametersV2Cali | null;
   factoryMode?: boolean;
   isAdvanced?: boolean;
   onClose: (completed?: boolean) => void;
+  /** close this dialog and start over in advanced mode */
+  onSwitchToAdvanced: () => void;
 }
 
 const AdorCalibration = ({
@@ -50,6 +67,7 @@ const AdorCalibration = ({
   factoryMode = false,
   isAdvanced = false,
   onClose,
+  onSwitchToAdvanced,
 }: Props): React.JSX.Element => {
   const calibratingParam = useRef<FisheyeCameraParametersV2Cali>(!factoryMode ? (currentData ?? {}) : {});
   const lang = useI18n();
@@ -62,6 +80,190 @@ const AdorCalibration = ({
   const updateParam = useCallback((param: FisheyeCameraParametersV2Cali) => {
     calibratingParam.current = { ...calibratingParam.current, ...param };
   }, []);
+  // whether the first pose came from the automatic step: decides the step after ELEVATED_CUT and its Back
+  const isAutoSolved = useRef(false);
+  // false once the backend turned out not to know the automatic commands: the second height then skips them too
+  const isAutoSupported = useRef(true);
+  // per height: where the manual step starts from when it is chosen after the automatic one came up short
+  const manualInitialPoints = useRef<Array<Array<[number, number]> | undefined>>([]);
+  const isUnmounted = useIsUnmounted();
+
+  const handleFirstPose = async (rvec: number[][], tvec: number[][]) => {
+    progressCaller.openNonstopProgress({ id: PROGRESS_ID, message: lang.device.processing });
+
+    try {
+      updateParam({ heights: [calibratingParam.current.dh1!], rvec, rvecs: [rvec], tvec, tvecs: [tvec] });
+      await cameraCalibrationApi.updateData(calibratingParam.current);
+      await saveCheckPoint(calibratingParam.current);
+      console.log('calibratingParam.current', calibratingParam.current);
+    } finally {
+      progressCaller.popById(PROGRESS_ID);
+    }
+
+    setStep(Step.ELEVATED_CUT);
+  };
+
+  /** resolves to whether the parameters were saved (the dialog is closed then) */
+  const handleSecondPose = async (rvec: number[][], tvec: number[][]): Promise<boolean> => {
+    const heights = [calibratingParam.current.heights![0], calibratingParam.current.dh2!];
+    const rvecs = [calibratingParam.current.rvecs![0], rvec];
+    const tvecs = [calibratingParam.current.tvecs![0], tvec];
+
+    updateParam({ heights, rvecs, tvecs });
+
+    const { data, success } = await cameraCalibrationApi.extrinsicRegression(rvecs, tvecs, heights);
+
+    if (!success) {
+      alertCaller.popUpError({ message: 'Failed to do extrinsic regression.' });
+
+      return false;
+    }
+
+    updateParam(data!);
+    console.log('calibratingParam.current', calibratingParam.current);
+
+    if (isUnmounted.current) return false;
+
+    const param: FisheyeCameraParametersV2 = {
+      d: calibratingParam.current.d!,
+      k: calibratingParam.current.k!,
+      levelingData: calibratingParam.current.levelingData!,
+      refHeight: calibratingParam.current.refHeight!,
+      rvec: calibratingParam.current.rvec!,
+      rvec_polyfit: calibratingParam.current.rvec_polyfit!,
+      source: calibratingParam.current.source,
+      tvec: calibratingParam.current.tvec!,
+      tvec_polyfit: calibratingParam.current.tvec_polyfit!,
+      v: 2,
+    };
+    const res = await setFisheyeConfig(param);
+
+    if (res.status === 'ok') {
+      alertCaller.popUp({ message: tCali.camera_parameter_saved_successfully });
+      onClose(true);
+
+      return true;
+    }
+
+    alertCaller.popUpError({
+      message: `${tCali.failed_to_save_camera_parameter}:<br />${JSON.stringify(res)}`,
+    });
+
+    return false;
+  };
+
+  /**
+   * One automatic solve at a height.
+   */
+  const renderAutoSolve = ({
+    dh,
+    engraveStep,
+    heightIndex,
+    manualStep,
+    onSolved,
+  }: {
+    dh: number;
+    /** where to go to engrave again */
+    engraveStep: Step;
+    /** 0 for the first height, 1 for the raised one */
+    heightIndex: number;
+    /** the manual step, for a backend without the auto commands or when the user chooses it after missing marks */
+    manualStep: Step;
+    /** false when it could not finish: the step then returns to the engraving step instead of spinning on */
+    onSolved: (rvec: number[][], tvec: number[][]) => Promise<boolean | void>;
+  }) => (
+    <ProcessingDialog
+      onClose={onClose}
+      onNext={() => {}}
+      process={async () => {
+        try {
+          progressCaller.openNonstopProgress({ id: PROGRESS_ID, message: tCali.auto_solve_pnp_locating });
+
+          let located: Awaited<ReturnType<typeof autoLocateMarks>>;
+          let pose: Awaited<ReturnType<typeof cameraCalibrationApi.solvePnPCalculate>> | undefined;
+
+          try {
+            located = await autoLocateMarks({
+              exposureRounds: EXPOSURE_ROUNDS,
+              isCancelled: () => isUnmounted.current,
+              params: calibratingParam.current,
+              refPoints: adorPnPPoints,
+              rMax: R_MAX_MM,
+            });
+
+            if (located.success) pose = await cameraCalibrationApi.solvePnPCalculate(dh, located.points, adorPnPPoints);
+          } finally {
+            progressCaller.popById(PROGRESS_ID);
+          }
+
+          if (isUnmounted.current) return;
+
+          if (!located.success) {
+            // backend without the commands: the manual steps still work
+            if (located.reason === 'UNSUPPORTED') {
+              isAutoSolved.current = false;
+              isAutoSupported.current = false;
+              setStep(manualStep);
+
+              return;
+            }
+
+            setStep(engraveStep);
+
+            if (located.reason === 'NOT_ENOUGH_MARKS') {
+              showNotEnoughMarksAlert({
+                found: located.matched ?? 0,
+                onManual: () => {
+                  if (isUnmounted.current) return;
+
+                  if (heightIndex === 0) isAutoSolved.current = false;
+
+                  manualInitialPoints.current[heightIndex] = located.initialPoints;
+                  setStep(manualStep);
+                },
+                total: adorPnPPoints.length,
+              });
+            } else {
+              alertCaller.popUpError({ message: `${tCali.failed_to_calibrate_with_pictures} (${located.reason})` });
+            }
+
+            return;
+          }
+
+          if (!pose?.success) throw new Error('solvePnPCalculate failed');
+
+          const { rvec, tvec } = pose.data;
+          const applyResult = async () => {
+            if (isUnmounted.current) return;
+
+            isAutoSolved.current = true;
+
+            if ((await onSolved(rvec, tvec)) === false) setStep(engraveStep);
+          };
+
+          if (!located.highResidual) {
+            await applyResult();
+
+            return;
+          }
+
+          // rest on the engraving step before the alert opens (see showHighResidualAlert)
+          setStep(engraveStep);
+          showHighResidualAlert({
+            isAdvanced,
+            onContinue: applyResult,
+            onRecapture: () => setStep(Step.PREPARE_CALIBRATION),
+            onSwitchToAdvanced,
+          });
+        } catch (error) {
+          // never leave this step spinning: the engraving step can start it again
+          console.error('Auto solve pnp failed', error);
+          alertCaller.popUpError({ message: tCali.failed_to_calibrate_with_pictures });
+          setStep(engraveStep);
+        }
+      }}
+    />
+  );
 
   return match(step)
     .with(Step.PREPARE_CALIBRATION, () => {
@@ -171,7 +373,7 @@ const AdorCalibration = ({
 
           progressCaller.update(PROGRESS_ID, { message: tCali.preparing_to_take_picture });
           await prepareToTakePicture();
-          setStep(Step.SOLVE_PNP_INSTRUCTION_1);
+          setStep(Step.AUTO_SOLVE_PNP_1);
         } catch (err) {
           console.error(err);
         } finally {
@@ -215,17 +417,10 @@ const AdorCalibration = ({
       <SolvePnP
         dh={calibratingParam.current.dh1!}
         hasNext
+        initialPoints={manualInitialPoints.current[0]}
         onBack={() => setStep(Step.SOLVE_PNP_INSTRUCTION_1)}
         onClose={onClose}
-        onNext={async (rvec, tvec) => {
-          progressCaller.openNonstopProgress({ id: PROGRESS_ID, message: lang.device.processing });
-          updateParam({ heights: [calibratingParam.current.dh1!], rvec, rvecs: [rvec], tvec, tvecs: [tvec] });
-          await cameraCalibrationApi.updateData(calibratingParam.current);
-          await saveCheckPoint(calibratingParam.current);
-          console.log('calibratingParam.current', calibratingParam.current);
-          progressCaller.popById(PROGRESS_ID);
-          setStep(Step.ELEVATED_CUT);
-        }}
+        onNext={handleFirstPose}
         params={calibratingParam.current}
         refPoints={adorPnPPoints}
       />
@@ -255,7 +450,7 @@ const AdorCalibration = ({
           await deviceMaster.doAdorCalibrationV2();
           progressCaller.update(PROGRESS_ID, { message: tCali.preparing_to_take_picture });
           await prepareToTakePicture();
-          onNext();
+          setStep(isAutoSupported.current ? Step.AUTO_SOLVE_PNP_2 : Step.SOLVE_PNP_2);
         } catch (err) {
           console.error(err);
         } finally {
@@ -263,54 +458,40 @@ const AdorCalibration = ({
         }
       };
 
-      return <StepElevate onBack={() => setStep(Step.SOLVE_PNP_1)} onClose={onClose} onNext={handleNext} />;
+      return (
+        <StepElevate
+          onBack={() => setStep(isAutoSolved.current ? Step.PUT_PAPER : Step.SOLVE_PNP_1)}
+          onClose={onClose}
+          onNext={handleNext}
+        />
+      );
     })
+    .with(Step.AUTO_SOLVE_PNP_1, () =>
+      renderAutoSolve({
+        dh: calibratingParam.current.dh1!,
+        engraveStep: Step.PUT_PAPER,
+        heightIndex: 0,
+        manualStep: Step.SOLVE_PNP_INSTRUCTION_1,
+        onSolved: handleFirstPose,
+      }),
+    )
+    .with(Step.AUTO_SOLVE_PNP_2, () =>
+      renderAutoSolve({
+        dh: calibratingParam.current.dh2!,
+        engraveStep: Step.ELEVATED_CUT,
+        heightIndex: 1,
+        manualStep: Step.SOLVE_PNP_2,
+        onSolved: handleSecondPose,
+      }),
+    )
     .otherwise(() => (
       <SolvePnP
         dh={calibratingParam.current.dh2!}
-        onBack={onBack}
+        initialPoints={manualInitialPoints.current[1]}
+        onBack={() => setStep(Step.ELEVATED_CUT)}
         onClose={onClose}
         onNext={async (rvec, tvec) => {
-          const { heights, rvecs, tvecs } = calibratingParam.current;
-
-          rvecs!.push(rvec);
-          tvecs!.push(tvec);
-          heights!.push(calibratingParam.current.dh2!);
-          updateParam({ heights, rvecs, tvecs });
-
-          const { data, success } = await cameraCalibrationApi.extrinsicRegression(rvecs!, tvecs!, heights!);
-
-          if (!success) {
-            alertCaller.popUpError({ message: 'Failed to do extrinsic regression.' });
-
-            return;
-          }
-
-          updateParam(data!);
-          console.log('calibratingParam.current', calibratingParam.current);
-
-          const param: FisheyeCameraParametersV2 = {
-            d: calibratingParam.current.d!,
-            k: calibratingParam.current.k!,
-            levelingData: calibratingParam.current.levelingData!,
-            refHeight: calibratingParam.current.refHeight!,
-            rvec: calibratingParam.current.rvec!,
-            rvec_polyfit: calibratingParam.current.rvec_polyfit!,
-            source: calibratingParam.current.source,
-            tvec: calibratingParam.current.tvec!,
-            tvec_polyfit: calibratingParam.current.tvec_polyfit!,
-            v: 2,
-          };
-          const res = await setFisheyeConfig(param);
-
-          if (res.status === 'ok') {
-            alertCaller.popUp({ message: tCali.camera_parameter_saved_successfully });
-            onClose(true);
-          } else {
-            alertCaller.popUpError({
-              message: `${tCali.failed_to_save_camera_parameter}:<br />${JSON.stringify(res)}`,
-            });
-          }
+          await handleSecondPose(rvec, tvec);
         }}
         params={calibratingParam.current}
         refPoints={adorPnPPoints}
