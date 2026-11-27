@@ -266,8 +266,9 @@ Edge cases and expected behaviour:
 | `AdorCalibration/AdorCalibration.tsx` (two automatic steps; the `onNext` bodies of the two `SolvePnP` steps moved into `handleFirstPose` / `handleSecondPose`) | Manual SOLVE_PNP_1 and SOLVE_PNP_2 — same checkpoint, regression and saved V2 parameters. PREPARE_CALIBRATION, CALIBRATE (ChArUco and factory chessboard) unchanged |
 | `AdorCalibration/index.tsx` (`key`, `onSwitchToAdvanced`, `replaceOpenDialog`) | `showAdorCalibration()` from the menu, factory mode — still returns `false` when the dialog is already open |
 | `packages/core/src/web/app/lang/*.ts` (keys added) | No existing key renamed or removed. Reused as button labels, text unchanged: `topbar.menu.calibrate_camera_advanced`, `calibration.title_capture_calibration_pattern` |
+| `camera/common/SolvePnP.tsx` (remap after a lost connection, review of #1063, 2026-11-27) | Manual steps of every dialog — same requests. When a remap without corner finding (`initialPoints`, exposure change) gets `NO_DATA` because a timed-out command replaced the connection, the parameters are uploaded again and the remap repeats, as corner finding already did; before, the reply was ignored and the step waited for the 2-minute timeout |
 
-Not touched: `SolvePnP.tsx`, `WideAngleCamera/`, `PromarkCalibration.tsx`,
+Not touched: `WideAngleCamera/`, `PromarkCalibration.tsx`,
 `device-master.ts`, `match_points.py`
 (`match_projected_points` keeps its signature; the new matcher is a new module).
 `fcode/bm2-calibration.fc` changes only if decision 11 is taken; the mark positions stay.

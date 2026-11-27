@@ -486,6 +486,8 @@ class CameraCalibrationApi {
           resolve({ blob: response });
         } else if (response.status === 'continue') {
           this.ws.send(img);
+        } else {
+          reject(response);
         }
       };
 

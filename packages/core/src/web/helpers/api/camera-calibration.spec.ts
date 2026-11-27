@@ -94,6 +94,19 @@ describe('cameraCalibrationApi command queue', () => {
   });
 });
 
+describe('cameraCalibrationApi remapImage', () => {
+  beforeEach(() => jest.clearAllMocks());
+
+  test('rejects on a fail reply instead of waiting for the timeout', async () => {
+    const promise = cameraCalibrationApi.remapImage(img);
+
+    await flush();
+
+    socketOptions.onMessage({ info: 'NO_DATA', reason: 'No calibration data found', status: 'fail' });
+    await expect(promise).rejects.toEqual(expect.objectContaining({ info: 'NO_DATA' }));
+  });
+});
+
 describe('cameraCalibrationApi auto PnP commands', () => {
   beforeEach(() => jest.clearAllMocks());
 

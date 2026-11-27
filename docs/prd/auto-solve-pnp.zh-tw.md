@@ -167,8 +167,9 @@
 | `AdorCalibration/AdorCalibration.tsx`（兩個自動步驟；兩個 `SolvePnP` 步驟的 `onNext` 內容移到 `handleFirstPose` / `handleSecondPose`） | 手動的 SOLVE_PNP_1 與 SOLVE_PNP_2：同樣的檢查點、迴歸與儲存的 V2 參數。PREPARE_CALIBRATION、CALIBRATE（ChArUco 與原廠棋盤格）不變 |
 | `AdorCalibration/index.tsx`（`key`、`onSwitchToAdvanced`、`replaceOpenDialog`） | 從選單、工廠模式呼叫的 `showAdorCalibration()`：對話框已開啟時仍回傳 `false` |
 | `packages/core/src/web/app/lang/*.ts`（新增鍵） | 沒有既有的鍵被改名或移除。沿用為按鈕標籤、文字不變：`topbar.menu.calibrate_camera_advanced`、`calibration.title_capture_calibration_pattern` |
+| `camera/common/SolvePnP.tsx`（連線被換掉後的 remap，#1063 的 review，2026-11-27） | 各對話框的手動步驟：請求不變。不找角點的 remap（`initialPoints`、調曝光）因為逾時換線而收到 `NO_DATA` 時，會重新上傳參數再 remap 一次，與找角點原本的做法相同；以前會忽略這個回覆，等到 2 分鐘逾時 |
 
-未動：`SolvePnP.tsx`、`WideAngleCamera/`、`PromarkCalibration.tsx`、`device-master.ts`、`match_points.py`（`match_projected_points` 維持原本的簽章；新的比對器是新模組）。`fcode/bm2-calibration.fc` 只有在採用決策 11 時才會變；標記點位置不變。
+未動：`WideAngleCamera/`、`PromarkCalibration.tsx`、`device-master.ts`、`match_points.py`（`match_projected_points` 維持原本的簽章；新的比對器是新模組）。`fcode/bm2-calibration.fc` 只有在採用決策 11 時才會變；標記點位置不變。
 
 ---
 
