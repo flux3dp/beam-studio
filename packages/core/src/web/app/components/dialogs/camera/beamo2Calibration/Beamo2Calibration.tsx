@@ -326,7 +326,7 @@ const Beamo2Calibration = ({ currentData, isAdvanced, onClose, onSwitchToAdvance
                       if (isUnmounted.current) return;
 
                       // each quadrant's manual step starts from these, as it does when coming back to one
-                      if (res.imgPoints) updateParam({ imgPoints1: res.imgPoints });
+                      updateParam({ imgPoints1: res.imgPoints });
 
                       setStep(Steps.SOLVE_PNP_INSTRUCTION);
                     },

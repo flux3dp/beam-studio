@@ -319,6 +319,24 @@ describe('Beamo2Calibration automatic solve step', () => {
     expect(utils.getByTestId('solve-pnp')).toHaveTextContent(JSON.stringify(imgPoints.topLeft));
   });
 
+  test('the manual steps find the corners themselves when this run predicted no points, whatever an earlier run found', async () => {
+    mockAutoSolvePnP
+      .mockResolvedValueOnce(solved)
+      .mockResolvedValue({ matched: 2, reason: 'NOT_ENOUGH_MARKS', success: false });
+
+    const utils = renderDialog();
+
+    await runAutoStep(utils);
+    fireEvent.click(utils.getByText('check-back'));
+    await runAutoStep(utils, i18n.lang.global.skip, 2);
+    act(() => mockShowNotEnoughMarksAlert.mock.calls[0][0].onManual());
+    await act(async () => {
+      fireEvent.click(utils.getByText(t.next));
+    });
+
+    expect(utils.getByTestId('solve-pnp')).toHaveTextContent('null');
+  });
+
   test('high residual in basic mode: continue, or release the machine and switch to advanced mode', async () => {
     mockAutoSolvePnP.mockResolvedValue({ ...solved, highResidual: true, rms: 1.8 });
 
