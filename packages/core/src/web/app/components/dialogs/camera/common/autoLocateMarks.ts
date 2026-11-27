@@ -122,6 +122,8 @@ const locate = async ({
           if (canSetExposure) {
             // the first photo after a change still has the old exposure (fbm2: every one of 7 changes); drop it
             await deviceMaster.takeOnePicture();
+
+            if (isCancelled?.()) return { reason: 'CANCELLED', success: false };
           } else {
             console.warn('[auto solve pnp] exposure cannot be set, this photo is the last one');
           }
